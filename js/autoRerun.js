@@ -1,6 +1,6 @@
 
 var timer=null;
-var T1,K1,Z1;
+var T1,K1,Z1,L1;
 
 function update_lsm_tree(id, lsm_tree_type, lsm_tree_L, lsm_tree_T, lsm_tree_mbuffer, N, E, obsolete_coefficient){
   if(id == 'lsm_tree_L' || id == 'obsolete_coefficient' || id == 'lsm_tree_Z'){
@@ -135,7 +135,7 @@ function drawCharts() {
     var step_width=1;
     var last_throughput=0;
     for(var i=0;i<1500;i+=step_width){
-        var T,K,Z,T_GCP, K_GCP, Z_GCP, T_AWS, K_AWS, Z_AWS, T_Azure, K_Azure, Z_Azure;
+        var T,K,Z,L,T_GCP, K_GCP, Z_GCP, T_AWS, K_AWS, Z_AWS, T_Azure, K_Azure, Z_Azure, L_GCP, L_AWS, L_Azure;
         console.log(i);
         x.push(i);
         y.push(countThroughput(i));
@@ -149,14 +149,17 @@ function drawCharts() {
         T_GCP=T1;
         K_GCP=K1;
         Z_GCP=Z1;
+        L_GCP=L1;
         var aws=countThroughput(i,1);
         T_AWS=T1;
         K_AWS=K1;
         Z_AWS=Z1;
+        L_AWS=L1;
         var azure=countThroughput(i,2);
         T_Azure=T1;
         K_Azure=K1;
         Z_Azure=Z1;
+        L_Azure=L1;
         var maxThroughput;
 
         if(gcp>aws&&gcp>azure) {
@@ -167,6 +170,7 @@ function drawCharts() {
             T=T_GCP;
             K=K_GCP;
             Z=Z_GCP;
+            L=L_GCP;
             derivative.push((gcp-last_throughput)/step_width);
             last_throughput=gcp;
         }else if(aws>azure){
@@ -177,6 +181,7 @@ function drawCharts() {
             T=T_AWS;
             K=K_AWS;
             Z=Z_AWS;
+            L=L_AWS;
             derivative.push((aws-last_throughput)/step_width);
             last_throughput=aws;
         }else{
@@ -187,10 +192,11 @@ function drawCharts() {
             T=T_Azure;
             K=K_Azure;
             Z=Z_Azure;
+            L=L_Azure;
             derivative.push((azure-last_throughput)/step_width);
             last_throughput=azure;
         }
-        hoverInfo.push("T="+T+",K="+K+",Z="+Z);
+        hoverInfo.push("T="+T+",K="+K+",Z="+Z+",L="+L);
         if(best_provider_now!=best_provider){
             pushProviderResults(GCP,GCP_x,AWS,AWS_x,Azure,Azure_x,data1,best_provider,maxThroughput,i,hoverInfo);
             if (best_provider==0) {
@@ -219,7 +225,7 @@ function drawCharts() {
 
 
             hoverInfo=new Array();
-            hoverInfo.push("T="+T+",K="+K+",Z="+Z);
+            hoverInfo.push("T="+T+",K="+K+",Z="+Z+",L="+L);
         }
         best_provider=best_provider_now;
 
@@ -269,8 +275,8 @@ function drawCharts() {
     }
 
     for(var i=0;i<derivative.length;i++){
-        if(derivative[i]>15000)
-            derivative[i]=(derivative[i-1]+derivative[i+1]+derivative[i-2]+derivative[i+2])/4;
+        if(derivative[i]>15000);
+            //derivative[i]=(derivative[i-1]+derivative[i+1]+derivative[i-2]+derivative[i+2])/4;
     }
 
     var data=[trace];
@@ -296,9 +302,37 @@ function drawCharts() {
                 pad: 5
             }, title: ''
         };
-    Plotly.newPlot('tester', data, layout);
+
+    var layout1 =
+        {
+            xaxis: {
+                title: 'Cost',
+                range: [ 0, 1600 ]
+            },
+            yaxis: {
+                title: 'Throughput',
+                type: 'log',
+                autorange: true
+            },
+            autosize: true,
+            width: 600,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+
+
+    Plotly.newPlot('tester', data, layout1);
 
     Plotly.newPlot('tester2', data1, layout);
+
+    //Plotly.newPlot('tester3', data, layout);
 
     var myPlot = document.getElementById('tester2')
 
@@ -310,6 +344,117 @@ function drawCharts() {
             { xval :pointNum }
         ]);
     });
+}
+
+function paintLatencyChart(){
+
+    var x=new Array();
+    var read_latency_y=new Array();
+    var write_latency_y=new Array();
+
+    var z=new Array();
+
+    var step_width=1;
+
+    for(var i=0;i<1000;i+=step_width){
+        x.push(i);
+        read_latency_y.push(countThroughputByLatency(i,100));
+        write_latency_y.push(countThroughputByLatency(20,i));
+    }
+
+    for(var i = 10; i < 1000; i += 10){
+        var temp=new Array();
+        for(var j = 10; j <1000; j += 10){
+            temp.push(countThroughputByLatency(i,j));
+        }
+        z.push(temp);
+    }
+
+    console.log(z);
+
+    var data = [{
+        z: z,
+        type: 'surface',
+
+    }];
+
+    var read_latency_trace = {
+        x: x,
+        y: read_latency_y,
+        type: 'scatter'
+    };
+
+    var write_latency_trace = {
+        x: x,
+        y: write_latency_y,
+        type: 'scatter'
+    };
+
+    var layout1 =
+        {
+            xaxis: {
+                title: 'Read Latency',
+                range: [ 0, 1100 ]
+            },
+            yaxis: {
+                title: 'Throughput',
+            },
+            autosize: true,
+            width: 600,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+
+    var layout2 =
+        {
+            xaxis: {
+                title: 'Write Latency',
+                range: [ 0, 1100 ]
+            },
+            yaxis: {
+                title: 'Throughput',
+            },
+            autosize: true,
+            width: 600,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+
+    var layout3 = {
+        scene: {
+            camera: {eye: {x: 1.87, y: 0.88, z: -0.64}},
+            xaxis:{title: 'Write Latency'},
+            yaxis:{title: 'Read Latency'},
+            zaxis:{title: 'Throughput'},
+        },
+        autosize: false,
+        width: 500,
+        height: 500,
+        margin: {
+            l: 5,
+            r: 0,
+            b: 5,
+            t: 0,
+        }
+    };
+
+    Plotly.newPlot('tester3', [read_latency_trace], layout1);
+    Plotly.newPlot('tester4', [write_latency_trace], layout2);
+    Plotly.newPlot('tester5', data, layout3);
 }
 
 function re_run(e, input_type) {
@@ -345,6 +490,7 @@ function re_run(e, input_type) {
 
     navigateDesignSpace();
     drawCharts();
+    paintLatencyChart()
 
 
     /*

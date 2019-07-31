@@ -443,12 +443,111 @@
                   <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right" onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
                 </div>
 
+                    <div id="breakdown_result" class="row" style="margin:50px 0px">
+                        <!-- LSM-Tree:a short range lookup issues at most K I/Os per level to the smaller L-1 Levels and at most Z I/Os to the largest level for a total of Z+K*(L-1) random I/Os -->
 
+                        <!-- LSM-Tree:a long range lookup continues with a sequential scan to the relevant key range at each run issuing at least s/B sequential I/Os. The number of sequential I/Os is amplified by (1+1/T) for updated entries at Levels 1 to L-1 and Z for updated entries at Level L. -->
+
+                        <div id="cost_output" class="col-lg-12 col-md-12 col-sm-12">
+                            <div class="row">
+                                <div class="col-lg-7 col-md-7 col-sm-7" style="">
+                    <span data-tooltip="update" data-tooltip-position="bottom">
+                      <p style="font-size:18px">Write</p>
+                    </span>
+                                </div>
+                                <div id="write" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-7 col-md-7 col-sm-7" style="">
+                    <span data-tooltip="Long-range Lookup" data-tooltip-position="bottom">
+                      <p style="font-size:18px">Range Lookup</p>
+                    </span>
+                                </div>
+                                <div id="long_range_lookup" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-7 col-md-7 col-sm-7" style="">
+                    <span data-tooltip="Existing-point lookup" data-tooltip-position="bottom">
+                      <p style="font-size:18px">Point Lookup</p>
+                    </span>
+                                </div>
+                                <div id="existing_point_lookup" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
+                                </div>
+                            </div>
+                            <div id="Zero-result-lookup-text-Div" style="display:none" class="row">
+                                <div class="col-lg-7 col-md-7 col-sm-7" style="">
+                    <span data-tooltip="Zero-result lookup" data-tooltip-position="bottom">
+                      <p style="font-size:18px">Zero-result Lookup</p>
+                    </span>
+                                </div>
+                                <div id="zero_result_lookup" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-7 col-md-7 col-sm-7" style="">
+                    <span data-tooltip="Required Storage (including obsolete entries) " data-tooltip-position="bottom">
+                      <p style="font-size:18px">Storage Space</p>
+                    </span>
+                                </div>
+                                <div id="storage" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-7 col-md-7 col-sm-7" style="">
+                    <span data-tooltip="Required Memory " data-tooltip-position="bottom">
+                      <p style="font-size:18px;font-weight:bold">Memory Footprint</p>
+                    </span>
+                                </div>
+                                <div id="memory" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center;">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-7 col-md-7 col-sm-7" style="">
+                    <span data-tooltip="Throughput (ops/second)" data-tooltip-position="bottom">
+                      <p style="font-size:18px;font-weight:bold">Throughput</p>
+                    </span>
+                                </div>
+                                <div id="throughput" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LSMB-Tree Cost -->
+
+
+
+
+
+                    </div>
 
                 </div>
+                <div class="col-lg-9 col-md-9 col-sm-9">
+                    <div class="row">
+                    <div id="tester2" class="col-lg-12 col-md-12 col-sm-12 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
+                    </div>
+                    </div>
+                    <div class="row">
+                     <div id="tester" class="col-lg-12 col-md-12 col-sm-12 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
+                     </div>
+                    </div>
 
-                <div id="tester2" class="col-sm-6 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
-            </div>
+                    <div class="row">
+                    <div id="tester3" class="col-sm-4 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
+                    </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="tester4" class="col-sm-4 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="tester5" class="col-sm-4 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
+                        </div>
+                    </div>
+                </div>
             <br>
 
 
@@ -472,147 +571,7 @@
               </div>
             </div>
             <br>
-            <div id="breakdown_result" class="row">
-                      <!-- LSM-Tree:a short range lookup issues at most K I/Os per level to the smaller L-1 Levels and at most Z I/Os to the largest level for a total of Z+K*(L-1) random I/Os -->
 
-                      <!-- LSM-Tree:a long range lookup continues with a sequential scan to the relevant key range at each run issuing at least s/B sequential I/Os. The number of sequential I/Os is amplified by (1+1/T) for updated entries at Levels 1 to L-1 and Z for updated entries at Level L. -->
-
-              <div id="cost_output" class="col-lg-3 col-md-3 col-sm-3">
-                <div class="row">
-                  <div class="col-lg-7 col-md-7 col-sm-7" style="">
-                    <span data-tooltip="update" data-tooltip-position="bottom">
-                      <p style="font-size:18px">Write</p>
-                    </span>
-                  </div>
-                  <div id="write" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-7 col-md-7 col-sm-7" style="">
-                    <span data-tooltip="Long-range Lookup" data-tooltip-position="bottom">
-                      <p style="font-size:18px">Range Lookup</p>
-                    </span>
-                  </div>
-                  <div id="long_range_lookup" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-7 col-md-7 col-sm-7" style="">
-                    <span data-tooltip="Existing-point lookup" data-tooltip-position="bottom">
-                      <p style="font-size:18px">Point Lookup</p>
-                    </span>
-                  </div>
-                  <div id="existing_point_lookup" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
-                  </div>
-                </div>
-                <div id="Zero-result-lookup-text-Div" style="display:none" class="row">
-                  <div class="col-lg-7 col-md-7 col-sm-7" style="">
-                    <span data-tooltip="Zero-result lookup" data-tooltip-position="bottom">
-                      <p style="font-size:18px">Zero-result Lookup</p>
-                    </span>
-                  </div>
-                  <div id="zero_result_lookup" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-7 col-md-7 col-sm-7" style="">
-                    <span data-tooltip="Required Storage (including obsolete entries) " data-tooltip-position="bottom">
-                      <p style="font-size:18px">Storage Space</p>
-                    </span>
-                  </div>
-                  <div id="storage" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center;">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-7 col-md-7 col-sm-7" style="">
-                    <span data-tooltip="Required Memory " data-tooltip-position="bottom">
-                      <p style="font-size:18px;font-weight:bold">Memory Footprint</p>
-                    </span>
-                  </div>
-                  <div id="memory" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center;">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-7 col-md-7 col-sm-7" style="">
-                    <span data-tooltip="Throughput (ops/second)" data-tooltip-position="bottom">
-                      <p style="font-size:18px;font-weight:bold">Throughput</p>
-                    </span>
-                  </div>
-                  <div id="throughput" class="col-lg-5 col-md-5 col-sm-5" style="text-align:center;">
-                  </div>
-                </div>
-              </div>
-
-              <!-- LSMB-Tree Cost -->
-                <div class="row" style="margin:0px 344px">
-              <div id="tester" class="col-sm-6 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
-              </div>
-              </div>
-
-              <!-- B-epsilon-Tree Cost -->
-              <div id="B_epsilon_tree_cost" class="col-lg-3 col-md-3 col-sm-3">
-                <div class="row">
-                  <div id="B_epsilon_tree_write" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="B_epsilon_tree_long_range_lookup" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="B_epsilon_tree_existing_point_lookup" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="B_epsilon_tree_zero_result_lookup" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;display:none">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="B_epsilon_tree_storage" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="B_epsilon_tree_memory" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;d">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="B_epsilon_tree_throughput" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;">
-                  </div>
-                </div>
-              </div>
-
-              <!-- design-continuum Cost -->
-              <div id="design_continuum_cost" class="col-lg-3 col-md-3 col-sm-3">
-                <div class="row">
-                  <div id="design_continuum_write" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="design_continuum_long_range_lookup" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="design_continuum_existing_point_lookup" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="design_continuum_zero_result_lookup" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;display:none">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="design_continuum_storage" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="design_continuum_memory" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;d">
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="design_continuum_throughput" class="col-lg-12 col-md-12 col-sm-12" style="text-align:center;">
-                  </div>
-                </div>
-              </div>
-            </div>
             <br>
 
 
