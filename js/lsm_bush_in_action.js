@@ -993,7 +993,8 @@ function init(){
 	document.getElementById("cost").value = 500;
 	navigateDesignSpace();
 	drawCharts();
-	paintLatencyChart();
+	drawLatencyChart();
+	drawBlockSizeChart()
 	//document.getElementById("Optimal-FPR").style.fontWeight='bold';
 	//document.getElementById("Optimal-FPR").style.fontSize='16px';
 

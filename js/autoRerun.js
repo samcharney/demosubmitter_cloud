@@ -130,13 +130,16 @@ function drawCharts() {
 
     var data1=[];
 
+    var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
+    console.log(cost);
+
     var best_provider=2;
     var best_provider_now=2;
-    var step_width=1;
+    var step_width=5;
     var last_throughput=0;
-    for(var i=0;i<1500;i+=step_width){
+    for(var i=0;i<cost*2;i+=step_width){
         var T,K,Z,L,T_GCP, K_GCP, Z_GCP, T_AWS, K_AWS, Z_AWS, T_Azure, K_Azure, Z_Azure, L_GCP, L_AWS, L_Azure;
-        console.log(i);
+        //console.log(i);
         x.push(i);
         y.push(countThroughput(i));
 
@@ -285,7 +288,7 @@ function drawCharts() {
         {
             xaxis: {
                 title: 'Cost',
-                range: [ 0, 1600 ]
+                range: [ 0, cost*2+100 ]
             },
             yaxis: {
                 title: 'Throughput',
@@ -307,7 +310,7 @@ function drawCharts() {
         {
             xaxis: {
                 title: 'Cost',
-                range: [ 0, 1600 ]
+                range: [ 0, cost*2+100 ]
             },
             yaxis: {
                 title: 'Throughput',
@@ -346,13 +349,88 @@ function drawCharts() {
     });
 }
 
-function paintLatencyChart(){
+function drawBlockSizeChart() {
+    var Cost = new Array();
+    var x = new Array();
+    var y = new Array();
+
+    var hoverInfo = new Array();
+
+
+    var data1 = [];
+
+    var best_provider = 2;
+    var best_provider_now = 2;
+    var step_width = 20;
+    var last_throughput = 0;
+    for (var i = 0; i < 8000; i += step_width) {
+        var T, K, Z, L;
+        var temp_throughput = last_throughput;
+        //GCP.push(countThroughput(i,0));
+        //AWS.push(countThroughput(i,1));
+        //Azure.push(countThroughput(i,2));
+        x.push(i);
+        y.push(countThroughputByBlockSize(i));
+        T = T1;
+        K = K1;
+        Z = Z1;
+        L = L1;
+
+        hoverInfo.push("T=" + T + ",K=" + K + ",Z=" + Z + ",L=" + L);
+
+    }
+
+
+
+    var data1=[{
+        x: x,
+        y: y,
+        marker: { size: 7, symbol: 'circle', color: 'steelblue'},
+        mode: 'lines',
+        type: 'scatter',
+        text: hoverInfo,
+        showlegend: false
+    }];
+
+    var layout =
+        {
+            xaxis: {
+                title: 'BlockSize',
+                range: [0, 8100]
+            },
+            yaxis: {
+                title: 'Throughput',
+            },
+            autosize: true,
+            width: 600,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+
+
+    //Plotly.newPlot('tester', data, layout1);
+
+    Plotly.newPlot('tester5', data1, layout);
+
+    //Plotly.newPlot('tester3', data, layout);
+}
+
+function drawLatencyChart(){
 
     var x=new Array();
     var read_latency_y=new Array();
     var write_latency_y=new Array();
 
     var z=new Array();
+    var x1=new Array();
+    var y=new Array();
 
     var step_width=1;
 
@@ -361,20 +439,24 @@ function paintLatencyChart(){
         read_latency_y.push(countThroughputByLatency(i,100));
         write_latency_y.push(countThroughputByLatency(20,i));
     }
-
+    /*
     for(var i = 10; i < 1000; i += 10){
-        var temp=new Array();
         for(var j = 10; j <1000; j += 10){
-            temp.push(countThroughputByLatency(i,j));
-        }
-        z.push(temp);
-    }
+            z.push(countThroughputByLatency(i,j));
+            x1.push(j);
+            y.push(i);
 
-    console.log(z);
+        }
+    }
+    */
 
     var data = [{
+        x: x1,
+        y: y,
         z: z,
-        type: 'surface',
+        opacity:0.5,
+        mode: "markers",
+        type: "mesh3d"
 
     }];
 
@@ -454,7 +536,7 @@ function paintLatencyChart(){
 
     Plotly.newPlot('tester3', [read_latency_trace], layout1);
     Plotly.newPlot('tester4', [write_latency_trace], layout2);
-    Plotly.newPlot('tester5', data, layout3);
+    //Plotly.newPlot('tester5', data, layout3);
 }
 
 function re_run(e, input_type) {
@@ -490,8 +572,8 @@ function re_run(e, input_type) {
 
     navigateDesignSpace();
     drawCharts();
-    paintLatencyChart()
-
+    drawLatencyChart();
+    drawBlockSizeChart();
 
     /*
     if(event.target.id.endsWith("mfilter_per_entry"))
