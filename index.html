@@ -255,7 +255,7 @@
             <!-- </div>  -->
 
             <div class="row" style="text-align: center">
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                   <img class="img-responsive img-centered" style="width:24%" src="./images/data.png"/>
                   <br>
                   <div id="dataset-trigger" onclick="showDataset()">
@@ -265,7 +265,7 @@
                   </div>
                 </div>
 
-                <div class="col-sm-4">
+                <div class="col-sm-3">
                   <img class="img-responsive img-centered" style="width:24%" src="./images/workload.png"/>
                   <br>
                   <div id="workload-trigger" onclick="showWorkload()">
@@ -273,15 +273,21 @@
                   </div>
                 </div>
 
-                <div class="col-sm-4">
-                  <img class="img-responsive img-centered" style="width:24%" src="./images/storage.png"/>
+                <div class="col-sm-3">
+                  <img class="img-responsive img-centered" style="width:24%" src="./images/dollar.png"/>
                   <br>
-                  <div id="storage-device-trigger" onclick="showStorageDevice()">
-                    <span style="cursor: pointer; font-size:25px" id="storage-text" data-tooltip="The storage device is an SSD with 4 KB blocks and for which reading a block takes 20 microseconds and writing a block takes 100 microseconds" data-tooltip-position="bottom">hardware</span>
+                  <div id="cost-trigger" onclick="showCost()">
+                    <span style="cursor: pointer; font-size:25px" id="cost-text" data-tooltip=" " data-tooltip-position="bottom">cost</span>
                   </div>
                 </div>
 
-
+                <div class="col-sm-3">
+                    <img class="img-responsive img-centered" style="width:24%" src="./images/cloud.png"/>
+                    <br>
+                    <div id="cloud-provider-trigger" onclick="showCloudProvider()">
+                        <span style="cursor: pointer; font-size:25px" id="cloud-provider-text" data-tooltip=" " data-tooltip-position="bottom">cloud provider</span>
+                    </div>
+                </div>
 
                 <div id="dataset-setting" class="row" style="display:none">
                   <div class="row">
@@ -306,14 +312,17 @@
                   </div>
                 </div>
 
-                <div id="storage-device-setting" class="row" style="display:none">
+                <div id="cost-setting" class="row" style="display:none">
                   <div class="row">
                     <div class="col-sm-4">
-                      <div class="input-group">
-                        <span class="input-group-addon"><span data-tooltip="Block Size in bytes (e.g., 4096)." data-tooltip-position="bottom"> Block size (bytes)</span></span>
-                        <input id="B" type="number" class="form-control" aria-label="Block Size B (bytes)" placeholder="Block Size in bytes (e.g., 4096)" style="text-align:right" onchange="re_run(event, 'storage_input')" onwheel="re_run(event, 'storage_input')"/>
-                      </div>
+                        <div class="input-group" style="text-align: center; ">
+                            <span class="input-group-addon"><span data-tooltip="the cost" data-tooltip-position="bottom">Cost </span></span>
+                            <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right" onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
+                        </div>
                     </div>
+
+
+                      <!--
                     <div class="col-sm-4">
                       <div class="input-group">
                         <span class="input-group-addon"><span data-tooltip="Read Latency (microseconds)" data-tooltip-position="bottom"> Read Latency (&mu;s) </span></span>
@@ -326,8 +335,25 @@
                         <input id="write-latency" type="text" class="form-control" aria-label="mu" placeholder="Write Latency (e.g., 100)" style="text-align:right" onchange="re_run(event, 'storage_input')" />
                       </div>
                     </div>
+                      -->
                   </div>
                 </div>
+
+                <div id="cloud-provider-setting" class="row" style="display:none">
+                    <div class="row">
+                        <div>
+                            <div class="input-group">
+                                <select id="temp" name="" style="width:150px;height: 30px ; margin:0px 1130px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
+                                    <option value="GCP">GCP</option>
+                                    <option value="AWS">AWS</option>
+                                    <option value="Azure">Azure</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
 
 
                 <div id="workload-setting" class="row" style="display:none">
@@ -400,7 +426,7 @@
                       <span style="font-size:24px" id="design_continuum_title" data-tooltip="design continuum" data-tooltip-position="bottom" >CrimsonDB: Design Continuum</span>
                     </div>
 
-                    <div id="Cloud Service Provider" class="input-group">
+                    <div id="Cloud Service Provider old" class="input-group" style="display:none">
                         <span class="input-group-addon"><span id="GCP" name="cloud_provider" onclick="SetProvider(0)" data-tooltip="This is GCP. Conf is" data-tooltip-position="bottom" style="cursor:pointer" >GCP &nbsp;</span></span>
                         <span class="input-group-addon"><span id="AWS" name="cloud_provider" onclick="SetProvider(1)" data-tooltip="This is AWS. Conf is" data-tooltip-position="bottom" style="cursor:pointer">AWS &nbsp;</span></span>
                         <span class="input-group-addon"><span id="Azure" name="cloud_provider" onclick="SetProvider(2)" data-tooltip="This is Azure. Conf is" data-tooltip-position="bottom" style="cursor:pointer">Azure &nbsp;</span></span>
@@ -438,10 +464,7 @@
                     <input id="mbuffer" type="number" class="form-control" aria-label="Buffer Size Mbuffer (MB)" placeholder="Buffer Size in MB (e.g., 2)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'input4')" readonly="true"/>
                   </div>
 
-                <div class="input-group" style="text-align: center; ">
-                <span class="input-group-addon"><span data-tooltip="the cost" data-tooltip-position="bottom">Cost </span></span>
-                  <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right" onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
-                </div>
+
 
                     <div id="breakdown_result" class="row" style="margin:50px 0px">
                         <!-- LSM-Tree:a short range lookup issues at most K I/Os per level to the smaller L-1 Levels and at most Z I/Os to the largest level for a total of Z+K*(L-1) random I/Os -->

@@ -71,7 +71,7 @@ function parseInputVariables()
     parsedBoxes.N = parseInt(document.getElementById("N").value.replace(/\D/g,''),10);
     parsedBoxes.E = parseInt(document.getElementById("E").value.replace(/\D/g,''),10);
     parsedBoxes.F = parseFloat(document.getElementById("F").value);
-    parsedBoxes.B = parseInt(document.getElementById("B").value.replace(/\D/g,''), 10);
+    parsedBoxes.B = 4096;
     parsedBoxes.cost = parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
 
     //Workload
@@ -82,8 +82,6 @@ function parseInputVariables()
     parsedBoxes.qL = parseFloat(document.getElementById("qL").value);
     parsedBoxes.qS = parseFloat(document.getElementById("qS").value);
 
-    parsedBoxes.read_latency = parseFloat(document.getElementById("read-latency").value);
-    parsedBoxes.write_latency = parseFloat(document.getElementById("write-latency").value);
 
     return parsedBoxes;
 }
@@ -103,8 +101,6 @@ function navigateDesignSpace() {
     var qS = Variables.qS;
     var scenario = 'W';//Variables.scenario;
 
-    var read_latency = Variables.read_latency;
-    var write_latency = Variables.write_latency;
 
     var X;
     var Y;
@@ -206,7 +202,7 @@ function navigateDesignSpace() {
                         //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
                         //console.log(Math.pow(K, 1/T));
                     }
-                    var total_cost=(w*update_cost*write_latency+v*read_cost*read_latency)/(v+w);
+                    var total_cost=(w*update_cost+v*read_cost)/(v+w);
                     if(best_cost<0||best_cost>total_cost){
                         best_cost=total_cost;
                         Variables.K=K;
@@ -351,8 +347,6 @@ function countThroughput(cost, cloud_provider) {
     var qS = Variables.qS;
     var scenario = 'W';//Variables.scenario;
 
-    var read_latency = Variables.read_latency;
-    var write_latency = Variables.write_latency;
 
     Variables.cost=cost;
 
@@ -453,7 +447,7 @@ function countThroughput(cost, cloud_provider) {
                         //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                         //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
                     }
-                    var total_cost=(w*update_cost*write_latency+v*read_cost*read_latency)/(v+w);
+                    var total_cost=(w*update_cost+v*read_cost)/(v+w);
                     if(best_cost<0||best_cost>total_cost){
                         best_cost=total_cost;
                         Variables.K=K;
@@ -481,144 +475,6 @@ function countThroughput(cost, cloud_provider) {
     return 1000000/best_cost;
 }
 
-function countThroughputByLatency(read_latency, write_latency) {
-    var Variables = parseInputVariables();
-    var N = Variables.N;
-    var E = Variables.E;
-    var F = Variables.F;
-    var B = Math.floor(Variables.B/E);
-    var s = Variables.s;
-
-    var w = Variables.w;
-    var r = Variables.r;
-    var v = Variables.v;
-    var qL = Variables.qL;
-    var qS = Variables.qS;
-    var scenario = 'W';//Variables.scenario;
-
-    var X;
-    var Y;
-    var L;
-    var M_F_HI;
-    var M_F; // = ((B*E + (M - M_F)) > 0 ? B*E + (M - M_F) : (B*E)); // byte
-    var M_F_LO; // = (M_B*(F)*T)/((B)*(E));
-    var M_BF;
-    var M_FP;
-    var FPR_sum;
-
-    setPricesBasedOnScheme(Variables);
-    if(!setMaxRAMNeeded(Variables))
-        return 0;
-
-    var best_cost=-1;
-
-    for (var T = 2; T <= 8; T++) {
-        for (var K = 1; K <= T - 1; K++) {
-            for (var Z = 1; Z <= T - 1; Z++) {
-                for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
-                    var M_B = M_B_percent * max_RAM_purchased*1024*1024*1024;
-                    var M=max_RAM_purchased*1024*1024*1024;
-                    X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z)  / T) * 8);
-                    M_F_HI = N * ((X / 8) / T + F / B);
-                    if ((N / B) < (M_B * T / (B * E))) {
-                        M_F_LO = (N / B) * F;
-                    } else {
-                        M_F_LO = (M_B * F * T) / (B * E);
-                    }
-                    M_F = M - M_B;
-                    if (M_F < M_F_LO)
-                        M_F = M_F_LO;
-                    L = Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T));
-
-                    if (M_F >= M_F_HI) {
-                        Y = 0;
-                        M_FP = N * F / B;
-                    } else if (M_F > M_F_LO && M_F < M_F_HI) {
-                        Y = L - 1;
-                        M_FP = M_F_LO;
-                        for (var i = L - 2; i >= 1; i--) {
-                            var h = L - i;
-                            var temp_M_FP = M_F_LO;
-                            for (var j = 2; j <= h; j++) {
-                                temp_M_FP = temp_M_FP + (temp_M_FP * T);
-                            }
-                            if (temp_M_FP <= M_F) {
-                                Y = i;
-                                M_FP = temp_M_FP;
-                            }
-                        }
-                    } else {
-                        Y = L - 1;
-                        M_FP = M_F_LO;
-                    }
-                    M_BF = 0;
-                    var margin = 2;
-                    if (M_F - M_FP > 0)
-                        M_BF = M_F - M_FP - margin;
-                    else
-                        M_BF = 0.0;
-
-
-                    var update_cost;
-                    var read_cost;
-                    var no_result_read_cost;
-                    var short_scan_cost;
-                    var long_scan_cost;
-                    var FPR_sum;
-
-                    if (write_percentage != 0) {
-                        update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
-                    }
-                    if (read_percentage != 0) {
-                        if (scenario == 'A') // Avg-case
-                        {
-                            //read_cost=analyzeReadCostAvgCase(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
-                        } else // Worst-case
-                        {
-                            read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
-                            FPR_sum = Math.exp((-M_BF*8/N)*Math.pow(Math.log(2)/Math.log(2.7182),2)*Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
-                            //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
-                        }
-
-                    }
-                    if (short_scan_percentage != 0) {
-                        short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
-                    }
-                    long_scan_cost = analyzeLongScanCost(B, s);
-                    if (scenario == 'A') // Avg-case
-                    {
-                        //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
-                    } else // Worst-case
-                    {
-                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
-                        //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
-                    }
-                    var total_cost=(w*update_cost*write_latency+v*read_cost*read_latency)/(v+w);
-                    if(best_cost<0||best_cost>total_cost){
-                        best_cost=total_cost;
-                        Variables.K=K;
-                        Variables.T=T;
-                        Variables.L=L;
-                        Variables.Z=Z;
-                        Variables.Buffer=M_B;
-                        Variables.M_BF=M_BF;
-                        Variables.read_cost=read_cost;
-                        Variables.update_cost=update_cost;
-                        Variables.short_scan_cost=short_scan_cost;
-                        Variables.long_scan_cost=long_scan_cost;
-                        Variables.no_result_read_cost=read_cost-1;
-                        Variables.total_cost=total_cost;
-                    }
-                }
-            }
-        }
-    }
-    //T1=Variables.T;
-    //K1=Variables.K;
-    //Z1=Variables.Z;
-    //return  max_RAM_purchased;
-    return 1000000/best_cost;
-}
 
 function countThroughputByBlockSize(BlockSize) {
     var Variables = parseInputVariables();
@@ -817,7 +673,7 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
     var storage, MBps, monthly_storage_cost;
     storage = (Variables.N*Variables.E)/(1024*1024*1024);
     if(cloud_provider==undefined) {
-        cloud_provider = getCloudProvider("cloud_provider");
+        cloud_provider = getCloudProvider("temp");
     }
     var B;
     if(cloud_provider == 1)
@@ -931,12 +787,15 @@ function getCloudProvider(buttonName){
         "AWS":1,
         "Azure":2
     }
-    var buttons = document.getElementsByName(buttonName);
-    var val;
+    //var buttons = document.getElementsByName(buttonName);
+    var buttons = document.getElementById(buttonName);
+    var val=buttons.selectedIndex;
+    console.log("VAL="+val);
+    /*
     for(var i = 0; i < buttons.length; i++){
         if(buttons[i].style.fontWeight=='bold'){
             val = lsm_map[buttons[i].id];
         }
-    }
+    }*/
     return parseInt(val);
 }

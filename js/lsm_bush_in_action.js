@@ -971,10 +971,8 @@ function init(){
 	// Dataset and Environment
     document.getElementById("N").value=numberWithCommas(68719476736); //(10M values)
     document.getElementById("E").value=20;
-		document.getElementById("B").value=4096; //in B
+		//document.getElementById("B").value=4096; //in B
 		document.getElementById("F").value=8;
-		document.getElementById("read-latency").value = 20;
-		document.getElementById("write-latency").value = 100;
 
 	// Workload
 	document.getElementById("s").value = 8192;
@@ -993,8 +991,6 @@ function init(){
 	document.getElementById("cost").value = 500;
 	navigateDesignSpace();
 	drawCharts();
-	drawLatencyChart();
-	drawBlockSizeChart()
 	//document.getElementById("Optimal-FPR").style.fontWeight='bold';
 	//document.getElementById("Optimal-FPR").style.fontSize='16px';
 
@@ -3063,24 +3059,26 @@ function MergeByLSMBush(lsm_bush_type){
 	re_run(event, 'input7');
 }
 
-function showStorageDevice(){
+function showCost(){
 	hideDataset();
 	hideWorkload();
-	document.getElementById("storage-text").style.fontWeight='bold';
-	document.getElementById('storage-device-trigger').onclick=function(){hideStorageDevice();}
-	document.getElementById("storage-device-setting").style.display='';
+	hideCloudProvider();
+	document.getElementById("cost-text").style.fontWeight='bold';
+	document.getElementById('cost-trigger').onclick=function(){hideCost();}
+	document.getElementById("cost-setting").style.display='';
 }
 
-function hideStorageDevice(){
-	document.getElementById("storage-text").style.fontWeight='';
-	document.getElementById('storage-device-trigger').onclick=function(){showStorageDevice();}
-	document.getElementById("storage-device-setting").style.display='none';
+function hideCost(){
+	document.getElementById("cost-text").style.fontWeight='';
+	document.getElementById('cost-trigger').onclick=function(){showCost();}
+	document.getElementById("cost-setting").style.display='none';
 
 }
 
 function showDataset(){
 	hideWorkload();
-	hideStorageDevice();
+	hideCost();
+	hideCloudProvider();
 	document.getElementById('data-text').style.fontWeight='bold';
 	document.getElementById('dataset-trigger').onclick=function(){hideDataset();}
 	document.getElementById("dataset-setting").style.display='';
@@ -3095,7 +3093,8 @@ function hideDataset(){
 
 function showWorkload(){
 	hideDataset();
-	hideStorageDevice();
+	hideCost();
+	hideCloudProvider();
 	document.getElementById('workload-text').style.fontWeight='bold';
 	document.getElementById('workload-trigger').onclick=function(){hideWorkload();}
 	document.getElementById("workload-setting").style.display='';
@@ -3105,4 +3104,19 @@ function hideWorkload(){
 	document.getElementById('workload-text').style.fontWeight='';
 	document.getElementById('workload-trigger').onclick=function(){showWorkload();}
 	document.getElementById("workload-setting").style.display='none';
+}
+
+function showCloudProvider(){
+	hideDataset();
+	hideCost();
+	hideWorkload();
+	document.getElementById('cloud-provider-text').style.fontWeight='bold';
+	document.getElementById('cloud-provider-trigger').onclick=function(){hideCloudProvider();}
+	document.getElementById("cloud-provider-setting").style.display='';
+}
+
+function hideCloudProvider(){
+	document.getElementById('cloud-provider-text').style.fontWeight='';
+	document.getElementById('cloud-provider-trigger').onclick=function(){showCloudProvider();}
+	document.getElementById("cloud-provider-setting").style.display='none';
 }
