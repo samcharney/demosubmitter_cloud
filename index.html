@@ -254,39 +254,61 @@
             <!-- <div id="interactiveDemo" class="row" style="">  -->
             <!-- </div>  -->
 
-            <div class="row" style="text-align: center">
-                <div class="col-sm-3">
-                  <img class="img-responsive img-centered" style="width:24%" src="./images/data.png"/>
+            <div class="row" style="text-align: center" >
+                <div class="col-sm-3" >
+                    <div class="col-sm-4"></div>
+                <div class="col-sm-4 trigger" data-tooltip="The dataset consists of 1 TB of data comprising unique 16-byte key-value pairs of 8-byte keys" data-tooltip-position="bottom" style="cursor: pointer">
+                    <div id="dataset-trigger" onclick="showDataset()">
+                  <img class="img-responsive img-centered" style="width:105px" src="./images/data.png"/>
                   <br>
-                  <div id="dataset-trigger" onclick="showDataset()">
-                    <span style="cursor: pointer;font-size:25px" id="data-text" data-tooltip="The dataset consists of 1 TB of data comprising unique 16-byte key-value pairs of 8-byte keys" data-tooltip-position="bottom">
+                    <span style="cursor: pointer;font-size:25px" id="data-text" >
                       data
                     </span>
                   </div>
                 </div>
-
-                <div class="col-sm-3">
-                  <img class="img-responsive img-centered" style="width:24%" src="./images/workload.png"/>
-                  <br>
-                  <div id="workload-trigger" onclick="showWorkload()">
-                    <span style="cursor: pointer;font-size:25px" id="workload-text" data-tooltip="The workload consists of 50.000% writes, 49.999% point lookups, and 0.001% range lookups with  target range of 8192 entries" data-tooltip-position="bottom">workload</span>
-                  </div>
+                    <div class="col-sm-4"></div>
                 </div>
 
-                <div class="col-sm-3">
-                  <img class="img-responsive img-centered" style="width:24%" src="./images/dollar.png"/>
+                <div class="col-sm-3" >
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 trigger"  data-tooltip="The workload consists of 50.000% writes, 49.999% point lookups, and 0.001% range lookups with  target range of 8192 entries" data-tooltip-position="bottom" style="cursor: pointer">
+                    <div id="workload-trigger" onclick="showWorkload()" >
+                  <img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>
                   <br>
-                  <div id="cost-trigger" onclick="showCost()">
-                    <span style="cursor: pointer; font-size:25px" id="cost-text" data-tooltip=" " data-tooltip-position="bottom">cost</span>
+                    <span style="cursor: pointer;font-size:25px" id="workload-text" >workload</span>
                   </div>
                 </div>
+                    <div class="col-sm-4"></div>
+                </div>
 
-                <div class="col-sm-3">
-                    <img class="img-responsive img-centered" style="width:24%" src="./images/cloud.png"/>
-                    <br>
-                    <div id="cloud-provider-trigger" onclick="showCloudProvider()">
-                        <span style="cursor: pointer; font-size:25px" id="cloud-provider-text" data-tooltip=" " data-tooltip-position="bottom">cloud provider</span>
+
+                <div class="col-sm-3" >
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 trigger" data-tooltip="The financial budget to execute the workload is $500" data-tooltip-position="bottom" style="cursor: pointer">
+                        <div id="cost-trigger" onclick="showCost()" >
+                  <img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>
+                  <br>
+                    <span style="cursor: pointer; font-size:25px" id="cost-text" >cost</span>
+                  </div>
                     </div>
+                    <div class="col-sm-4"></div>
+                </div>
+
+                <div class="col-sm-3" >
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-4 trigger" data-tooltip="The selected cloud service provider is AWS" data-tooltip-position="bottom" style="cursor: pointer">
+                        <div id="cloud-provider-trigger" onclick="showCloudProvider()">
+                            <img class="img-responsive img-centered" style="width:105px" src="./images/cloud.png"/>
+                            <br>
+                            <span style="cursor: pointer; font-size:25px" id="cloud-provider-text" >cost</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4"></div>
+                </div>
+
+
+
+                <div class="row" style="text-align: center; margin-bottom: 20px">
                 </div>
 
                 <div id="dataset-setting" class="row" style="display:none">
@@ -343,7 +365,7 @@
                     <div class="row">
                         <div>
                             <div class="input-group">
-                                <select id="temp" name="" style="width:150px;height: 30px ; margin:0px 1130px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
+                                <select id="cloud-provider" name="" style="width:150px;height: 30px ; margin:0px 1130px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
                                     <option value="GCP">GCP</option>
                                     <option value="AWS">AWS</option>
                                     <option value="Azure">Azure</option>
@@ -377,7 +399,7 @@
 
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4">
-                        <div class="input-group">
+                        <div class="input-group" style="display: none">
                             <span class="input-group-addon"><span data-tooltip="Proportion of Short Range Lookup Operation" data-tooltip-position="bottom"> Proportion of Short Range Lookup </span></span>
                             <input id="qS" type="text" class="form-control" aria-label="proportion of short range lookup operation" placeholder=" qS (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>

@@ -211,6 +211,7 @@ function navigateDesignSpace() {
                         Variables.Z=Z;
                         Variables.Buffer=M_B;
                         Variables.M_BF=M_BF;
+                        Variables.M_FP=M_FP;
                         Variables.read_cost=read_cost;
                         Variables.update_cost=update_cost;
                         Variables.short_scan_cost=short_scan_cost;
@@ -456,6 +457,7 @@ function countThroughput(cost, cloud_provider) {
                         Variables.Z=Z;
                         Variables.Buffer=M_B;
                         Variables.M_BF=M_BF;
+                        Variables.M_FP=M_FP;
                         Variables.read_cost=read_cost;
                         Variables.update_cost=update_cost;
                         Variables.short_scan_cost=short_scan_cost;
@@ -467,12 +469,8 @@ function countThroughput(cost, cloud_provider) {
             }
         }
     }
-    T1=Variables.T;
-    K1=Variables.K;
-    Z1=Variables.Z;
-    L1=Variables.L;
     //return  max_RAM_purchased;
-    return 1000000/best_cost;
+    return Variables;
 }
 
 
@@ -673,7 +671,7 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
     var storage, MBps, monthly_storage_cost;
     storage = (Variables.N*Variables.E)/(1024*1024*1024);
     if(cloud_provider==undefined) {
-        cloud_provider = getCloudProvider("temp");
+        cloud_provider = getCloudProvider("cloud-provider");
     }
     var B;
     if(cloud_provider == 1)
@@ -762,7 +760,7 @@ function setMaxRAMNeeded(Variables)
         return 0;
     }
     //int i=0;
-    var max_RAM_blocks = /*Math.floor*/((total_budget/(24*30*(RAM_BLOCK_COST))));
+    var max_RAM_blocks = Math.floor((total_budget/(24*30*(RAM_BLOCK_COST))));
     if(max_RAM_blocks < 0)
     {
         console.log("\n************ INSUFFICIENT BUDGET FOR PRICING SCHEME *************\n");

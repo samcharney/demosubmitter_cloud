@@ -1,6 +1,5 @@
 
 var timer=null;
-var T1,K1,Z1,L1;
 
 function update_lsm_tree(id, lsm_tree_type, lsm_tree_L, lsm_tree_T, lsm_tree_mbuffer, N, E, obsolete_coefficient){
   if(id == 'lsm_tree_L' || id == 'obsolete_coefficient' || id == 'lsm_tree_Z'){
@@ -68,6 +67,8 @@ function pushProviderResults(GCP,GCP_x,AWS,AWS_x,Azure,Azure_x,data1,best_provid
             type: 'scatter',
             text: hoverInfo,
             showlegend: false,
+            hovertemplate:
+                "<b>%{text}</b><br><br>",
             legendgroup: 'GCP'
         }
         data1.push(GCPPoint);
@@ -85,6 +86,8 @@ function pushProviderResults(GCP,GCP_x,AWS,AWS_x,Azure,Azure_x,data1,best_provid
             mode: 'lines',
             text: hoverInfo,
             showlegend: false,
+            hovertemplate:
+                "<b>%{text}</b><br><br>",
             type: 'scatter'
         }
         data1.push(AWSPoint);
@@ -102,6 +105,8 @@ function pushProviderResults(GCP,GCP_x,AWS,AWS_x,Azure,Azure_x,data1,best_provid
             mode: 'lines',
             text: hoverInfo,
             showlegend: false,
+            hovertemplate:
+                "<b>%{text}</b><br><br>",
             type: 'scatter'
         }
         data1.push(AzurePoint);
@@ -138,7 +143,7 @@ function drawCharts() {
     var step_width=5;
     var last_throughput=0;
     for(var i=0;i<cost*2;i+=step_width){
-        var T,K,Z,L,T_GCP, K_GCP, Z_GCP, T_AWS, K_AWS, Z_AWS, T_Azure, K_Azure, Z_Azure, L_GCP, L_AWS, L_Azure;
+        var best_design;
         //console.log(i);
         x.push(i);
         y.push(countThroughput(i));
@@ -148,32 +153,21 @@ function drawCharts() {
         //AWS.push(countThroughput(i,1));
         //Azure.push(countThroughput(i,2));
 
-        var gcp=countThroughput(i,0);
-        T_GCP=T1;
-        K_GCP=K1;
-        Z_GCP=Z1;
-        L_GCP=L1;
-        var aws=countThroughput(i,1);
-        T_AWS=T1;
-        K_AWS=K1;
-        Z_AWS=Z1;
-        L_AWS=L1;
-        var azure=countThroughput(i,2);
-        T_Azure=T1;
-        K_Azure=K1;
-        Z_Azure=Z1;
-        L_Azure=L1;
+        var gcp_design=countThroughput(i,0);
+        var aws_design=countThroughput(i,1);
+        var azure_design=countThroughput(i,2);
+        var gcp=100000/gcp_design.total_cost;
+        var aws=100000/aws_design.total_cost;
+        var azure=100000/azure_design.total_cost;
         var maxThroughput;
+
 
         if(gcp>aws&&gcp>azure) {
             best_provider_now=0;
             GCP.push(gcp);
             GCP_x.push(i);
             maxThroughput=gcp;
-            T=T_GCP;
-            K=K_GCP;
-            Z=Z_GCP;
-            L=L_GCP;
+            best_design=gcp_design;
             derivative.push((gcp-last_throughput)/step_width);
             last_throughput=gcp;
         }else if(aws>azure){
@@ -181,10 +175,7 @@ function drawCharts() {
             AWS.push(aws);
             AWS_x.push(i);
             maxThroughput=aws;
-            T=T_AWS;
-            K=K_AWS;
-            Z=Z_AWS;
-            L=L_AWS;
+            best_design=aws_design;
             derivative.push((aws-last_throughput)/step_width);
             last_throughput=aws;
         }else{
@@ -192,14 +183,11 @@ function drawCharts() {
             Azure.push(azure);
             Azure_x.push(i);
             maxThroughput=azure;
-            T=T_Azure;
-            K=K_Azure;
-            Z=Z_Azure;
-            L=L_Azure;
+            best_design=azure_design;
             derivative.push((azure-last_throughput)/step_width);
             last_throughput=azure;
         }
-        hoverInfo.push("T="+T+",K="+K+",Z="+Z+",L="+L);
+        hoverInfo.push("T="+best_design.T+" K="+best_design.K+" Z="+best_design.Z+" L="+best_design.L +" Buffer size="+(best_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(best_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(best_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
         if(best_provider_now!=best_provider){
             pushProviderResults(GCP,GCP_x,AWS,AWS_x,Azure,Azure_x,data1,best_provider,maxThroughput,i,hoverInfo);
             if (best_provider==0) {
@@ -228,7 +216,7 @@ function drawCharts() {
 
 
             hoverInfo=new Array();
-            hoverInfo.push("T="+T+",K="+K+",Z="+Z+",L="+L);
+            hoverInfo.push("T="+best_design.T+" K="+best_design.K+" Z="+best_design.Z+" L="+best_design.L +" Buffer size="+(best_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(best_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(best_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
         }
         best_provider=best_provider_now;
 
@@ -256,6 +244,8 @@ function drawCharts() {
         marker: { size: 7, symbol: 'circle', color: 'steelblue'},
         name: 'GCP',
         //mode: 'markers',
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
         type: 'scatter'
     }
 
@@ -265,6 +255,8 @@ function drawCharts() {
         marker: { size: 7, symbol: 'circle', color: 'green'},
         name: 'AWS',
         //mode: 'markers',
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
         type: 'scatter'
     }
 
@@ -274,6 +266,8 @@ function drawCharts() {
         marker: { size: 7, symbol: 'circle', color: 'orange'},
         name: 'Azure',
         //mode: 'markers',
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
         type: 'scatter'
     }
 
