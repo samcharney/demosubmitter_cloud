@@ -990,7 +990,8 @@ function init(){
 
 	document.getElementById("cost").value = 500;
 	navigateDesignSpace();
-	drawCharts();
+	//drawCharts();
+	drawChart2();
 	//document.getElementById("Optimal-FPR").style.fontWeight='bold';
 	//document.getElementById("Optimal-FPR").style.fontSize='16px';
 

@@ -343,6 +343,104 @@ function drawCharts() {
     });
 }
 
+function drawChart2() {
+    var Azure=new Array();
+    var GCP=new Array();
+    var AWS=new Array();
+    var x=new Array();
+    var GCP_hover=new Array();
+    var AWS_hover=new Array();
+    var Azure_hover=new Array();
+
+    var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
+    var step_width=1;
+
+    for(var i=0;i<cost*2;i+=step_width){
+        var gcp_design=countThroughput(i,0);
+        var aws_design=countThroughput(i,1);
+        var azure_design=countThroughput(i,2);
+        var gcp=100000/gcp_design.total_cost;
+        var aws=100000/aws_design.total_cost;
+        var azure=100000/azure_design.total_cost;
+
+        x.push(i);
+        GCP.push(gcp);
+        AWS.push(aws);
+        Azure.push(azure);
+
+        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +" Buffer size="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
+        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +" Buffer size="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
+        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +" Buffer size="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
+
+
+    }
+
+    var GCPPoint={
+        x: x,
+        y: GCP,
+        marker: { size: 7, symbol: 'circle', color: 'steelblue'},
+        name: 'GCP',
+        //mode: 'markers',
+        text: GCP_hover,
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }
+
+    var AWSPoint={
+        x: x,
+        y: AWS,
+        marker: { size: 7, symbol: 'circle', color: 'green'},
+        name: 'AWS',
+        //mode: 'markers',
+        text: AWS_hover,
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }
+
+    var AzurePoint={
+        x: x,
+        y: Azure,
+        marker: { size: 7, symbol: 'circle', color: 'orange'},
+        name: 'Azure',
+        //mode: 'markers',
+        text: Azure_hover,
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }
+
+    var data=[GCPPoint,AWSPoint,AzurePoint];
+
+
+    var layout1 =
+        {
+            xaxis: {
+                title: 'Cost',
+                range: [ 0, cost*2+100 ]
+            },
+            yaxis: {
+                title: 'Throughput',
+                type: 'log',
+                autorange: true
+            },
+            autosize: true,
+            width: 600,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+
+    Plotly.newPlot('tester2', data, layout1);
+}
+
 
 function re_run(e, input_type) {
 
@@ -376,8 +474,8 @@ function re_run(e, input_type) {
 
 
     navigateDesignSpace();
-    drawCharts();
-
+    //drawCharts();
+    drawChart2();
     /*
     if(event.target.id.endsWith("mfilter_per_entry"))
     {
