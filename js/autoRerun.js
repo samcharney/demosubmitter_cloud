@@ -359,9 +359,9 @@ function drawChart2() {
         var gcp_design=countThroughput(i,0);
         var aws_design=countThroughput(i,1);
         var azure_design=countThroughput(i,2);
-        var gcp=100000/gcp_design.total_cost;
-        var aws=100000/aws_design.total_cost;
-        var azure=100000/azure_design.total_cost;
+        var gcp=gcp_design.latency;
+        var aws=aws_design.latency;
+        var azure=azure_design.latency;
 
         x.push(i);
         GCP.push(gcp);
@@ -421,9 +421,8 @@ function drawChart2() {
                 range: [ 0, cost*2+100 ]
             },
             yaxis: {
-                title: 'Throughput',
-                type: 'log',
-                autorange: true
+                title: 'Latency',
+                range: [0, 20000]
             },
             autosize: true,
             width: 600,

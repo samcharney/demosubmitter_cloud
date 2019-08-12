@@ -983,12 +983,15 @@ function init(){
 	document.getElementById("qL").value = 0.00001;
 	//document.getElementById("X").value = numberWithCommas(0);
 
-	//buttons:
+	//buttons
 
 	document.getElementById("AWS").style.fontWeight='bold';
 	document.getElementById("AWS").style.fontSize='16px';
 
 	document.getElementById("cost").value = 500;
+
+	document.getElementById("query_count").value=100000000;
+
 	navigateDesignSpace();
 	//drawCharts();
 	drawChart2();
