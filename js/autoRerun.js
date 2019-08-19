@@ -368,9 +368,9 @@ function drawChart2() {
         AWS.push(aws);
         Azure.push(azure);
 
-        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +" Buffer size="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
-        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +" Buffer size="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
-        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +" Buffer size="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+"GB M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+"GB M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+"GB");
+        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +" M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB");
+        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +" M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB");
+        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +" M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB");
 
 
     }
@@ -417,15 +417,15 @@ function drawChart2() {
     var layout1 =
         {
             xaxis: {
-                title: 'Cost',
+                title: 'Cost($)',
                 range: [ 0, cost*2+100 ]
             },
             yaxis: {
-                title: 'Latency',
-                range: [0, 20000]
+                title: 'Latency(hour)',
+                range: [0, 5.5]
             },
             autosize: true,
-            width: 600,
+            width: 900,
             height: 300,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {

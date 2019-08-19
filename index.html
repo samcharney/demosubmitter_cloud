@@ -338,7 +338,7 @@
                   <div class="row">
                     <div class="col-sm-4">
                         <div class="input-group" style="text-align: center; left:760px ;width:200px">
-                            <span class="input-group-addon"><span data-tooltip="the cost" data-tooltip-position="bottom">Cost </span></span>
+                            <span class="input-group-addon"><span data-tooltip="The cost" data-tooltip-position="bottom">Cost </span></span>
                             <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
                         </div>
                     </div>
@@ -388,12 +388,12 @@
                     <div class="col-lg-4 col-md-4 col-sm-4">
                       <div class="input-group">
                         <span class="input-group-addon"><span data-tooltip="Proportion of Write" data-tooltip-position="bottom"> Proportion of Write </span></span>
-                        <input id="w" type="text" class="form-control" aria-label="proportion of write operation" placeholder=" w (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')" />
+                        <input id="w" type="text" class="form-control" aria-label="Proportion of write operation" placeholder=" w (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')" />
                       </div>
 
                         <div class="input-group">
                             <span class="input-group-addon"><span data-tooltip="Proportion of Non-result Point Lookup Operation" data-tooltip-position="bottom"> Proportion of Non-result Point Lookup </span></span>
-                            <input id="r" type="text" class="form-control" aria-label="proportion of non-result point lookup operation" placeholder=" r (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
+                            <input id="r" type="text" class="form-control" aria-label="Proportion of non-result point lookup operation" placeholder=" r (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
 
@@ -401,12 +401,12 @@
                     <div class="col-lg-4 col-md-4 col-sm-4">
                         <div class="input-group" style="display: none">
                             <span class="input-group-addon"><span data-tooltip="Proportion of Short Range Lookup Operation" data-tooltip-position="bottom"> Proportion of Short Range Lookup </span></span>
-                            <input id="qS" type="text" class="form-control" aria-label="proportion of short range lookup operation" placeholder=" qS (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
+                            <input id="qS" type="text" class="form-control" aria-label="Proportion of short range lookup operation" placeholder=" qS (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                       <div class="input-group">
                         <span class="input-group-addon"><span data-tooltip="Proportion of Long Range Lookup Operation" data-tooltip-position="bottom"> Proportion of Long Range Lookup  </span></span>
-                        <input id="qL" type="text" class="form-control" aria-label="proportion of long range lookup operation" placeholder=" qL (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
+                        <input id="qL" type="text" class="form-control" aria-label="Proportion of long range lookup operation" placeholder=" qL (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                       </div>
 
                         <div class="input-group">
@@ -418,8 +418,8 @@
                     </div>
                     <div class="col-lg-4 col-md-4 col-sm-4">
                       <div class="input-group">
-                        <span class="input-group-addon"><span data-tooltip="Proportion of Existig Point Lookup Operation" data-tooltip-position="bottom"> Proportion of Existig Point Lookup </span></span>
-                        <input id="v" type="text" class="form-control" aria-label="proportion of existing point lookup operation" placeholder=" v (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
+                        <span class="input-group-addon"><span data-tooltip="Proportion of Existing Point Lookup Operation" data-tooltip-position="bottom"> Proportion of Existig Point Lookup </span></span>
+                        <input id="v" type="text" class="form-control" aria-label="Proportion of existing point lookup operation" placeholder=" v (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                       </div>
 
 
@@ -466,13 +466,13 @@
 
 
                     <div class="input-group" style="text-align: center">
-                    <span class="input-group-addon"><span data-tooltip="maximum number of independent sorted partitions (i.e., runs) of hot levels " data-tooltip-position="bottom">Hot merge threshold (K) </span></span>
+                    <span class="input-group-addon"><span data-tooltip="Maximum number of independent sorted partitions (i.e., runs) of hot levels " data-tooltip-position="bottom">Hot merge threshold (K) </span></span>
                       <input id="K" type="number" class="form-control" aria-label="design_continuum_K" placeholder="K" style="text-align:right" onblur="re_run(event, 'input7')" onchange="re_run(event, 'input7')" onwheel="re_run(event, 'input7')" readonly="true"/>
 
                     </div>
 
                     <div class="input-group" style="text-align: center">
-                    <span class="input-group-addon"><span data-tooltip="maximum number of independent sorted partitions (i.e., runs) of cold levels" data-tooltip-position="bottom">Cold merge threshold (Z) </span></span>
+                    <span class="input-group-addon"><span data-tooltip="Maximum number of independent sorted partitions (i.e., runs) of cold levels" data-tooltip-position="bottom">Cold merge threshold (Z) </span></span>
                       <input id="Z" type="number" class="form-control" aria-label="design_continuum_Z" placeholder="Z" style="text-align:right" onkeyup="re_run(event, 'input9')" onblur="re_run(event, 'input7')" onwheel="re_run(event, 'input7')" readonly="true"/>
                     </div>
 
@@ -482,12 +482,12 @@
                     </div>
 
                   <div class="input-group" style="text-align: center">
-                  <span class="input-group-addon"><span data-tooltip="the fence and filters's memory budget" data-tooltip-position="bottom">M<sub>f</sub> (bits per entry)</span></span>
+                  <span class="input-group-addon"><span data-tooltip="The fence and filters's memory budget" data-tooltip-position="bottom">M<sub>f</sub> (bits per entry)</span></span>
                     <input id="memory_budget" class="form-control" aria-label="design_continuum_memory_budget" placeholder="MF" style="text-align:right" onkeyup="re_run(event, 'input9')" onblur="re_run(event, 'input7')" readonly="true"/>
                   </div>
 
                   <div class="input-group">
-                    <span class="input-group-addon"><span data-tooltip="Buffer Size in MB (e.g., 2)." data-tooltip-position="bottom"> Buffer size (MB)</span></span>
+                    <span class="input-group-addon"><span data-tooltip="Buffer size in MB (e.g., 2)." data-tooltip-position="bottom"> Buffer size (MB)</span></span>
                     <input id="mbuffer" type="number" class="form-control" aria-label="Buffer Size Mbuffer (MB)" placeholder="Buffer Size in MB (e.g., 2)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'input4')" readonly="true"/>
                   </div>
 
@@ -575,7 +575,7 @@
                 </div>
                 <div class="col-lg-9 col-md-9 col-sm-9">
                     <div class="row">
-                    <div id="tester2" class="col-lg-12 col-md-12 col-sm-12 js-plotly-plot" style="position: relative; width: 400px; height: 300px;">
+                    <div id="tester2" class="col-lg-12 col-md-12 col-sm-12 js-plotly-plot" style="position: relative; width: 900px; height: 300px;">
                     </div>
                     </div>
                     <div class="row">

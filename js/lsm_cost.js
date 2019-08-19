@@ -470,7 +470,7 @@ function countThroughput(cost, cloud_provider) {
                         Variables.long_scan_cost=long_scan_cost;
                         Variables.no_result_read_cost=read_cost-1;
                         Variables.total_cost=total_cost;
-                        Variables.latency=total_cost*query_count/IOPS;
+                        Variables.latency=total_cost*query_count/IOPS/60/60;
                     }
                 }
             }
