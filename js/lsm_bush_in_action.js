@@ -977,10 +977,10 @@ function init(){
 	// Workload
 	document.getElementById("s").value = 8192;
 	document.getElementById("qS").value = 0;
-	document.getElementById("w").value = 0.5;
+	document.getElementById("w").value = 0.2;
 	document.getElementById("r").value = 0.0;
-	document.getElementById("v").value = 0.49999;
-	document.getElementById("qL").value = 0.00001;
+	document.getElementById("v").value = 0.8;
+	document.getElementById("qL").value = 0.0;
 	//document.getElementById("X").value = numberWithCommas(0);
 
 	//buttons

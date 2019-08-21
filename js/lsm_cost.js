@@ -62,6 +62,17 @@ function Variables()
 
     var latency;
 
+    var VM_info;
+
+}
+
+function VM_library()
+{
+    var provider_name;
+    var no_of_instances;
+    var name_of_instance;
+    var mem_of_instance; // GB
+    var rate_of_instance; // hourly price
 }
 
 function parseInputVariables()
@@ -104,7 +115,6 @@ function navigateDesignSpace() {
     var qS = Variables.qS;
     var scenario = 'W';//Variables.scenario;
 
-
     var X;
     var Y;
     var L;
@@ -116,14 +126,13 @@ function navigateDesignSpace() {
     var FPR_sum;
 
 
-
     B=setPricesBasedOnScheme(Variables);
     if(!setMaxRAMNeeded(Variables))
         return;
 
     var best_cost=-1;
 
-    for (var T = 2; T <= 5; T++) {
+    for (var T = 2; T <= 15; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
                 for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
@@ -201,12 +210,16 @@ function navigateDesignSpace() {
                         //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
                     } else // Worst-case
                     {
-                        logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                         //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
                         //console.log(Math.pow(K, 1/T));
                     }
                     var total_cost=(w*update_cost+v*read_cost)/(v+w);
+                    //console.log(total_cost);
                     if(best_cost<0||best_cost>total_cost){
+                        //Math.exp(((-M_BF*8)/N)*Math.pow(Math.log(2),2)*Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
+                        //console.log( Math.pow(Z, (T-1)/T)+"-"+Math.pow(K, 1/T)+"-"+Math.pow(T, (T/(T-1)))/(T-1));
+                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                         best_cost=total_cost;
                         Variables.K=K;
                         Variables.T=T;
@@ -327,8 +340,8 @@ function navigateDesignSpace() {
     span_tmp.appendChild(p_tmp);
     div_throughput.appendChild(span_tmp);
 
-    document.getElementById("mbuffer").value=Variables.Buffer/1024/1024; //in MB
-    document.getElementById("memory_budget").value=Variables.M_BF/Variables.N; //0 bits per element
+    document.getElementById("mbuffer").value=(Variables.Buffer/1024/1024).toFixed(2); //in MB
+    document.getElementById("memory_budget").value=(Variables.M_BF/Variables.N).toFixed(2); //0 bits per element
     document.getElementById("L").value=Variables.L;
     document.getElementById("K").value=Variables.K;
     document.getElementById("Z").value=Variables.Z;
@@ -353,7 +366,7 @@ function countThroughput(cost, cloud_provider) {
 
     var query_count=Variables.query_count;
 
-
+    var VM_libraries=initializeVMLibraries();
     Variables.cost=cost;
 
     var X;
@@ -371,113 +384,124 @@ function countThroughput(cost, cloud_provider) {
         return 0;
 
     var best_cost=-1;
+    var best_latency=-1;
 
-    for (var T = 2; T <= 8; T++) {
-        for (var K = 1; K <= T - 1; K++) {
-            for (var Z = 1; Z <= T - 1; Z++) {
-                for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
-                    var M_B = M_B_percent * max_RAM_purchased*1024*1024*1024;
-                    var M=max_RAM_purchased*1024*1024*1024;
-                    X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z)  / T) * 8);
-                    M_F_HI = N * ((X / 8) / T + F / B);
-                    if ((N / B) < (M_B * T / (B * E))) {
-                        M_F_LO = (N / B) * F;
-                    } else {
-                        M_F_LO = (M_B * F * T) / (B * E);
-                    }
-                    M_F = M - M_B;
-                    if (M_F < M_F_LO)
-                        M_F = M_F_LO;
-                    L = Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T));
-
-                    if (M_F >= M_F_HI) {
-                        Y = 0;
-                        M_FP = N * F / B;
-                    } else if (M_F > M_F_LO && M_F < M_F_HI) {
-                        Y = L - 1;
-                        M_FP = M_F_LO;
-                        for (var i = L - 2; i >= 1; i--) {
-                            var h = L - i;
-                            var temp_M_FP = M_F_LO;
-                            for (var j = 2; j <= h; j++) {
-                                temp_M_FP = temp_M_FP + (temp_M_FP * T);
-                            }
-                            if (temp_M_FP <= M_F) {
-                                Y = i;
-                                M_FP = temp_M_FP;
-                            }
+    for (var VM_index = 0; VM_index < VM_libraries[cloud_provider].no_of_instances; VM_index++) {
+        mem_sum=Math.floor(total_budget/(24*30*VM_libraries[cloud_provider].rate_of_instance[VM_index]));
+        if(mem_sum==0) continue;
+        console.log("VM="+VM_index+" cloud_provider:"+cloud_provider+" mem_sum="+mem_sum);
+        max_RAM_purchased=VM_libraries[cloud_provider].mem_of_instance[VM_index];
+        N=Variables.N/mem_sum;
+        //console.log(VM_libraries);
+        for (var T = 2; T <= 8; T++) {
+            for (var K = 1; K <= T - 1; K++) {
+                for (var Z = 1; Z <= T - 1; Z++) {
+                    for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
+                        var M_B = M_B_percent * max_RAM_purchased * 1024 * 1024 * 1024;
+                        var M = max_RAM_purchased * 1024 * 1024 * 1024;
+                        X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z) / T) * 8);
+                        M_F_HI = N * ((X / 8) / T + F / B);
+                        if ((N / B) < (M_B * T / (B * E))) {
+                            M_F_LO = (N / B) * F;
+                        } else {
+                            M_F_LO = (M_B * F * T) / (B * E);
                         }
-                    } else {
-                        Y = L - 1;
-                        M_FP = M_F_LO;
-                    }
-                    M_BF = 0;
-                    var margin = 2;
-                    if (M_F - M_FP > 0)
-                        M_BF = M_F - M_FP - margin;
-                    else
-                        M_BF = 0.0;
+                        M_F = M - M_B;
+                        if (M_F < M_F_LO)
+                            M_F = M_F_LO;
+                        L = Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T));
+
+                        if (M_F >= M_F_HI) {
+                            Y = 0;
+                            M_FP = N * F / B;
+                        } else if (M_F > M_F_LO && M_F < M_F_HI) {
+                            Y = L - 1;
+                            M_FP = M_F_LO;
+                            for (var i = L - 2; i >= 1; i--) {
+                                var h = L - i;
+                                var temp_M_FP = M_F_LO;
+                                for (var j = 2; j <= h; j++) {
+                                    temp_M_FP = temp_M_FP + (temp_M_FP * T);
+                                }
+                                if (temp_M_FP <= M_F) {
+                                    Y = i;
+                                    M_FP = temp_M_FP;
+                                }
+                            }
+                        } else {
+                            Y = L - 1;
+                            M_FP = M_F_LO;
+                        }
+                        M_BF = 0;
+                        var margin = 2;
+                        if (M_F - M_FP > 0)
+                            M_BF = M_F - M_FP - margin;
+                        else
+                            M_BF = 0.0;
 
 
-                    var update_cost;
-                    var read_cost;
-                    var no_result_read_cost;
-                    var short_scan_cost;
-                    var long_scan_cost;
-                    var FPR_sum;
+                        var update_cost;
+                        var read_cost;
+                        var no_result_read_cost;
+                        var short_scan_cost;
+                        var long_scan_cost;
+                        var FPR_sum;
 
-                    if (write_percentage != 0) {
-                        update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
-                    }
-                    if (read_percentage != 0) {
+                        if (write_percentage != 0) {
+                            update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                        }
+                        if (read_percentage != 0) {
+                            if (scenario == 'A') // Avg-case
+                            {
+                                //read_cost=analyzeReadCostAvgCase(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                            } else // Worst-case
+                            {
+                                read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
+                                FPR_sum = Math.exp((-M_BF * 8 / N) * Math.pow(Math.log(2) / Math.log(2.7182), 2) * Math.pow(T, Y)) * Math.pow(Z, (T - 1) / T) * Math.pow(K, 1 / T) * Math.pow(T, (T / (T - 1))) / (T - 1);
+                                //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
+                            }
+
+                        }
+                        if (short_scan_percentage != 0) {
+                            short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                        }
+                        long_scan_cost = analyzeLongScanCost(B, s);
                         if (scenario == 'A') // Avg-case
                         {
-                            //read_cost=analyzeReadCostAvgCase(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                            //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
                         } else // Worst-case
                         {
-                            read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
-                            FPR_sum = Math.exp((-M_BF*8/N)*Math.pow(Math.log(2)/Math.log(2.7182),2)*Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
-                            //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
+                            //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+                            //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
                         }
+                        var total_cost = (w * update_cost + v * read_cost) / (v + w);
+                        var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60;
 
-                    }
-                    if (short_scan_percentage != 0) {
-                        short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
-                    }
-                    long_scan_cost = analyzeLongScanCost(B, s);
-                    if (scenario == 'A') // Avg-case
-                    {
-                        //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
-                    } else // Worst-case
-                    {
-                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
-                        //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
-                    }
-                    var total_cost=(w*update_cost+v*read_cost)/(v+w);
-
-                    if(best_cost<0||best_cost>total_cost){
-                        best_cost=total_cost;
-                        Variables.K=K;
-                        Variables.T=T;
-                        Variables.L=L;
-                        Variables.Z=Z;
-                        Variables.Buffer=M_B;
-                        Variables.M_BF=M_BF;
-                        Variables.M_FP=M_FP;
-                        Variables.read_cost=read_cost;
-                        Variables.update_cost=update_cost;
-                        Variables.short_scan_cost=short_scan_cost;
-                        Variables.long_scan_cost=long_scan_cost;
-                        Variables.no_result_read_cost=read_cost-1;
-                        Variables.total_cost=total_cost;
-                        Variables.latency=total_cost*query_count/IOPS/60/60;
+                        if (best_latency < 0 || total_latency < best_latency) {
+                            best_latency = total_latency;
+                            Variables.K = K;
+                            Variables.T = T;
+                            Variables.L = L;
+                            Variables.Z = Z;
+                            Variables.Buffer = M_B;
+                            Variables.M_BF = M_BF;
+                            Variables.M_FP = M_FP;
+                            Variables.read_cost = read_cost;
+                            Variables.update_cost = update_cost;
+                            Variables.short_scan_cost = short_scan_cost;
+                            Variables.long_scan_cost = long_scan_cost;
+                            Variables.no_result_read_cost = read_cost - 1;
+                            Variables.total_cost = total_cost;
+                            Variables.latency = total_latency;
+                            Variables.VM_info= (VM_libraries[cloud_provider].name_of_instance[VM_index]+":"+mem_sum);
+                        }
                     }
                 }
             }
         }
     }
     //return  max_RAM_purchased;
-    console.log(Variables.latency);
+    //console.log(Variables.latency);
     return Variables;
 }
 
@@ -540,7 +564,7 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
         cloud_provider = getCloudProvider("cloud-provider");
     }
     var B;
-    if(cloud_provider == 1)
+    if(cloud_provider == 0)
     {
         MIN_RAM_SIZE = 16; // GB
         RAM_BLOCK_COST = 0.091; // per RAM block per hour
@@ -558,7 +582,7 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
         }
         network_bandwidth = 10.0*1024*1024*1024/8; //Gbps
     }
-    if(cloud_provider == 0)
+    if(cloud_provider == 1)
     {
         MIN_RAM_SIZE = 13; // GB
         RAM_BLOCK_COST = 0.0745; // per RAM block per hour
@@ -663,4 +687,109 @@ function getCloudProvider(buttonName){
         }
     }*/
     return parseInt(val);
+}
+
+function initializeVMLibraries()
+{
+    var VM_libraries = new Array();
+    for(var i=0;i<3;i++)
+    VM_libraries.push(new VM_library());
+
+    /* ********************************** initialize VMs of AWS *********************************  */
+
+    VM_libraries[0].provider_name = "AWS";
+    VM_libraries[0].no_of_instances = 6;
+    VM_libraries[0].name_of_instance = new Array();
+    VM_libraries[0].mem_of_instance = new Array();
+    VM_libraries[0].rate_of_instance = new Array();
+
+    VM_libraries[0].name_of_instance[0] = "r5d.large";
+    VM_libraries[0].name_of_instance[1] = "r5d.xlarge";
+    VM_libraries[0].name_of_instance[2] = "r5d.2xlarge";
+    VM_libraries[0].name_of_instance[3] = "r5d.4xlarge";
+    VM_libraries[0].name_of_instance[4] = "r5d.12xlarge";
+    VM_libraries[0].name_of_instance[5] = "r5d.24xlarge";
+
+    VM_libraries[0].mem_of_instance[0] = 16;
+    VM_libraries[0].mem_of_instance[1] = 32;
+    VM_libraries[0].mem_of_instance[2] = 64;
+    VM_libraries[0].mem_of_instance[3] = 128;
+    VM_libraries[0].mem_of_instance[4] = 384;
+    VM_libraries[0].mem_of_instance[5] = 768;
+
+    VM_libraries[0].rate_of_instance[0] = 0.091;
+    VM_libraries[0].rate_of_instance[1] = 0.182;
+    VM_libraries[0].rate_of_instance[2] = 0.364;
+    VM_libraries[0].rate_of_instance[3] = 0.727;
+    VM_libraries[0].rate_of_instance[4] = 2.181;
+    VM_libraries[0].rate_of_instance[5] = 4.362;
+
+    /* ********************************** initialize VMs of GCP *********************************  */
+
+    VM_libraries[1].provider_name = "GCP";
+    VM_libraries[1].no_of_instances = 7;
+    VM_libraries[1].name_of_instance = new Array();
+    VM_libraries[1].mem_of_instance = new Array();
+    VM_libraries[1].rate_of_instance = new Array();
+
+    VM_libraries[1].name_of_instance[0] = "n1-highmem-2";
+    VM_libraries[1].name_of_instance[1] = "n1-highmem-4";
+    VM_libraries[1].name_of_instance[2] = "n1-highmem-8";
+    VM_libraries[1].name_of_instance[3] = "n1-highmem-16";
+    VM_libraries[1].name_of_instance[4] = "n1-highmem-32";
+    VM_libraries[1].name_of_instance[5] = "n1-highmem-64";
+    VM_libraries[1].name_of_instance[6] = "n1-highmem-96";
+
+    VM_libraries[1].mem_of_instance[0] = 13;
+    VM_libraries[1].mem_of_instance[1] = 26;
+    VM_libraries[1].mem_of_instance[2] = 52;
+    VM_libraries[1].mem_of_instance[3] = 104;
+    VM_libraries[1].mem_of_instance[4] = 208;
+    VM_libraries[1].mem_of_instance[5] = 416;
+    VM_libraries[1].mem_of_instance[6] = 624;
+
+    VM_libraries[1].rate_of_instance[0] = 0.0745;
+    VM_libraries[1].rate_of_instance[1] = 0.1491;
+    VM_libraries[1].rate_of_instance[2] = 0.2981;
+    VM_libraries[1].rate_of_instance[3] = 0.5962;
+    VM_libraries[1].rate_of_instance[4] = 1.1924;
+    VM_libraries[1].rate_of_instance[5] = 2.3849;
+    VM_libraries[1].rate_of_instance[6] = 3.5773;
+
+    /* ********************************** initialize VMs of AZURE *********************************  */
+
+    VM_libraries[2].provider_name = "AZURE";
+    VM_libraries[2].no_of_instances = 7;
+    VM_libraries[2].name_of_instance = new Array();
+    VM_libraries[2].mem_of_instance = new Array();
+    VM_libraries[2].rate_of_instance = new Array();
+
+    VM_libraries[2].name_of_instance[0] = "E2 v3";
+    VM_libraries[2].name_of_instance[1] = "E4 v3";
+    VM_libraries[2].name_of_instance[2] = "E8 v3";
+    VM_libraries[2].name_of_instance[3] = "E16 v3";
+    VM_libraries[2].name_of_instance[4] = "E20 v3";
+    VM_libraries[2].name_of_instance[5] = "E32 v3";
+    VM_libraries[2].name_of_instance[6] = "E64 v3";
+
+    VM_libraries[2].mem_of_instance[0] = 16;
+    VM_libraries[2].mem_of_instance[1] = 32;
+    VM_libraries[2].mem_of_instance[2] = 64;
+    VM_libraries[2].mem_of_instance[3] = 128;
+    VM_libraries[2].mem_of_instance[4] = 160;
+    VM_libraries[2].mem_of_instance[5] = 256;
+    VM_libraries[2].mem_of_instance[6] = 512;
+
+    VM_libraries[2].rate_of_instance[0] = 0.0782;
+    VM_libraries[2].rate_of_instance[1] = 0.1564;
+    VM_libraries[2].rate_of_instance[2] = 0.3128;
+    VM_libraries[2].rate_of_instance[3] = 0.6256;
+    VM_libraries[2].rate_of_instance[4] = 0.7409;
+    VM_libraries[2].rate_of_instance[5] = 1.2512;
+    VM_libraries[2].rate_of_instance[6] = 2.5024;
+
+    //printVMLibraries();
+   // console.log(VM_libraries)
+    return VM_libraries;
+
 }

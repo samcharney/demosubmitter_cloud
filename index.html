@@ -366,8 +366,8 @@
                         <div>
                             <div class="input-group">
                                 <select id="cloud-provider" name="" style="width:150px;height: 30px ; margin:0px 1130px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
-                                    <option value="GCP">GCP</option>
-                                    <option value="AWS">AWS</option>
+                                    <option value="AWS">GCP</option>
+                                    <option value="GCP">AWS</option>
                                     <option value="Azure">Azure</option>
                                 </select>
                             </div>
@@ -459,9 +459,9 @@
                         <span class="input-group-addon"><span id="Azure" name="cloud_provider" onclick="SetProvider(2)" data-tooltip="This is Azure. Conf is" data-tooltip-position="bottom" style="cursor:pointer">Azure &nbsp;</span></span>
                     </div>
 
-                    <div class="input-group" style="display:none">
+                    <div class="input-group">
                     <span class="input-group-addon"><span data-tooltip="Grow factor (fanout in B tree or size ratio in LSM tree)" data-tooltip-position="bottom"> Growth Factor (T) </span></span>
-                      <input id="T" type="number" class="form-control" aria-label="fanout" placeholder="T" style="text-align:right" onchange="re_run(event, 'input4')"/>
+                      <input id="T" type="number" class="form-control" aria-label="fanout" placeholder="T" style="text-align:right" onchange="re_run(event, 'input4')" readonly="true"/>
                     </div>
 
 

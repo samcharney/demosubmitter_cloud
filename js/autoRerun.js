@@ -353,11 +353,11 @@ function drawChart2() {
     var Azure_hover=new Array();
 
     var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
-    var step_width=1;
+    var step_width=10;
 
     for(var i=0;i<cost*2;i+=step_width){
-        var gcp_design=countThroughput(i,0);
-        var aws_design=countThroughput(i,1);
+        var aws_design=countThroughput(i,0);
+        var gcp_design=countThroughput(i,1);
         var azure_design=countThroughput(i,2);
         var gcp=gcp_design.latency;
         var aws=aws_design.latency;
@@ -368,9 +368,9 @@ function drawChart2() {
         AWS.push(aws);
         Azure.push(azure);
 
-        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +" M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB");
-        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +" M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB");
-        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +" M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB");
+        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +" M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB "+gcp_design.VM_info);
+        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +" M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB "+aws_design.VM_info);
+        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +" M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB "+azure_design.VM_info);
 
 
     }
@@ -413,16 +413,20 @@ function drawChart2() {
 
     var data=[GCPPoint,AWSPoint,AzurePoint];
 
+    var i=0;
+    while(Azure[i]==undefined||isNaN(Azure[i]))
+        i++;
+    console.log(Azure[i]);
 
     var layout1 =
         {
             xaxis: {
-                title: 'Cost($)',
+                title: 'Cost($/month)',
                 range: [ 0, cost*2+100 ]
             },
             yaxis: {
                 title: 'Latency(hour)',
-                range: [0, 5.5]
+                range: [0, Azure[i]*1.05]
             },
             autosize: true,
             width: 900,
