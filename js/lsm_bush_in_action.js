@@ -995,6 +995,7 @@ function init(){
 	navigateDesignSpace();
 	//drawCharts();
 	drawChart2();
+	drawContinuums();
 	//document.getElementById("Optimal-FPR").style.fontWeight='bold';
 	//document.getElementById("Optimal-FPR").style.fontSize='16px';
 

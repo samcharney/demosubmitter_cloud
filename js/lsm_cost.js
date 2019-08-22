@@ -18,6 +18,8 @@ var RAM_BLOCK_COST;
 var IOPS;
 var network_bandwidth;
 
+var machines = 10;
+
 function Variables()
 {
     var N;
@@ -389,7 +391,7 @@ function countThroughput(cost, cloud_provider) {
     for (var VM_index = 0; VM_index < VM_libraries[cloud_provider].no_of_instances; VM_index++) {
         mem_sum=Math.floor(total_budget/(24*30*VM_libraries[cloud_provider].rate_of_instance[VM_index]));
         if(mem_sum==0) continue;
-        console.log("VM="+VM_index+" cloud_provider:"+cloud_provider+" mem_sum="+mem_sum);
+        //console.log("VM="+VM_index+" cloud_provider:"+cloud_provider+" mem_sum="+mem_sum);
         max_RAM_purchased=VM_libraries[cloud_provider].mem_of_instance[VM_index];
         N=Variables.N/mem_sum;
         //console.log(VM_libraries);
@@ -457,7 +459,6 @@ function countThroughput(cost, cloud_provider) {
                             } else // Worst-case
                             {
                                 read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
-                                FPR_sum = Math.exp((-M_BF * 8 / N) * Math.pow(Math.log(2) / Math.log(2.7182), 2) * Math.pow(T, Y)) * Math.pow(Z, (T - 1) / T) * Math.pow(K, 1 / T) * Math.pow(T, (T / (T - 1))) / (T - 1);
                                 //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
                             }
 
@@ -504,6 +505,191 @@ function countThroughput(cost, cloud_provider) {
     //console.log(Variables.latency);
     return Variables;
 }
+
+function countContinuum(combination, cloud_provider) {
+    var Variables = parseInputVariables();
+    var N = Variables.N;
+    var E = Variables.E;
+    var F = Variables.F;
+    var B = Math.floor(Variables.B/E);
+    var s = Variables.s;
+
+    var w = Variables.w;
+    var r = Variables.r;
+    var v = Variables.v;
+    var qL = Variables.qL;
+    var qS = Variables.qS;
+    var scenario = 'W';//Variables.scenario;
+
+    var query_count=Variables.query_count;
+
+    var VM_libraries=initializeVMLibraries();
+    Variables.cost=cost;
+
+    var X;
+    var Y;
+    var L;
+    var M_F_HI;
+    var M_F; // = ((B*E + (M - M_F)) > 0 ? B*E + (M - M_F) : (B*E)); // byte
+    var M_F_LO; // = (M_B*(F)*T)/((B)*(E));
+    var M_BF;
+    var M_FP;
+    var FPR_sum;
+
+    var Storage_Value=getStorageCost(Variables, cloud_provider);
+    B=Storage_Value[0];
+    var monthly_storage_cost=Storage_Value[1];
+
+    var best_cost=-1;
+    var best_latency=-1;
+
+    var mem_sum;
+    var monthly_mem_cost;
+
+
+    for(var i=0;i<VM_libraries[cloud_provider].no_of_instances;i++){
+        if(combination[i]>0){
+            mem_sum=combination[i];
+            max_RAM_purchased=VM_libraries[cloud_provider].mem_of_instance[i];
+            monthly_mem_cost=mem_sum*VM_libraries[cloud_provider].rate_of_instance[i]*24*30;
+            Variables.VM_info= (VM_libraries[cloud_provider].name_of_instance[i]+":"+mem_sum);
+        }
+    }
+
+    N=Variables.N/mem_sum;
+    for (var T = 2; T <= 15; T++) {
+        for (var K = 1; K <= T - 1; K++) {
+            for (var Z = 1; Z <= T - 1; Z++) {
+                for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
+                    var M_B = M_B_percent * max_RAM_purchased * 1024 * 1024 * 1024;
+                    var M = max_RAM_purchased * 1024 * 1024 * 1024;
+                    X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z) / T) * 8);
+                    M_F_HI = N * ((X / 8) / T + F / B);
+                    if ((N / B) < (M_B * T / (B * E))) {
+                        M_F_LO = (N / B) * F;
+                    } else {
+                        M_F_LO = (M_B * F * T) / (B * E);
+                    }
+                    M_F = M - M_B;
+                    if (M_F < M_F_LO)
+                        M_F = M_F_LO;
+                    L = Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T));
+
+                    if (M_F >= M_F_HI) {
+                        Y = 0;
+                        M_FP = N * F / B;
+                    } else if (M_F > M_F_LO && M_F < M_F_HI) {
+                        Y = L - 1;
+                        M_FP = M_F_LO;
+                        for (var i = L - 2; i >= 1; i--) {
+                            var h = L - i;
+                            var temp_M_FP = M_F_LO;
+                            for (var j = 2; j <= h; j++) {
+                                temp_M_FP = temp_M_FP + (temp_M_FP * T);
+                            }
+                            if (temp_M_FP <= M_F) {
+                                Y = i;
+                                M_FP = temp_M_FP;
+                            }
+                        }
+                    } else {
+                        Y = L - 1;
+                        M_FP = M_F_LO;
+                    }
+                    M_BF = 0;
+                    var margin = 2;
+                    if (M_F - M_FP > 0)
+                        M_BF = M_F - M_FP - margin;
+                    else
+                        M_BF = 0.0;
+
+
+                    var update_cost;
+                    var read_cost;
+                    var no_result_read_cost;
+                    var short_scan_cost;
+                    var long_scan_cost;
+                    var FPR_sum;
+
+                    if (write_percentage != 0) {
+                        update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                    }
+                    if (read_percentage != 0) {
+                        if (scenario == 'A') // Avg-case
+                        {
+                            //read_cost=analyzeReadCostAvgCase(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                        } else // Worst-case
+                        {
+                            read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
+                            //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
+                        }
+
+                    }
+                    if (short_scan_percentage != 0) {
+                        short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                    }
+                    long_scan_cost = analyzeLongScanCost(B, s);
+                    if (scenario == 'A') // Avg-case
+                    {
+                        //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
+                    } else // Worst-case
+                    {
+                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+                        //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
+                    }
+                    var total_cost = (w * update_cost + v * read_cost) / (v + w);
+                    var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+
+                    if (best_latency < 0 || total_latency < best_latency) {
+                        best_latency = total_latency;
+                        Variables.K = K;
+                        Variables.T = T;
+                        Variables.L = L;
+                        Variables.Z = Z;
+                        Variables.Buffer = M_B;
+                        Variables.M_BF = M_BF;
+                        Variables.M_FP = M_FP;
+                        Variables.read_cost = read_cost;
+                        Variables.update_cost = update_cost;
+                        Variables.short_scan_cost = short_scan_cost;
+                        Variables.long_scan_cost = long_scan_cost;
+                        Variables.no_result_read_cost = read_cost - 1;
+                        Variables.total_cost = total_cost;
+                        Variables.latency = total_latency;
+                        Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
+                    }
+                }
+            }
+        }
+    }
+    //return  max_RAM_purchased;
+    //console.log(Variables.latency);
+    return Variables;
+}
+
+function buildContinuums(){
+    var result_array=new Array();
+
+    var VM_libraries=initializeVMLibraries();
+
+    for (var cloud_provider=0;cloud_provider<3;cloud_provider++) {
+        var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
+        for (var i = 0; i < VMCombinations.length; i++) {
+            var VMCombination = VMCombinations[i];
+            var Variables = countContinuum(VMCombination, cloud_provider);
+            var info=(VM_libraries[cloud_provider].provider_name+" : T="+Variables.T+" K="+Variables.K+" Z="+Variables.Z+" L="+Variables.L +" M_B="+(Variables.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(Variables.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(Variables.M_FP/1024/1024/1024).toFixed(2)+" GB "+Variables.VM_info);
+            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info];
+            result_array.push(result);
+        }
+    }
+    result_array.sort(function (a,b) {
+        return a[0]-b[0];
+    })
+    console.log(result_array);
+    return result_array;
+}
+
+
 
 
 
@@ -580,6 +766,10 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
             monthly_storage_cost = (storage-75)*0.1; // $0.1 per GB-month https://aws.amazon.com/ebs/pricing/
             total_budget = total_budget - monthly_storage_cost;
         }
+        else
+        {
+            monthly_storage_cost = storage*0.1; // $0.1 per GB-month https://aws.amazon.com/ebs/pricing/
+        }
         network_bandwidth = 10.0*1024*1024*1024/8; //Gbps
     }
     if(cloud_provider == 1)
@@ -641,6 +831,93 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
 
     //console.log(cloud_provider+"====="+total_budget)
     return B;
+}
+
+function getStorageCost(Variables, cloud_provider)
+{
+    var storage, MBps, monthly_storage_cost;
+    storage = (Variables.N*Variables.E)/(1024*1024*1024);
+    if(cloud_provider==undefined) {
+        cloud_provider = getCloudProvider("cloud-provider");
+    }
+    var B;
+    if(cloud_provider == 0)
+    {
+        MIN_RAM_SIZE = 16; // GB
+        RAM_BLOCK_COST = 0.091; // per RAM block per hour
+        MBps = 3500; // it is actually Mbps  for AWS
+        B = Math.floor(256*1024/Variables.E); //https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/memory-optimized-instances.html
+        IOPS = MBps*Math.pow(10,6)/(B*Variables.E);
+        if(IOPS > 15000)
+        {
+            IOPS = 15000;
+        }
+        if(storage > 75)
+        {
+            monthly_storage_cost = (storage-75)*0.1; // $0.1 per GB-month https://aws.amazon.com/ebs/pricing/
+        }
+        else
+        {
+            monthly_storage_cost = storage*0.1; // $0.1 per GB-month https://aws.amazon.com/ebs/pricing/
+        }
+    }
+    if(cloud_provider == 1)
+    {
+        MIN_RAM_SIZE = 13; // GB
+        RAM_BLOCK_COST = 0.0745; // per RAM block per hour
+        MBps = read_percentage*720/100 + write_percentage*160/100; // taking average
+        B = 16*1024/(Variables.E);
+        IOPS = MBps*Math.pow(10,6)/(B*Variables.E);
+        if(IOPS > 30000)
+        {
+            IOPS = 30000;
+        }
+        monthly_storage_cost = storage*0.24;
+    }
+    if(cloud_provider == 2)
+    {
+        MIN_RAM_SIZE = 16; // GB
+        RAM_BLOCK_COST = 0.0782; // per RAM block per hour
+        B = 8*1024/(Variables.E);
+        if(storage <= 32)
+        {
+            IOPS = 120;
+            monthly_storage_cost = 5.28;
+        }
+        else if(storage > 32 && storage <= 64)
+        {
+            IOPS = 240;
+            monthly_storage_cost = 10.21;
+        }
+        else if(storage > 64 && storage <= 128)
+        {
+            IOPS = 500;
+            monthly_storage_cost = 19.71;
+        }
+        else if(storage > 128 && storage <= 256)
+        {
+            IOPS = 1100;
+            monthly_storage_cost = 38.02;
+        }
+        else if(storage > 256 && storage <= 512)
+        {
+            IOPS = 2300;
+            monthly_storage_cost = 73.22;
+        }
+        else if(storage > 512 && storage <= 2000)
+        {
+            IOPS = 5000;
+            monthly_storage_cost = 135.17;
+        }
+        else
+        {
+            IOPS = 7500;
+            monthly_storage_cost = 259.05;
+        }
+    }
+
+    //console.log(cloud_provider+"====="+total_budget)
+    return [B,monthly_storage_cost];
 }
 
 function setMaxRAMNeeded(Variables)
@@ -791,5 +1068,25 @@ function initializeVMLibraries()
     //printVMLibraries();
    // console.log(VM_libraries)
     return VM_libraries;
+}
 
+function getAllVMCombinations(cloud_provider,VM_libraries)
+{
+    var no_of_instances=VM_libraries[cloud_provider].no_of_instances;
+    var VMCombinations=new Array();
+    for(var i = 1; i <= machines; i++){
+        for(var j = 0; j < no_of_instances; j++){
+            var VMCombination=new Array();
+            for(var k = 0; k < no_of_instances; k++){
+                if(k==j)
+                    VMCombination[k]=i;
+                else
+                    VMCombination[k]=0;
+            }
+            VMCombinations.push(VMCombination);
+        }
+    }
+
+    //console.log(VMCombinations);
+    return VMCombinations;
 }

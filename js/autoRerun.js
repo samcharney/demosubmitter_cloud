@@ -444,7 +444,52 @@ function drawChart2() {
     Plotly.newPlot('tester2', data, layout1);
 }
 
+function drawContinuums() {
+    var result_array=buildContinuums();
+    var latency_array=new Array();
+    var cost_array=new Array();
+    var info_array=new Array();
+    for(var i=0;i<result_array.length;i++){
+        cost_array.push(result_array[i][0]);
+        latency_array.push(result_array[i][1]);
+        info_array.push(result_array[i][4]);
+    }
 
+    var data=[{
+        x: cost_array,
+        y: latency_array,
+        //marker: { size: 7, symbol: 'circle', color: 'steelblue'},
+        //mode: 'markers',
+        text: info_array,
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }];
+    console.log(data);
+    var layout =
+        {
+            xaxis: {
+                title: 'Cost($/month)',
+                range: [ 0, cost*2+100 ]
+            },
+            yaxis: {
+                title: 'Latency(day)',
+                autorange: true
+            },
+            autosize: true,
+            width: 900,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+    Plotly.newPlot('tester', data, layout);
+}
 function re_run(e, input_type) {
 
 
@@ -479,6 +524,7 @@ function re_run(e, input_type) {
     navigateDesignSpace();
     //drawCharts();
     drawChart2();
+    drawContinuums();
     /*
     if(event.target.id.endsWith("mfilter_per_entry"))
     {
