@@ -969,7 +969,7 @@ function initScenario4(){
 function init(){
 
 	// Dataset and Environment
-    document.getElementById("N").value=numberWithCommas(68719476736); //(10M values)
+    document.getElementById("N").value=numberWithCommas(6871947673600); //(10M values)
     document.getElementById("E").value=20;
 		//document.getElementById("B").value=4096; //in B
 		document.getElementById("F").value=8;
@@ -988,7 +988,7 @@ function init(){
 	document.getElementById("AWS").style.fontWeight='bold';
 	document.getElementById("AWS").style.fontSize='16px';
 
-	document.getElementById("cost").value = 500;
+	document.getElementById("cost").value = 50000;
 
 	document.getElementById("query_count").value=100000000;
 

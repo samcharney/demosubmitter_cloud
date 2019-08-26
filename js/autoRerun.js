@@ -353,7 +353,7 @@ function drawChart2() {
     var Azure_hover=new Array();
 
     var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
-    var step_width=10;
+    var step_width=500;
 
     for(var i=0;i<cost*2;i+=step_width){
         var aws_design=countThroughput(i,0);

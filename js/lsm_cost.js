@@ -13,12 +13,21 @@ var total_budget;
 var max_RAM_purchased; // in GB
 var no_of_RAM_blocks;
 
+var U = 1000000000000;
+// static double U = 300000000;
+var p_put = 0.1; // fraction of the time that you call get on elements in U_1
+var U_1 = 1000000;
+var U_2 = 1000000000000;
+// NOTE: it must always be true that (p_put / U_1) > (1 / U_2)
+var p_get = 0.7;
+
 var MIN_RAM_SIZE;
 var RAM_BLOCK_COST;
 var IOPS;
 var network_bandwidth;
 
 var machines = 10;
+var workload_type = 0;
 
 function Variables()
 {
@@ -115,7 +124,7 @@ function navigateDesignSpace() {
     var v = Variables.v;
     var qL = Variables.qL;
     var qS = Variables.qS;
-    var scenario = 'W';//Variables.scenario;
+    var scenario = 'A';//Variables.scenario;
 
     var X;
     var Y;
@@ -186,7 +195,6 @@ function navigateDesignSpace() {
                     var no_result_read_cost;
                     var short_scan_cost;
                     var long_scan_cost;
-                    var FPR_sum;
 
                     if (write_percentage != 0) {
                         update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
@@ -194,7 +202,7 @@ function navigateDesignSpace() {
                     if (read_percentage != 0) {
                         if (scenario == 'A') // Avg-case
                         {
-                            //read_cost=analyzeReadCostAvgCase(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                            read_cost = analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
                         } else // Worst-case
                         {
                             read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
@@ -209,7 +217,7 @@ function navigateDesignSpace() {
                     long_scan_cost = analyzeLongScanCost(B, s);
                     if (scenario == 'A') // Avg-case
                     {
-                        //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
+                        logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                     } else // Worst-case
                     {
                         //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
@@ -519,7 +527,7 @@ function countContinuum(combination, cloud_provider) {
     var v = Variables.v;
     var qL = Variables.qL;
     var qS = Variables.qS;
-    var scenario = 'W';//Variables.scenario;
+    var scenario = 'A';//Variables.scenario;
 
     var query_count=Variables.query_count;
 
@@ -609,7 +617,6 @@ function countContinuum(combination, cloud_provider) {
                     var no_result_read_cost;
                     var short_scan_cost;
                     var long_scan_cost;
-                    var FPR_sum;
 
                     if (write_percentage != 0) {
                         update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
@@ -617,7 +624,7 @@ function countContinuum(combination, cloud_provider) {
                     if (read_percentage != 0) {
                         if (scenario == 'A') // Avg-case
                         {
-                            //read_cost=analyzeReadCostAvgCase(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
                         } else // Worst-case
                         {
                             read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
@@ -704,6 +711,198 @@ function analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO) {
     return update_cost;
 }
 
+function analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E)
+{
+    // uniform
+    var avg_read_cost;
+    if (workload_type == 0) {
+    avg_read_cost = aggregateAvgCase(0, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E);
+        return avg_read_cost;
+    }
+
+    // skew
+    if (workload_type == 1) {
+        var skew_part =  aggregateAvgCase(1, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E);
+        var non_skew_part =  aggregateAvgCase(2, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E);
+    avg_read_cost = skew_part * p_get + non_skew_part * (1 - p_get);
+    }
+    return avg_read_cost;
+}
+
+function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E) {
+    var term1 = 0.0, term2 = 0.0, term3= 0.0;
+    var term2_2 = 0.0, term3_2 =0.0;
+    var c, q;
+    var p_i;
+    var cq=getcq(type, T, K, Z, L, Y, M_B, E);
+    c=cq[0];
+    q=cq[1];
+    term1 = c/q;
+    FPR_sum = Math.exp((-M_BF*8/data)*Math.pow((Math.log(2)/Math.log(2.7182)), 2) * Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
+    //console.log(FPR_sum+" T="+T+" K="+K+" Z= "+Z+" M_B="+M_B/1024/1024/1024);
+    for(var i = 1;i<=L-Y-1;i++)
+    {
+        p_i = (FPR_sum)*(T-1)/(T*K*Math.pow(T, L-Y-i));
+        term2_2 = 0.0;
+        for(var r = 1;r<=K;r++)
+        {
+            term2_2 = term2_2 + getC_ri(type, r, i, M_B, T, K, Z, L, Y, E)/q;
+        }
+        term2 = term2 + (p_i * term2_2);
+    }
+    for(var i = L-Y;i<=L;i++)
+    {
+        if (i == L-Y) {
+            p_i = (FPR_sum)*(T-1)/(T*Z);
+        }
+        else {
+            p_i = 1;
+        }
+        term3_2 = 0.0;
+        for(var r = 1;r<=Z;r++)
+        {
+            term3_2 = term3_2 + getD_ri(type, r, i, M_B, T, K, Z, L, Y ,E)/q;
+            // printf("%f\n", getD_ri(type, r, i, M_B, T, K, Z, L, Y)/q);
+        }
+        term3 = term3 + (p_i * term3_2);
+    }
+    //console.log(c,q);
+    return term1 + term2 + term3;
+}
+
+function getcq(type, T, K, Z, L, Y, M_B, E)
+{
+    var c,q;
+    q = 1.0;
+    for(var i=1;i<=L-Y-1;i++)
+    {
+        q = q * Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), K);
+        //console.log((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), K);
+    }
+    for(var i=L-Y;i<=L;i++)
+    {
+        q = q * Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z);
+    }
+    c = (1 - (q))*(1 - getAlpha_0(type, M_B, E));
+    q = 1 - (q)*(1 - getAlpha_0(type, M_B, E));
+    return [c,q];
+}
+
+function getC_ri(type, r,  i, M_B, T, K, Z, L, Y, E)
+{
+    var term1 = 1 - getAlpha_0(type, M_B, E);
+    var term2 = 1.0;
+    for(var h=1;h<i;h++)
+    {
+        term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+    }
+    var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+    var term4 = 1;
+    for(var h = i+1;h<=L-Y-1;h++)
+    {
+        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+    }
+    for(var h = L-Y;h<=L;h++)
+    {
+        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+    }
+    term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), K-r);
+    term4 = 1 - term4;
+    return term1*term2*term3*term4;
+}
+
+function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E)
+{
+    var term1 = 1.0 - getAlpha_0(type, M_B, E);
+    var term2 = 1.0;
+    for(var h=1;h<=L-Y-1;h++)
+    {
+        term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+    }
+    for(var h=L-Y;h<i;h++)
+    {
+        term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+    }
+    var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+    var term4 = 1.0;
+    for(var h = i+1;h<=L;h++)
+    {
+        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+    }
+    term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z-r);
+    term4 = 1 - term4;
+    return term1*term2*term3*term4;
+}
+
+function getAlpha_0( type, M_B, E)
+{
+    if (type == 0) {
+        var val = M_B/(E*U);
+        if(val < 1)
+            return val;
+        return 1;
+    }
+    if (type == 1) {
+        var val = 1 - (p_put / U_1);
+        var EB = M_B / E;
+        val = pow(val, EB);
+        val = 1 - val;
+        return val;
+    }
+    if (type == 2) {
+        var val = (1-p_put) * M_B/(E*U_2);
+        if(val < 1)
+            return val;
+        return 1;
+    }
+    return -1;
+}
+
+function getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)
+{
+    if (type == 0) {
+        var val;
+        if(i >= 1 && i <= L-Y-1)
+        {
+            val = M_B*Math.pow(T,i)/(K*E*U);
+        }
+        else
+        {
+            val = M_B*Math.pow(T,i)/(Z*E*U);
+        }
+        if(val < 1)
+            return val;
+        return 1;
+    }
+    if (type == 1) {
+        var val = 1 - (p_put / U_1);
+        if(i >= 1 && i <= L-Y-1)
+        {
+            val = Math.pow(val, (M_B*Math.pow(T,i)/(K*E)));
+        }
+        else
+        {
+            val = Math.pow(val, (M_B*Math.pow(T,i)/(Z*E)));
+        }
+        val = 1 - val;
+        return val;
+    }
+    if (type == 2) {
+        var val = (1-p_put) * M_B/(E*U_2);
+        if(i >= 1 && i <= L-Y-1)
+        {
+            val = (1-p_put) * M_B*Math.pow(T,i)/(K*E*U_2);
+        }
+        else
+        {
+            val = (1-p_put) * M_B*Math.pow(T,i)/(Z*E*U_2);
+        }
+        if(val < 1)
+            return val;
+        return 1;
+    }
+    return -1;
+}
 
 function analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum){
     var entries_in_hot_level;
