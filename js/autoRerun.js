@@ -445,14 +445,61 @@ function drawChart2() {
 }
 
 function drawContinuums() {
-    var result_array=buildContinuums();
+    var best_array=getBestDesignArray(buildContinuums());
     var latency_array=new Array();
     var cost_array=new Array();
     var info_array=new Array();
+    for(var i=0;i<best_array.length;i++){
+        cost_array.push(best_array[i][0]);
+        latency_array.push(best_array[i][1]);
+        info_array.push(best_array[i][4]);
+    }
+
+    var result_array_ad=buildContinuums().sort(function (a,b) {return a[1]-b[1];});
+
+    var latency_array_ad=new Array();
+    var cost_array_ad=new Array();
+    var info_array_ad=new Array();
+    for(var i=0;i<result_array_ad.length;i++){
+        cost_array_ad.push(result_array_ad[i][0]);
+        latency_array_ad.push(result_array_ad[i][1]);
+        info_array_ad.push(result_array_ad[i][4]);
+    }
+
+    var result_array=buildContinuums();
+    console.log(result_array);
+    var graph_array=new Array();
+    for(var i=0;i<3;i++)
+        graph_array.push([new Array(),new Array(),new Array()]);
     for(var i=0;i<result_array.length;i++){
-        cost_array.push(result_array[i][0]);
-        latency_array.push(result_array[i][1]);
-        info_array.push(result_array[i][4]);
+        var cloud_provider;
+        if(result_array[i][3]=='AWS')
+            cloud_provider=0;
+        if(result_array[i][3]=='GCP')
+            cloud_provider=1;
+        if(result_array[i][3]=='AZURE')
+            cloud_provider=2;
+
+        graph_array[cloud_provider][0].push(result_array[i][0]);
+        graph_array[cloud_provider][1].push(result_array[i][1]);
+        graph_array[cloud_provider][2].push(result_array[i][4]);
+    }
+
+    var graph_array_ad=new Array();
+    for(var i=0;i<3;i++)
+        graph_array_ad.push([new Array(),new Array(),new Array()]);
+    for(var i=0;i<result_array.length;i++){
+        var cloud_provider;
+        if(result_array_ad[i][3]=='AWS')
+            cloud_provider=0;
+        if(result_array_ad[i][3]=='GCP')
+            cloud_provider=1;
+        if(result_array_ad[i][3]=='AZURE')
+            cloud_provider=2;
+
+        graph_array_ad[cloud_provider][0].push(result_array_ad[i][0]);
+        graph_array_ad[cloud_provider][1].push(result_array_ad[i][1]);
+        graph_array_ad[cloud_provider][2].push(result_array_ad[i][4]);
     }
 
     var data=[{
@@ -465,7 +512,67 @@ function drawContinuums() {
             "<b>%{text}</b><br><br>",
         type: 'scatter'
     }];
+
+    var data_ad=[{
+        x: latency_array_ad,
+        y: cost_array_ad,
+        //marker: { size: 7, symbol: 'circle', color: 'steelblue'},
+        //mode: 'markers',
+        text: info_array_ad,
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }];
+
     console.log(data);
+
+    var color_array=[
+        'green',
+        'steelblue',
+        'orange'
+    ];
+
+    var cloud_array=[
+        'AWS',
+        'GCP',
+        'AZURE'
+    ];
+
+    var data2=new Array();
+    var data3=new Array();
+
+    for(var i=0;i<3;i++){
+        var Point={
+            x: graph_array[i][0],
+            y: graph_array[i][1],
+            marker: { size: 4, symbol: 'circle', color: color_array[i]},
+            name: cloud_array[i],
+            //mode: 'markers',
+            text: graph_array[i][2],
+            //hovertemplate:
+                //"<b>%{text}</b><br><br>",
+            mode: 'markers',
+            type: 'scatter'
+        }
+        data2.push(Point);
+    }
+
+    for(var i=0;i<3;i++){
+        var Point={
+            x: graph_array_ad[i][1],
+            y: graph_array_ad[i][0],
+            marker: { size: 4, symbol: 'circle', color: color_array[i]},
+            name: cloud_array[i],
+            //mode: 'markers',
+            text: graph_array_ad[i][2],
+            //hovertemplate:
+            //"<b>%{text}</b><br><br>",
+            mode: 'markers',
+            type: 'scatter'
+        }
+        data3.push(Point);
+    }
+
     var layout =
         {
             xaxis: {
@@ -488,8 +595,36 @@ function drawContinuums() {
                 pad: 5
             }, title: ''
         };
-    Plotly.newPlot('tester', data, layout);
+
+    var layout_ad =
+        {
+            xaxis: {
+                title: 'Latency(day)',
+                autorange: true
+            },
+            yaxis: {
+                title: 'Cost($/month)',
+                range: [ 0, cost*2+100 ]
+            },
+            autosize: true,
+            width: 900,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+    Plotly.newPlot('tester4', data, layout);
+    Plotly.newPlot('tester5', data_ad, layout_ad);
+    Plotly.newPlot('tester', data2, layout);
+    Plotly.newPlot('tester3', data3, layout_ad);
+
 }
+
 function re_run(e, input_type) {
 
 
