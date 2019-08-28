@@ -549,8 +549,8 @@ function drawContinuums() {
             name: cloud_array[i],
             //mode: 'markers',
             text: graph_array[i][2],
-            //hovertemplate:
-                //"<b>%{text}</b><br><br>",
+            hovertemplate:
+                "<b>%{text}</b><br><br>",
             mode: 'markers',
             type: 'scatter'
         }
@@ -565,8 +565,8 @@ function drawContinuums() {
             name: cloud_array[i],
             //mode: 'markers',
             text: graph_array_ad[i][2],
-            //hovertemplate:
-            //"<b>%{text}</b><br><br>",
+            hovertemplate:
+                "<b>%{text}</b><br><br>",
             mode: 'markers',
             type: 'scatter'
         }
