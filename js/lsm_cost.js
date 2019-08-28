@@ -1310,3 +1310,32 @@ function getBestDesignArray(result_array) {
     }
     return bestDesignArray;
 }
+
+function getBestDesignEverArray(result_array) {
+    var last_x = result_array[0][0];
+    var best_y = -1;
+    var best_design_index;
+    var best_y_ever = -1;
+    var bestDesignArray = new Array();
+    for (var i = 0; i < result_array.length; i++) {
+        if (result_array[i][0] == last_x) {
+            if (best_y == -1 || result_array[i][1] < best_y) {
+                best_y = result_array[i][1];
+                best_design_index = i;
+            }
+        } else {
+            best_y = result_array[i][1];
+            last_x = result_array[i][0];
+            if(result_array[best_design_index][1]<best_y_ever||best_y_ever==-1) {
+                bestDesignArray.push(result_array[best_design_index]);
+                best_y_ever=result_array[best_design_index][1];
+            }
+            best_design_index = i;
+        }
+    }
+    if(result_array[best_design_index][1]<best_y_ever||best_y_ever==-1) {
+        bestDesignArray.push(result_array[best_design_index]);
+        best_y_ever=result_array[best_design_index][1];
+    }
+    return bestDesignArray;
+}

@@ -455,6 +455,42 @@ function drawContinuums() {
         info_array.push(best_array[i][4]);
     }
 
+    var data=[{
+        x: cost_array,
+        y: latency_array,
+        //marker: { size: 7, symbol: 'circle', color: 'steelblue'},
+        //mode: 'markers',
+        showlegend: false,
+        text: info_array,
+        //line: {width: 2, color:'lightblue'},
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }];
+
+    best_array=getBestDesignEverArray(buildContinuums());
+    latency_array=new Array();
+    cost_array=new Array();
+    info_array=new Array();
+    for(var i=0;i<best_array.length;i++){
+        cost_array.push(best_array[i][0]);
+        latency_array.push(best_array[i][1]);
+        info_array.push(best_array[i][4]);
+    }
+
+    var data_ever=[{
+        x: cost_array,
+        y: latency_array,
+        marker: { size: 7, symbol: 'circle', color: 'lightblue'},
+        mode: 'lines+markers',
+        showlegend: false,
+        text: info_array,
+        line: {color: 'steelblue', width: 2},
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }];
+
     var result_array_ad=buildContinuums().sort(function (a,b) {return a[1]-b[1];});
 
     var latency_array_ad=new Array();
@@ -466,8 +502,22 @@ function drawContinuums() {
         info_array_ad.push(result_array_ad[i][4]);
     }
 
+    var data_ad=[{
+        x: latency_array_ad,
+        y: cost_array_ad,
+        //marker: { size: 7, symbol: 'circle', color: 'steelblue'},
+        //mode: 'markers',
+        text: info_array_ad,
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }];
+
+
+
     var result_array=buildContinuums();
     console.log(result_array);
+
     var graph_array=new Array();
     for(var i=0;i<3;i++)
         graph_array.push([new Array(),new Array(),new Array()]);
@@ -502,27 +552,7 @@ function drawContinuums() {
         graph_array_ad[cloud_provider][2].push(result_array_ad[i][4]);
     }
 
-    var data=[{
-        x: cost_array,
-        y: latency_array,
-        //marker: { size: 7, symbol: 'circle', color: 'steelblue'},
-        //mode: 'markers',
-        text: info_array,
-        hovertemplate:
-            "<b>%{text}</b><br><br>",
-        type: 'scatter'
-    }];
 
-    var data_ad=[{
-        x: latency_array_ad,
-        y: cost_array_ad,
-        //marker: { size: 7, symbol: 'circle', color: 'steelblue'},
-        //mode: 'markers',
-        text: info_array_ad,
-        hovertemplate:
-            "<b>%{text}</b><br><br>",
-        type: 'scatter'
-    }];
 
     console.log(data);
 
@@ -573,6 +603,38 @@ function drawContinuums() {
         data3.push(Point);
     }
 
+    var result_array_ad_ever=new Array();
+    var best_cost=-1;
+    console.log(result_array_ad);
+    for(var i=0;i<result_array_ad.length;i++){
+        console.log(result_array_ad[i][0],best_cost,i)
+        if(best_cost==-1||(best_cost-result_array_ad[i][0])>0){
+            best_cost=result_array_ad[i][0];
+            result_array_ad_ever.push(result_array_ad[i]);
+        }
+    }
+
+    latency_array_ad=new Array();
+    cost_array_ad=new Array();
+    info_array_ad=new Array();
+    for(var i=0;i<result_array_ad_ever.length;i++){
+        cost_array_ad.push(result_array_ad_ever[i][0]);
+        latency_array_ad.push(result_array_ad_ever[i][1]);
+        info_array_ad.push(result_array_ad_ever[i][4]);
+    }
+
+    var data_ad_ever=[{
+        x: latency_array_ad,
+        y: cost_array_ad,
+        marker: { size: 7, symbol: 'circle', color: 'lightblue'},
+        mode: 'lines+markers',
+        text: info_array_ad,
+        line: {color: 'steelblue', width: 2},
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'
+    }];
+
     var layout =
         {
             xaxis: {
@@ -618,11 +680,13 @@ function drawContinuums() {
                 pad: 5
             }, title: ''
         };
+
     Plotly.newPlot('tester4', data, layout);
     Plotly.newPlot('tester5', data_ad, layout_ad);
     Plotly.newPlot('tester', data2, layout);
     Plotly.newPlot('tester3', data3, layout_ad);
-
+    Plotly.newPlot('tester6', data_ever, layout);
+    Plotly.newPlot('tester7', data_ad_ever, layout_ad);
 }
 
 function re_run(e, input_type) {
