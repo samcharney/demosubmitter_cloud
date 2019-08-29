@@ -368,9 +368,9 @@ function drawChart2() {
         AWS.push(aws);
         Azure.push(azure);
 
-        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +" M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB "+gcp_design.VM_info);
-        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +" M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB "+aws_design.VM_info);
-        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +" M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB "+azure_design.VM_info);
+        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +"<br>M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+gcp_design.VM_info);
+        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +"<br>M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+aws_design.VM_info);
+        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +"<br>M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+azure_design.VM_info);
 
 
     }
@@ -383,7 +383,7 @@ function drawChart2() {
         //mode: 'markers',
         text: GCP_hover,
         hovertemplate:
-            "<b>%{text}</b><br><br>",
+            "<b>%{x}</b><br><br>",
         type: 'scatter'
     }
 
@@ -395,7 +395,7 @@ function drawChart2() {
         //mode: 'markers',
         text: AWS_hover,
         hovertemplate:
-            "<b>%{text}</b><br><br>",
+            "<b>%{x}</b><br><br>",
         type: 'scatter'
     }
 
@@ -407,7 +407,7 @@ function drawChart2() {
         //mode: 'markers',
         text: Azure_hover,
         hovertemplate:
-            "<b>%{text}</b><br><br>",
+            "<b>%{x}</b><br><br>",
         type: 'scatter'
     }
 
@@ -420,6 +420,11 @@ function drawChart2() {
 
     var layout1 =
         {
+            hoverlable:{opacity: 0.5},
+            legend: {
+                x: 0.9,
+                y: 1
+            },
             xaxis: {
                 title: 'Cost($/month)',
                 range: [ 0, cost*2+100 ]
@@ -429,7 +434,7 @@ function drawChart2() {
                 range: [0, Azure[i]*1.05]
             },
             autosize: true,
-            width: 900,
+            width: 750,
             height: 300,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {
@@ -442,9 +447,36 @@ function drawChart2() {
         };
 
     Plotly.newPlot('tester2', data, layout1);
+
+    var hoverInfo = document.getElementById('hoverinfo2');
+    var myPlot = document.getElementById('tester2');
+    myPlot.on('plotly_hover', function(data){
+        var infotext = data.points.map(function(d){
+            return (d.data.name+": "+d.text);
+        });
+        hoverInfo.innerHTML = infotext.join('<br/>');
+    })
+        .on('plotly_unhover', function(data){
+            hoverInfo.innerHTML = '';
+        });
 }
 
 function drawContinuums() {
+
+    var colors=[
+        'green',
+        'steelblue',
+        'orange'
+    ];
+
+    var cloud_array=[
+        'AWS',
+        'GCP',
+        'AZURE'
+    ];
+
+
+
     var best_array=getBestDesignArray(buildContinuums());
     var latency_array=new Array();
     var cost_array=new Array();
@@ -472,20 +504,25 @@ function drawContinuums() {
     latency_array=new Array();
     cost_array=new Array();
     info_array=new Array();
+    var color_array=new Array();
     for(var i=0;i<best_array.length;i++){
         cost_array.push(best_array[i][0]);
         latency_array.push(best_array[i][1]);
         info_array.push(best_array[i][4]);
+        for(var j=0;j<3;j++){
+            if(best_array[i][3]==cloud_array[j])
+                color_array.push(colors[j]);
+        }
     }
 
     var data_ever=[{
         x: cost_array,
         y: latency_array,
-        marker: { size: 7, symbol: 'circle', color: 'lightblue'},
+        marker: { size: 7, symbol: 'circle', color: color_array},
         mode: 'lines+markers',
         showlegend: false,
         text: info_array,
-        line: {color: 'steelblue', width: 2},
+        line: {color: 'grey', width: 2},
         hovertemplate:
             "<b>%{text}</b><br><br>",
         type: 'scatter'
@@ -554,20 +591,6 @@ function drawContinuums() {
 
 
 
-    console.log(data);
-
-    var color_array=[
-        'green',
-        'steelblue',
-        'orange'
-    ];
-
-    var cloud_array=[
-        'AWS',
-        'GCP',
-        'AZURE'
-    ];
-
     var data2=new Array();
     var data3=new Array();
 
@@ -575,7 +598,7 @@ function drawContinuums() {
         var Point={
             x: graph_array[i][0],
             y: graph_array[i][1],
-            marker: { size: 4, symbol: 'circle', color: color_array[i]},
+            marker: { size: 4, symbol: 'circle', color: colors[i]},
             name: cloud_array[i],
             //mode: 'markers',
             text: graph_array[i][2],
@@ -591,7 +614,7 @@ function drawContinuums() {
         var Point={
             x: graph_array_ad[i][1],
             y: graph_array_ad[i][0],
-            marker: { size: 4, symbol: 'circle', color: color_array[i]},
+            marker: { size: 4, symbol: 'circle', color: colors[i]},
             name: cloud_array[i],
             //mode: 'markers',
             text: graph_array_ad[i][2],
@@ -617,19 +640,24 @@ function drawContinuums() {
     latency_array_ad=new Array();
     cost_array_ad=new Array();
     info_array_ad=new Array();
+    var color_array_ad=new Array();
     for(var i=0;i<result_array_ad_ever.length;i++){
         cost_array_ad.push(result_array_ad_ever[i][0]);
         latency_array_ad.push(result_array_ad_ever[i][1]);
         info_array_ad.push(result_array_ad_ever[i][4]);
+        for(var j=0;j<3;j++){
+            if(result_array_ad_ever[i][3]==cloud_array[j])
+                color_array_ad.push(colors[j]);
+        }
     }
 
     var data_ad_ever=[{
         x: latency_array_ad,
         y: cost_array_ad,
-        marker: { size: 7, symbol: 'circle', color: 'lightblue'},
+        marker: { size: 7, symbol: 'circle', color: color_array_ad},
         mode: 'lines+markers',
         text: info_array_ad,
-        line: {color: 'steelblue', width: 2},
+        line: {color: 'grey', width: 2},
         hovertemplate:
             "<b>%{text}</b><br><br>",
         type: 'scatter'
@@ -646,6 +674,7 @@ function drawContinuums() {
                 autorange: true
             },
             autosize: true,
+            hovermode: "closest",
             width: 900,
             height: 300,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
@@ -669,6 +698,7 @@ function drawContinuums() {
                 range: [ 0, cost*2+100 ]
             },
             autosize: true,
+            hovermode: "closest",
             width: 900,
             height: 300,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
