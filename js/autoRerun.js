@@ -411,12 +411,11 @@ function drawChart2() {
         type: 'scatter'
     }
 
-    var data=[GCPPoint,AWSPoint,AzurePoint];
+    var data=[AWSPoint,GCPPoint,AzurePoint];
 
     var i=0;
     while(Azure[i]==undefined||isNaN(Azure[i]))
         i++;
-    console.log(Azure[i]);
 
     var layout1 =
         {
@@ -426,11 +425,11 @@ function drawChart2() {
                 y: 1
             },
             xaxis: {
-                title: 'Cost($/month)',
+                title: 'Cost ($/month)',
                 range: [ 0, cost*2+100 ]
             },
             yaxis: {
-                title: 'Latency(hour)',
+                title: 'Latency (hour)',
                 range: [0, Azure[i]*1.05]
             },
             autosize: true,
@@ -448,17 +447,25 @@ function drawChart2() {
 
     Plotly.newPlot('tester2', data, layout1);
 
-    var hoverInfo = document.getElementById('hoverinfo2');
+    //var hoverInfo = document.getElementById('hoverinfo2_aws');
     var myPlot = document.getElementById('tester2');
     myPlot.on('plotly_hover', function(data){
-        var infotext = data.points.map(function(d){
-            return (d.data.name+": "+d.text);
-        });
-        hoverInfo.innerHTML = infotext.join('<br/>');
+        for(var i in data.points){
+            var cloud_provider=data.points[i].data.name;
+            if(cloud_provider=='AWS')
+                hoverInfo = document.getElementById('hoverinfo2_aws');
+            if(cloud_provider=='GCP')
+                hoverInfo = document.getElementById('hoverinfo2_gcp');
+            if(cloud_provider=='Azure')
+                hoverInfo = document.getElementById('hoverinfo2_azure');
+            hoverInfo.innerHTML=(cloud_provider+" for now:<br>"+data.points[i].text);
+        }
+        //console.log(data);
+        //hoverInfo.innerHTML = infotext.join('<br/>');
     })
-        .on('plotly_unhover', function(data){
-            hoverInfo.innerHTML = '';
-        });
+        //.on('plotly_unhover', function(data){
+        //    hoverInfo.innerHTML = '';
+        //});
 }
 
 function drawContinuums() {
@@ -475,9 +482,9 @@ function drawContinuums() {
         'AZURE'
     ];
 
+    var ContinuumArray=buildContinuums();
 
-
-    var best_array=getBestDesignArray(buildContinuums());
+    var best_array=getBestDesignArray(ContinuumArray);
     var latency_array=new Array();
     var cost_array=new Array();
     var info_array=new Array();
@@ -486,7 +493,7 @@ function drawContinuums() {
         latency_array.push(best_array[i][1]);
         info_array.push(best_array[i][4]);
     }
-
+    console.log(info_array);
     var data=[{
         x: cost_array,
         y: latency_array,
@@ -500,7 +507,7 @@ function drawContinuums() {
         type: 'scatter'
     }];
 
-    best_array=getBestDesignEverArray(buildContinuums());
+    best_array=getBestDesignEverArray(ContinuumArray);
     latency_array=new Array();
     cost_array=new Array();
     info_array=new Array();
@@ -528,8 +535,8 @@ function drawContinuums() {
         type: 'scatter'
     }];
 
-    var result_array_ad=buildContinuums().sort(function (a,b) {return a[1]-b[1];});
-
+    var result_array_ad=ContinuumArray;
+    result_array_ad.sort(function (a,b) {return a[1]-b[1];});
     var latency_array_ad=new Array();
     var cost_array_ad=new Array();
     var info_array_ad=new Array();
@@ -552,8 +559,7 @@ function drawContinuums() {
 
 
 
-    var result_array=buildContinuums();
-    console.log(result_array);
+    var result_array=ContinuumArray;
 
     var graph_array=new Array();
     for(var i=0;i<3;i++)
@@ -628,9 +634,7 @@ function drawContinuums() {
 
     var result_array_ad_ever=new Array();
     var best_cost=-1;
-    console.log(result_array_ad);
     for(var i=0;i<result_array_ad.length;i++){
-        console.log(result_array_ad[i][0],best_cost,i)
         if(best_cost==-1||(best_cost-result_array_ad[i][0])>0){
             best_cost=result_array_ad[i][0];
             result_array_ad_ever.push(result_array_ad[i]);
@@ -666,16 +670,16 @@ function drawContinuums() {
     var layout =
         {
             xaxis: {
-                title: 'Cost($/month)',
+                title: 'Cost ($/month)',
                 range: [ 0, cost*2+100 ]
             },
             yaxis: {
-                title: 'Latency(day)',
+                title: 'Latency (day)',
                 autorange: true
             },
             autosize: true,
             hovermode: "closest",
-            width: 900,
+            width: 750,
             height: 300,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {
@@ -690,16 +694,16 @@ function drawContinuums() {
     var layout_ad =
         {
             xaxis: {
-                title: 'Latency(day)',
+                title: 'Latency (day)',
                 autorange: true
             },
             yaxis: {
-                title: 'Cost($/month)',
+                title: 'Cost ($/month)',
                 range: [ 0, cost*2+100 ]
             },
             autosize: true,
             hovermode: "closest",
-            width: 900,
+            width: 750,
             height: 300,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {
