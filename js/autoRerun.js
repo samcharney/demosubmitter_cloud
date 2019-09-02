@@ -368,9 +368,9 @@ function drawChart2() {
         AWS.push(aws);
         Azure.push(azure);
 
-        GCP_hover.push("T="+gcp_design.T+", K="+gcp_design.K+", Z="+gcp_design.Z+", L="+gcp_design.L +"<br>M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+gcp_design.VM_info);
-        AWS_hover.push("T="+aws_design.T+", K="+aws_design.K+", Z="+aws_design.Z+", L="+aws_design.L +"<br>M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+aws_design.VM_info);
-        Azure_hover.push("T="+azure_design.T+", K="+azure_design.K+", Z="+azure_design.Z+", L="+azure_design.L +"<br>M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+azure_design.VM_info);
+        GCP_hover.push("T="+gcp_design.T+", K="+gcp_design.K+", Z="+gcp_design.Z+", L="+gcp_design.L +"<br>M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB, M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+gcp_design.VM_info);
+        AWS_hover.push("T="+aws_design.T+", K="+aws_design.K+", Z="+aws_design.Z+", L="+aws_design.L +"<br>M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB, M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+aws_design.VM_info);
+        Azure_hover.push("T="+azure_design.T+", K="+azure_design.K+", Z="+azure_design.Z+", L="+azure_design.L +"<br>M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB, M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+azure_design.VM_info);
 
 
     }
@@ -553,7 +553,7 @@ function drawContinuums() {
         //mode: 'markers',
         text: info_array_ad,
         hovertemplate:
-            "<b>%{text}</b><br><br>",
+            "<b>%{text}</b><extra></extra>",
         type: 'scatter'
     }];
 
@@ -663,7 +663,7 @@ function drawContinuums() {
         text: info_array_ad,
         line: {color: 'grey', width: 2},
         hovertemplate:
-            "<b>%{y}</b><br><br>",
+            "<b>%{y}</b><extra></extra>",
         type: 'scatter'
     }];
 
@@ -725,10 +725,11 @@ function drawContinuums() {
     Plotly.newPlot('tester7', data_ad_ever, layout_ad);
 
     var myPlot = document.getElementById('tester6');
+    console.log(myPlot);
     myPlot.on('plotly_hover', function(data){
         console.log(data);
         var hoverInfo = document.getElementById('hoverinfo6');
-        hoverInfo.innerHTML=("Graph1:<br>"+data.points[0].text);
+        hoverInfo.innerHTML=(data.points[0].text);
         //console.log(data);
         //hoverInfo.innerHTML = infotext.join('<br/>');
     })
@@ -737,7 +738,7 @@ function drawContinuums() {
     myPlot.on('plotly_hover', function(data){
         console.log(data);
         var hoverInfo = document.getElementById('hoverinfo7');
-        hoverInfo.innerHTML=("Graph2:<br>"+data.points[0].text);
+        hoverInfo.innerHTML=(data.points[0].text);
         //console.log(data);
         //hoverInfo.innerHTML = infotext.join('<br/>');
     })

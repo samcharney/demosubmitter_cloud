@@ -256,30 +256,49 @@
 
             <div class="row" style="text-align: center" >
                 <div class="col-sm-3" >
-                    <div class="col-sm-4"></div>
-                <div class="col-sm-4 trigger" data-tooltip="The dataset consists of 1 TB of data comprising unique 16-byte key-value pairs of 8-byte keys" data-tooltip-position="bottom" style="cursor: pointer">
-                    <div id="dataset-trigger" onclick="showDataset()">
-                  <!--<img class="img-responsive img-centered" style="width:105px" src="./images/data.png"/>-->
-                    <span style="cursor: pointer;font-size:25px" id="data-text" >
-                      data
-                    </span>
-                  </div>
+                    <div class="row">
+                            <div style="display: inline-block">
+                            <!--<img class="img-responsive img-centered" style="width:105px" src="./images/data.png"/>-->
+                            <span style="font-size:25px" id="data-text" >
+                                data
+                            </span>
+                            </div>
+                        <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#dataset-setting" role="button" aria-expanded="false">
+                            <div id="dataset-trigger" onclick="">
+                                <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="dataset-setting" class="collapse multi-collapse">
+                            <div class="input-group" >
+                                <span class="input-group-addon"><span data-tooltip="Number of Entries in the Index (e.g., 10485760), which automatically changes the Level number" data-tooltip-position="bottom"> # Entries</span></span>
+                                <input id="N" type="text" class="form-control" aria-label="Index Size N (elements)" placeholder="Number of Entries in the Index (e.g., 10485760)" style="text-align:right" onchange="re_run(event, 'dataset_input')"/>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span data-tooltip="Key-Value pair size in bytes (e.g., 16)." data-tooltip-position="bottom"> Entry size (bytes)</span></span>
+                                <input id="E" type="number" class="form-control" aria-label="Key-Value pair size (bytes)" placeholder="Key-Value pair size in bytes (e.g., 16)" style="text-align:right" onchange="re_run(event, 'dataset_input')" onwheel="re_run(event, 'dataset_input')"  />
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span data-tooltip="Key size in bytes (e.g., 8)." data-tooltip-position="bottom"> Key size (bytes)</span></span>
+                                <input id="F" type="text" class="form-control" aria-label="Key size (bytes)" placeholder="Key size in bytes (e.g., 8)" style="text-align:right" onchange="re_run(event, 'dataset_input')"/>
+                            </div>
+                    </div>
                 </div>
-                    <div class="col-sm-4"></div>
-                </div>
+
 
                 <div class="col-sm-3" >
                     <div class="row">
-                    <div class="col-sm-4"></div>
-                    <div class="col-sm-4 trigger"  data-tooltip="The workload consists of 50.000% writes, 49.999% point lookups, and 0.001% range lookups with  target range of 8192 entries" data-tooltip-position="bottom" style="cursor: pointer">
-                    <div id="workload-trigger" onclick="showWorkload()" >
+                    <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
                           <span style="cursor: pointer;font-size:25px" id="workload-text" >workload</span>
-                        </div>
-                      </div>
-                          <div class="col-sm-4"></div>
                     </div>
-                    <div id="workload-setting" class="row" style="display:none">
+                        <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#workload-setting" role="button" aria-expanded="false">
+                            <div id="workload-trigger" onclick="">
+                                <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="workload-setting" class="collapse multi-collapse">
                         <!-- <div class="row">
                           <div class="col-lg-4 col-md-4 col-sm-4"> <h4>Writes</h4></div>
                           <div class="col-lg-4 col-md-4 col-sm-4"> <h4>Range Lookups</h4> </div>
@@ -327,27 +346,51 @@
 
 
                       <div class="col-sm-3" >
-                          <div class="col-sm-4"></div>
-                          <div class="col-sm-4 trigger" data-tooltip="The financial budget to execute the workload is $500" data-tooltip-position="bottom" style="cursor: pointer">
-                              <div id="cost-trigger" onclick="showCost()" >
+                          <div class="row">
+                              <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
-
-                          <span style="cursor: pointer; font-size:25px" id="cost-text" >cost</span>
-                        </div>
+                                  <span style="cursor: pointer; font-size:25px" id="cost-text" >cost</span>
+                              </div>
+                              <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#cost-setting" role="button" aria-expanded="false">
+                                  <div id="cost-trigger" onclick="">
+                                      <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                                  </div>
+                              </div>
                           </div>
-                          <div class="col-sm-4"></div>
+                          <div id="cost-setting" class="collapse multi-collapse">
+                              <div class="row">
+                                      <div class="input-group" style="text-align: center;">
+                                          <span class="input-group-addon"><span data-tooltip="The cost" data-tooltip-position="bottom">Cost </span></span>
+                                          <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
+                                      </div>
+                              </div>
+                          </div>
                       </div>
 
                       <div class="col-sm-3" >
-                          <div class="col-sm-4"></div>
-                          <div class="col-sm-4 trigger" data-tooltip="The selected cloud service provider is AWS" data-tooltip-position="bottom" style="cursor: pointer">
-                              <div id="cloud-provider-trigger" onclick="showCloudProvider()">
+                              <div style="display: inline-block">
                                   <!--<img class="img-responsive img-centered" style="width:105px" src="./images/cloud.png"/>-->
-
                                   <span style="cursor: pointer; font-size:25px" id="cloud-provider-text" >cloud</span>
                               </div>
+                          <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#cloud-provider-setting" role="button" aria-expanded="false">
+                              <div id="cloud-provider-trigger" onclick="">
+                                  <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                              </div>
                           </div>
-                          <div class="col-sm-4"></div>
+                          <div id="cloud-provider-setting" class="collapse multi-collapse">
+                              <div class="row">
+                                  <div>
+                                      <div class="input-group">
+                                          <select id="cloud-provider" name="" style="width:200px;height: 30px ; margin:0px 80px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
+                                              <option value="AWS">AWS</option>
+                                              <option value="GCP">GCP</option>
+                                              <option value="Azure">Azure</option>
+                                          </select>
+                                      </div>
+                                  </div>
+
+                              </div>
+                          </div>
                       </div>
 
 
@@ -356,69 +399,12 @@
                       </div>
 
                 <div class="row">
-                      <div id="dataset-setting" class="col-lg-3 col-md-3 col-sm-3" style="display:none">
-                          <div class="row">
-                            <div class="input-group" >
-                              <span class="input-group-addon"><span data-tooltip="Number of Entries in the Index (e.g., 10485760), which automatically changes the Level number" data-tooltip-position="bottom"> # Entries</span></span>
-                              <input id="N" type="text" class="form-control" aria-label="Index Size N (elements)" placeholder="Number of Entries in the Index (e.g., 10485760)" style="text-align:right" onchange="re_run(event, 'dataset_input')"/>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="input-group">
-                              <span class="input-group-addon"><span data-tooltip="Key-Value pair size in bytes (e.g., 16)." data-tooltip-position="bottom"> Entry size (bytes)</span></span>
-                              <input id="E" type="number" class="form-control" aria-label="Key-Value pair size (bytes)" placeholder="Key-Value pair size in bytes (e.g., 16)" style="text-align:right" onchange="re_run(event, 'dataset_input')" onwheel="re_run(event, 'dataset_input')"  />
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="input-group">
-                              <span class="input-group-addon"><span data-tooltip="Key size in bytes (e.g., 8)." data-tooltip-position="bottom"> Key size (bytes)</span></span>
-                              <input id="F" type="text" class="form-control" aria-label="Key size (bytes)" placeholder="Key size in bytes (e.g., 8)" style="text-align:right" onchange="re_run(event, 'dataset_input')"/>
-                            </div>
-                          </div>
-                      </div>
-
-                      <div id="cost-setting" class="row" style="display:none">
-                        <div class="row">
-                          <div class="col-sm-4">
-                              <div class="input-group" style="text-align: center; left:760px ;width:200px">
-                                  <span class="input-group-addon"><span data-tooltip="The cost" data-tooltip-position="bottom">Cost </span></span>
-                                  <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
-                              </div>
-                          </div>
 
 
-                            <!--
-                          <div class="col-sm-4">
-                            <div class="input-group">
-                              <span class="input-group-addon"><span data-tooltip="Read Latency (microseconds)" data-tooltip-position="bottom"> Read Latency (&mu;s) </span></span>
-                              <input id="read-latency" type="text" class="form-control" aria-label="mu" placeholder="Read Latency (e.g., 20)" style="text-align:right" onchange="re_run(event, 'storage_input')" />
-                            </div>
-                          </div>
-                          <div class="col-sm-4">
-                            <div class="input-group">
-                              <span class="input-group-addon"><span data-tooltip="Write Latency (microseconds)" data-tooltip-position="bottom"> Write Latency (&mu;s) </span></span>
-                              <input id="write-latency" type="text" class="form-control" aria-label="mu" placeholder="Write Latency (e.g., 100)" style="text-align:right" onchange="re_run(event, 'storage_input')" />
-                            </div>
-                          </div>
-                            -->
-                  </div>
-                </div>
 
 
-                <div id="cloud-provider-setting" class="row" style="display:none">
-                    <div class="row">
-                        <div>
-                            <div class="input-group">
-                                <select id="cloud-provider" name="" style="width:150px;height: 30px ; margin:0px 1130px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
-                                    <option value="AWS">AWS</option>
-                                    <option value="GCP">GCP</option>
-                                    <option value="Azure">Azure</option>
-                                </select>
-                            </div>
-                        </div>
 
-                    </div>
-                </div>
+
 
 
 
@@ -430,10 +416,10 @@
             <br>
             <br>
             <!-- Configuration for each architecture -->
-            <div class="row" style="margin:20px 0px">
+            <div class="row" style="margin:20px 0px;">
 
                 <!-- Design Continuum -->
-                <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="col-lg-3 col-md-3 col-sm-3" style="display: none">
                     <!-- <div class="input-group input-group-lg text-center">
                         <span class="input-group-btn">
                             <a id="scenario1" class="btn btn-default btn-params" type="button" onclick="initScenario1(event)"><span data-tooltip="Using the default LSH-Table configuration." data-tooltip-position="bottom" style="text-decoration:underline; text-decoration-style: dotted;">LSH-Table</span></a>
@@ -483,7 +469,7 @@
 
 
 
-                    <div id="breakdown_result" class="row" style="margin:50px 0px">
+                    <div id="breakdown_result" class="row" style="margin:50px 0px; display: none">
                         <!-- LSM-Tree:a short range lookup issues at most K I/Os per level to the smaller L-1 Levels and at most Z I/Os to the largest level for a total of Z+K*(L-1) random I/Os -->
 
                         <!-- LSM-Tree:a long range lookup continues with a sequential scan to the relevant key range at each run issuing at least s/B sequential I/Os. The number of sequential I/Os is amplified by (1+1/T) for updated entries at Levels 1 to L-1 and Z for updated entries at Level L. -->
@@ -563,17 +549,15 @@
                     </div>
 
                 </div>
-                <div class="col-lg-9 col-md-9 col-sm-9">
+                <div class="col-lg-12 col-md-12 col-sm-12">
                     <div class="row">
                         <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                         </div>
+                        <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 105px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:10px; background-color: lightgrey; border: 2px solid gray;">
+                        </div>
                         <div id="tester7" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                         </div>
-                        <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 125px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:10px; background-color: lightgrey; border: 2px solid gray;">
-                            Graph1:<br>
-                        </div>
-                        <div id="hoverinfo7" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 125px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:5px; background-color: lightgrey; border: 2px solid gray;">
-                            Graph2:<br>
+                        <div id="hoverinfo7" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 105px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:5px; background-color: lightgrey; border: 2px solid gray;">
                         </div>
                     </div>
 
@@ -581,11 +565,11 @@
                     <div class="row">
                     <div id="tester2" class="col-lg-12 col-md-12 col-sm-12 js-plotly-plot" style="position: relative; width: 750px; height: 350px; margin-top:0px">
                     </div>
-                        <div id="hoverinfo2_aws" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 105px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:5px; background-color: lightgreen; border: 2px solid green;">
+                        <div id="hoverinfo2_aws" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 280px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:15px; margin-top:20px; background-color: lightgreen; border: 2px solid green;">
                         </div>
-                        <div id="hoverinfo2_gcp" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 105px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:5px; background-color: lightblue; border: 2px solid steelblue;">
+                        <div id="hoverinfo2_gcp" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 280px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:15px; background-color: lightblue; border: 2px solid steelblue;">
                         </div>
-                        <div id="hoverinfo2_azure" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 105px; border-radius: 8px; font-size: 10px; margin-left: 30px; background-color: lightcoral; border: 2px solid crimson;">
+                        <div id="hoverinfo2_azure" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 280px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; background-color: lightcoral; border: 2px solid crimson;">
                         </div>
                     </div>
                     <div class="row">

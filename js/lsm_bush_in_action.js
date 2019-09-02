@@ -969,10 +969,10 @@ function initScenario4(){
 function init(){
 
 	// Dataset and Environment
-    document.getElementById("N").value=numberWithCommas(6871947673600); //(10M values)
-    document.getElementById("E").value=20;
+    document.getElementById("N").value=numberWithCommas(300000000000); //(10M values)
+    document.getElementById("E").value=128;
 		//document.getElementById("B").value=4096; //in B
-		document.getElementById("F").value=8;
+		document.getElementById("F").value=64;
 
 	// Workload
 	document.getElementById("s").value = 8192;
@@ -991,6 +991,10 @@ function init(){
 	document.getElementById("cost").value = 50000;
 
 	document.getElementById("query_count").value=100000000;
+
+	$(".rotate").click(function () {
+		$(this).toggleClass("down");
+	})
 
 	navigateDesignSpace();
 	//drawCharts();
