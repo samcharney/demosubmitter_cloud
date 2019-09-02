@@ -969,7 +969,7 @@ function initScenario4(){
 function init(){
 
 	// Dataset and Environment
-    document.getElementById("N").value=numberWithCommas(300000000000); //(10M values)
+    document.getElementById("N").value=numberWithCommas(85000000000); //(10M values)
     document.getElementById("E").value=128;
 		//document.getElementById("B").value=4096; //in B
 		document.getElementById("F").value=64;
@@ -977,9 +977,9 @@ function init(){
 	// Workload
 	document.getElementById("s").value = 8192;
 	document.getElementById("qS").value = 0;
-	document.getElementById("w").value = 0.2;
+	document.getElementById("w").value = 0.8;
 	document.getElementById("r").value = 0.0;
-	document.getElementById("v").value = 0.8;
+	document.getElementById("v").value = 0.2;
 	document.getElementById("qL").value = 0.0;
 	//document.getElementById("X").value = numberWithCommas(0);
 
