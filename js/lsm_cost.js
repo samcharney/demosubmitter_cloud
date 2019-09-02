@@ -502,7 +502,7 @@ function countThroughput(cost, cloud_provider) {
                             Variables.no_result_read_cost = read_cost - 1;
                             Variables.total_cost = total_cost;
                             Variables.latency = total_latency;
-                            Variables.VM_info= (VM_libraries[cloud_provider].name_of_instance[VM_index]+":"+mem_sum);
+                            Variables.VM_info= (mem_sum+" X "+VM_libraries[cloud_provider].name_of_instance[VM_index]);
                         }
                     }
                 }
@@ -560,7 +560,7 @@ function countContinuum(combination, cloud_provider) {
             mem_sum=combination[i];
             max_RAM_purchased=VM_libraries[cloud_provider].mem_of_instance[i];
             monthly_mem_cost=mem_sum*VM_libraries[cloud_provider].rate_of_instance[i]*24*30;
-            Variables.VM_info= (VM_libraries[cloud_provider].name_of_instance[i]+":"+mem_sum);
+            Variables.VM_info= (mem_sum+" X "+VM_libraries[cloud_provider].name_of_instance[i]);
         }
     }
 
