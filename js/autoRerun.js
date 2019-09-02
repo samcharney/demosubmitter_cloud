@@ -368,9 +368,9 @@ function drawChart2() {
         AWS.push(aws);
         Azure.push(azure);
 
-        GCP_hover.push("T="+gcp_design.T+" K="+gcp_design.K+" Z="+gcp_design.Z+" L="+gcp_design.L +"<br>M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+gcp_design.VM_info);
-        AWS_hover.push("T="+aws_design.T+" K="+aws_design.K+" Z="+aws_design.Z+" L="+aws_design.L +"<br>M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+aws_design.VM_info);
-        Azure_hover.push("T="+azure_design.T+" K="+azure_design.K+" Z="+azure_design.Z+" L="+azure_design.L +"<br>M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+azure_design.VM_info);
+        GCP_hover.push("T="+gcp_design.T+", K="+gcp_design.K+", Z="+gcp_design.Z+", L="+gcp_design.L +"<br>M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+gcp_design.VM_info);
+        AWS_hover.push("T="+aws_design.T+", K="+aws_design.K+", Z="+aws_design.Z+", L="+aws_design.L +"<br>M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+aws_design.VM_info);
+        Azure_hover.push("T="+azure_design.T+", K="+azure_design.K+", Z="+azure_design.Z+", L="+azure_design.L +"<br>M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+azure_design.VM_info);
 
 
     }
@@ -402,7 +402,7 @@ function drawChart2() {
     var AzurePoint={
         x: x,
         y: Azure,
-        marker: { size: 7, symbol: 'circle', color: 'orange'},
+        marker: { size: 7, symbol: 'circle', color: 'crimson'},
         name: 'Azure',
         //mode: 'markers',
         text: Azure_hover,
@@ -434,7 +434,7 @@ function drawChart2() {
             },
             autosize: true,
             width: 750,
-            height: 300,
+            height: 350,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {
                 l: 60,
@@ -458,7 +458,7 @@ function drawChart2() {
                 hoverInfo = document.getElementById('hoverinfo2_gcp');
             if(cloud_provider=='Azure')
                 hoverInfo = document.getElementById('hoverinfo2_azure');
-            hoverInfo.innerHTML=(cloud_provider+" for now:<br>"+data.points[i].text);
+            hoverInfo.innerHTML=("<b>"+cloud_provider+":</b><br>"+data.points[i].text);
         }
         //console.log(data);
         //hoverInfo.innerHTML = infotext.join('<br/>');
@@ -473,7 +473,7 @@ function drawContinuums() {
     var colors=[
         'green',
         'steelblue',
-        'orange'
+        'crimson'
     ];
 
     var cloud_array=[
@@ -531,7 +531,7 @@ function drawContinuums() {
         text: info_array,
         line: {color: 'grey', width: 2},
         hovertemplate:
-            "<b>%{text}</b><br><br>",
+            "<b>%{y}</b><br><br>",
         type: 'scatter'
     }];
 
@@ -663,7 +663,7 @@ function drawContinuums() {
         text: info_array_ad,
         line: {color: 'grey', width: 2},
         hovertemplate:
-            "<b>%{text}</b><br><br>",
+            "<b>%{y}</b><br><br>",
         type: 'scatter'
     }];
 
@@ -715,12 +715,32 @@ function drawContinuums() {
             }, title: ''
         };
 
-    Plotly.newPlot('tester4', data, layout);
-    Plotly.newPlot('tester5', data_ad, layout_ad);
+    //Plotly.newPlot('tester4', data, layout);
+    //Plotly.newPlot('tester5', data_ad, layout_ad);
     Plotly.newPlot('tester', data2, layout);
     Plotly.newPlot('tester3', data3, layout_ad);
+    layout.width=375;
+    layout_ad.width=375;
     Plotly.newPlot('tester6', data_ever, layout);
     Plotly.newPlot('tester7', data_ad_ever, layout_ad);
+
+    var myPlot = document.getElementById('tester6');
+    myPlot.on('plotly_hover', function(data){
+        console.log(data);
+        var hoverInfo = document.getElementById('hoverinfo6');
+        hoverInfo.innerHTML=("Graph1:<br>"+data.points[0].text);
+        //console.log(data);
+        //hoverInfo.innerHTML = infotext.join('<br/>');
+    })
+
+    myPlot = document.getElementById('tester7');
+    myPlot.on('plotly_hover', function(data){
+        console.log(data);
+        var hoverInfo = document.getElementById('hoverinfo7');
+        hoverInfo.innerHTML=("Graph2:<br>"+data.points[0].text);
+        //console.log(data);
+        //hoverInfo.innerHTML = infotext.join('<br/>');
+    })
 }
 
 function re_run(e, input_type) {

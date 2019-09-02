@@ -684,7 +684,7 @@ function buildContinuums(){
         for (var i = 0; i < VMCombinations.length; i++) {
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
-            var info=(VM_libraries[cloud_provider].provider_name+" : T="+Variables.T+" K="+Variables.K+" Z="+Variables.Z+" L="+Variables.L +" M_B="+(Variables.Buffer/1024/1024/1024).toFixed(2)+" GB M_BF="+(Variables.M_BF/1024/1024/1024).toFixed(2)+" GB M_FP="+(Variables.M_FP/1024/1024/1024).toFixed(2)+" GB "+Variables.VM_info);
+            var info=("<b>"+VM_libraries[cloud_provider].provider_name+" :</b><br>T="+Variables.T+", K="+Variables.K+", Z="+Variables.Z+", L="+Variables.L +"<br>M_B="+(Variables.Buffer/1024/1024/1024).toFixed(2)+" GB<br>M_BF="+(Variables.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(Variables.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+Variables.VM_info);
             var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info];
             result_array.push(result);
         }
