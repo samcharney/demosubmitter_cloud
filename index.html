@@ -263,9 +263,9 @@
                                 data
                             </span>
                             </div>
-                        <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#dataset-setting" role="button" aria-expanded="false">
+                        <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#dataset-setting" role="button" aria-expanded="false">
                             <div id="dataset-trigger" onclick="">
-                                <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                                <img class="img-responsive img-centered" style="width:25px;" src="./images/arrow.png"/>
                             </div>
                         </div>
                     </div>
@@ -292,7 +292,7 @@
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
                           <span style="cursor: pointer;font-size:25px" id="workload-text" >workload</span>
                     </div>
-                        <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#workload-setting" role="button" aria-expanded="false">
+                        <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#workload-setting" role="button" aria-expanded="false">
                             <div id="workload-trigger" onclick="">
                                 <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
                             </div>
@@ -351,7 +351,7 @@
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
                                   <span style="cursor: pointer; font-size:25px" id="cost-text" >cost</span>
                               </div>
-                              <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#cost-setting" role="button" aria-expanded="false">
+                              <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#cost-setting" role="button" aria-expanded="false">
                                   <div id="cost-trigger" onclick="">
                                       <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
                                   </div>
@@ -372,7 +372,7 @@
                                   <!--<img class="img-responsive img-centered" style="width:105px" src="./images/cloud.png"/>-->
                                   <span style="cursor: pointer; font-size:25px" id="cloud-provider-text" >cloud</span>
                               </div>
-                          <div class="trigger rotate" style="cursor: pointer; width:25px;display: inline-block" data-toggle="collapse" href="#cloud-provider-setting" role="button" aria-expanded="false">
+                          <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#cloud-provider-setting" role="button" aria-expanded="false">
                               <div id="cloud-provider-trigger" onclick="">
                                   <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
                               </div>
@@ -382,6 +382,7 @@
                                   <div>
                                       <div class="input-group">
                                           <select id="cloud-provider" name="" style="width:200px;height: 30px ; margin:0px 80px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
+                                              <option value="AWS">Any</option>
                                               <option value="AWS">AWS</option>
                                               <option value="GCP">GCP</option>
                                               <option value="Azure">Azure</option>
@@ -553,11 +554,11 @@
                     <div class="row">
                         <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                         </div>
-                        <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 105px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:10px; background-color: lightgrey; border: 2px solid gray;">
+                        <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 230px; height: 72px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:10px; background-color: lightgrey; border: 2px solid gray;">
                         </div>
                         <div id="tester7" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                         </div>
-                        <div id="hoverinfo7" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 140px; height: 105px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:5px; background-color: lightgrey; border: 2px solid gray;">
+                        <div id="hoverinfo7" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 230px; height: 72px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:5px; background-color: lightgrey; border: 2px solid gray;">
                         </div>
                     </div>
 
@@ -565,11 +566,11 @@
                     <div class="row">
                     <div id="tester2" class="col-lg-12 col-md-12 col-sm-12 js-plotly-plot" style="position: relative; width: 750px; height: 350px; margin-top:0px">
                     </div>
-                        <div id="hoverinfo2_aws" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 280px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:15px; margin-top:20px; background-color: lightgreen; border: 2px solid green;">
+                        <div id="hoverinfo2_aws" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 230px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-right:30px; margin-bottom:15px; margin-top:20px; background-color: lightgreen; border: 2px solid green;">
                         </div>
-                        <div id="hoverinfo2_gcp" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 280px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-bottom:15px; background-color: lightblue; border: 2px solid steelblue;">
+                        <div id="hoverinfo2_gcp" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 230px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-right:30px; margin-bottom:15px; background-color: lightblue; border: 2px solid steelblue;">
                         </div>
-                        <div id="hoverinfo2_azure" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 280px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; background-color: lightcoral; border: 2px solid crimson;">
+                        <div id="hoverinfo2_azure" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 230px; height: 72px; border-radius: 8px; font-size: 10px; padding-right: 5px; margin-left: 30px; margin-right:30px; background-color: lightcoral; border: 2px solid crimson;">
                         </div>
                     </div>
                     <div class="row">

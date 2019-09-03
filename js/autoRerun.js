@@ -368,9 +368,9 @@ function drawChart2() {
         AWS.push(aws);
         Azure.push(azure);
 
-        GCP_hover.push("T="+gcp_design.T+", K="+gcp_design.K+", Z="+gcp_design.Z+", L="+gcp_design.L +"<br>M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB, M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+gcp_design.VM_info);
-        AWS_hover.push("T="+aws_design.T+", K="+aws_design.K+", Z="+aws_design.Z+", L="+aws_design.L +"<br>M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB, M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+aws_design.VM_info);
-        Azure_hover.push("T="+azure_design.T+", K="+azure_design.K+", Z="+azure_design.Z+", L="+azure_design.L +"<br>M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB, M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB<br>"+azure_design.VM_info);
+        GCP_hover.push("T="+gcp_design.T+", K="+gcp_design.K+", Z="+gcp_design.Z+", L="+gcp_design.L +"<br>M_B="+(gcp_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(gcp_design.M_BF/1024/1024/1024).toFixed(2)+" GB,<br>M_FP="+(gcp_design.M_FP/1024/1024/1024).toFixed(2)+" GB, "+gcp_design.VM_info);
+        AWS_hover.push("T="+aws_design.T+", K="+aws_design.K+", Z="+aws_design.Z+", L="+aws_design.L +"<br>M_B="+(aws_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(aws_design.M_BF/1024/1024/1024).toFixed(2)+" GB,<br>M_FP="+(aws_design.M_FP/1024/1024/1024).toFixed(2)+" GB"+aws_design.VM_info);
+        Azure_hover.push("T="+azure_design.T+", K="+azure_design.K+", Z="+azure_design.Z+", L="+azure_design.L +"<br>M_B="+(azure_design.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(azure_design.M_BF/1024/1024/1024).toFixed(2)+" GB,<br>M_FP="+(azure_design.M_FP/1024/1024/1024).toFixed(2)+" GB, "+azure_design.VM_info);
 
 
     }
@@ -482,6 +482,20 @@ function drawContinuums() {
         'AZURE'
     ];
 
+    var legend_array=new Array();
+    for(var i=0; i<3; i++){
+        legend_array[i]={x: [null],
+            y: [null],
+            marker: { size: 7, symbol: 'circle', color: "crimson"},
+            showlegend: true,
+            mode: 'markers',
+            name: "red",
+            type: 'scatter'
+        };
+        legend_array[i].marker.color=colors[i];
+        legend_array[i].name=cloud_array[i];
+    }
+
     var ContinuumArray=buildContinuums();
 
     var best_array=getBestDesignArray(ContinuumArray);
@@ -512,13 +526,16 @@ function drawContinuums() {
     cost_array=new Array();
     info_array=new Array();
     var color_array=new Array();
+    var provider_num_array=[0,0,0];
     for(var i=0;i<best_array.length;i++){
         cost_array.push(best_array[i][0]);
         latency_array.push(best_array[i][1]);
         info_array.push(best_array[i][4]);
         for(var j=0;j<3;j++){
-            if(best_array[i][3]==cloud_array[j])
+            if(best_array[i][3]==cloud_array[j]) {
                 color_array.push(colors[j]);
+                provider_num_array[j]++;
+            }
         }
     }
 
@@ -531,9 +548,9 @@ function drawContinuums() {
         text: info_array,
         line: {color: 'grey', width: 2},
         hovertemplate:
-            "<b>%{y}</b><br><br>",
+            "<b>%{y}</b><extra></extra>",
         type: 'scatter'
-    }];
+    },legend_array[0],legend_array[1],legend_array[2]];
 
     var result_array_ad=ContinuumArray;
     result_array_ad.sort(function (a,b) {return a[1]-b[1];});
@@ -655,6 +672,8 @@ function drawContinuums() {
         }
     }
 
+
+
     var data_ad_ever=[{
         x: latency_array_ad,
         y: cost_array_ad,
@@ -662,10 +681,12 @@ function drawContinuums() {
         mode: 'lines+markers',
         text: info_array_ad,
         line: {color: 'grey', width: 2},
+        showlegend: false,
         hovertemplate:
             "<b>%{y}</b><extra></extra>",
         type: 'scatter'
-    }];
+    },legend_array[0],legend_array[1],legend_array[2]];
+
 
     var layout =
         {
@@ -676,6 +697,10 @@ function drawContinuums() {
             yaxis: {
                 title: 'Latency (day)',
                 autorange: true
+            },
+            legend: {
+                x: 0.66,
+                y: 1
             },
             autosize: true,
             hovermode: "closest",
@@ -701,6 +726,10 @@ function drawContinuums() {
                 title: 'Cost ($/month)',
                 range: [ 0, cost*2+100 ]
             },
+            legend: {
+                x: 0.66,
+                y: 1
+            },
             autosize: true,
             hovermode: "closest",
             width: 750,
@@ -717,8 +746,8 @@ function drawContinuums() {
 
     //Plotly.newPlot('tester4', data, layout);
     //Plotly.newPlot('tester5', data_ad, layout_ad);
-    Plotly.newPlot('tester', data2, layout);
-    Plotly.newPlot('tester3', data3, layout_ad);
+    //Plotly.newPlot('tester', data2, layout);
+    //Plotly.newPlot('tester3', data3, layout_ad);
     layout.width=375;
     layout_ad.width=375;
     Plotly.newPlot('tester6', data_ever, layout);
@@ -742,6 +771,15 @@ function drawContinuums() {
         //console.log(data);
         //hoverInfo.innerHTML = infotext.join('<br/>');
     })
+
+    $("#tester6,#tester7").hover(function(){
+    }, function() {
+        $("#hoverinfo6,#hoverinfo7").text("Out of top "+(best_array.length)*100/(ContinuumArray.length)+"% designs, "+provider_num_array[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array[2]*100/ContinuumArray.length+"% are of AZURE.");
+    });
+
+    $(document).ready(function(){
+        $("#hoverinfo6,#hoverinfo7").text("Out of top "+(best_array.length)*100/(ContinuumArray.length)+"% designs, "+provider_num_array[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array[2]*100/ContinuumArray.length+"% are of AZURE.");
+    });
 }
 
 function re_run(e, input_type) {
