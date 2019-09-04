@@ -482,6 +482,9 @@ function drawContinuums() {
         'AZURE'
     ];
 
+    var provider_num_array=[0,0,0];
+    var provider_num_array_ad=[0,0,0];
+
     var legend_array=new Array();
     for(var i=0; i<3; i++){
         legend_array[i]={x: [null],
@@ -498,7 +501,7 @@ function drawContinuums() {
 
     var ContinuumArray=buildContinuums();
 
-    var best_array=getBestDesignArray(ContinuumArray);
+    var best_array=ContinuumArray;
     var latency_array=new Array();
     var cost_array=new Array();
     var info_array=new Array();
@@ -506,6 +509,13 @@ function drawContinuums() {
         cost_array.push(best_array[i][0]);
         latency_array.push(best_array[i][1]);
         info_array.push(best_array[i][4]);
+        if(i<best_array.length/10){
+            for(var j=0;j<3;j++){
+                if(best_array[i][3]==cloud_array[j]) {
+                    provider_num_array_ad[j]++;
+                }
+            }
+        }
     }
     console.log(info_array);
     var data=[{
@@ -525,16 +535,16 @@ function drawContinuums() {
     latency_array=new Array();
     cost_array=new Array();
     info_array=new Array();
+    var name_array=new Array();
     var color_array=new Array();
-    var provider_num_array=[0,0,0];
     for(var i=0;i<best_array.length;i++){
         cost_array.push(best_array[i][0]);
         latency_array.push(best_array[i][1]);
         info_array.push(best_array[i][4]);
+        name_array.push(best_array[i][3]);
         for(var j=0;j<3;j++){
             if(best_array[i][3]==cloud_array[j]) {
                 color_array.push(colors[j]);
-                provider_num_array[j]++;
             }
         }
     }
@@ -546,9 +556,10 @@ function drawContinuums() {
         mode: 'lines+markers',
         showlegend: false,
         text: info_array,
+        hovertext: name_array,
         line: {color: 'grey', width: 2},
         hovertemplate:
-            "<b>%{y}</b><extra></extra>",
+            "<b>%{hovertext}</b><extra></extra>",
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
 
@@ -561,6 +572,13 @@ function drawContinuums() {
         cost_array_ad.push(result_array_ad[i][0]);
         latency_array_ad.push(result_array_ad[i][1]);
         info_array_ad.push(result_array_ad[i][4]);
+        if(i<result_array_ad.length/10){
+            for(var j=0;j<3;j++){
+                if(result_array_ad[i][3]==cloud_array[j]) {
+                    provider_num_array[j]++;
+                }
+            }
+        }
     }
 
     var data_ad=[{
@@ -661,11 +679,13 @@ function drawContinuums() {
     latency_array_ad=new Array();
     cost_array_ad=new Array();
     info_array_ad=new Array();
+    name_array=new Array();
     var color_array_ad=new Array();
     for(var i=0;i<result_array_ad_ever.length;i++){
         cost_array_ad.push(result_array_ad_ever[i][0]);
         latency_array_ad.push(result_array_ad_ever[i][1]);
         info_array_ad.push(result_array_ad_ever[i][4]);
+        name_array.push(result_array_ad_ever[i][3])
         for(var j=0;j<3;j++){
             if(result_array_ad_ever[i][3]==cloud_array[j])
                 color_array_ad.push(colors[j]);
@@ -682,8 +702,9 @@ function drawContinuums() {
         text: info_array_ad,
         line: {color: 'grey', width: 2},
         showlegend: false,
+        hovertext: name_array,
         hovertemplate:
-            "<b>%{y}</b><extra></extra>",
+            "<b>%{hovertext}</b><extra></extra>",
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
 
@@ -692,7 +713,8 @@ function drawContinuums() {
         {
             xaxis: {
                 title: 'Cost ($/month)',
-                range: [ 0, cost*2+100 ]
+                range: [ 0, 51000 ],
+                dtick: 10000
             },
             yaxis: {
                 title: 'Latency (day)',
@@ -756,11 +778,14 @@ function drawContinuums() {
     var myPlot = document.getElementById('tester6');
     console.log(myPlot);
     myPlot.on('plotly_hover', function(data){
-        console.log(data);
         var hoverInfo = document.getElementById('hoverinfo6');
         hoverInfo.innerHTML=(data.points[0].text);
         //console.log(data);
         //hoverInfo.innerHTML = infotext.join('<br/>');
+        for(var i in ContinuumArray){
+            if(data.points[0].text==ContinuumArray[i][4])
+                drawDiagram(ContinuumArray[i][5]);
+        }
     })
 
     myPlot = document.getElementById('tester7');
@@ -774,11 +799,13 @@ function drawContinuums() {
 
     $("#tester6,#tester7").hover(function(){
     }, function() {
-        $("#hoverinfo6,#hoverinfo7").text("Out of top "+(best_array.length)*100/(ContinuumArray.length)+"% designs, "+provider_num_array[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array[2]*100/ContinuumArray.length+"% are of AZURE.");
+        $("#hoverinfo6").text("Out of top 10% designs, "+provider_num_array[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array[2]*100/ContinuumArray.length+"% are of AZURE.");
+        $("#hoverinfo7").text("Out of top 10% designs, "+provider_num_array_ad[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array_ad[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array_ad[2]*100/ContinuumArray.length+"% are of AZURE.");
     });
 
     $(document).ready(function(){
-        $("#hoverinfo6,#hoverinfo7").text("Out of top "+(best_array.length)*100/(ContinuumArray.length)+"% designs, "+provider_num_array[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array[2]*100/ContinuumArray.length+"% are of AZURE.");
+        $("#hoverinfo6").text("Out of top 10% designs, "+provider_num_array[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array[2]*100/ContinuumArray.length+"% are of AZURE.");
+        $("#hoverinfo7").text("Out of top 10% designs, "+provider_num_array_ad[0]*100/ContinuumArray.length+"% are of AWS, "+provider_num_array_ad[1]*100/ContinuumArray.length+"% are of GCP, and "+provider_num_array_ad[2]*100/ContinuumArray.length+"% are of AZURE.");
     });
 }
 

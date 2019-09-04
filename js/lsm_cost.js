@@ -217,7 +217,7 @@ function navigateDesignSpace() {
                     long_scan_cost = analyzeLongScanCost(B, s);
                     if (scenario == 'A') // Avg-case
                     {
-                        logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                     } else // Worst-case
                     {
                         //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
@@ -653,6 +653,7 @@ function countContinuum(combination, cloud_provider) {
                         Variables.T = T;
                         Variables.L = L;
                         Variables.Z = Z;
+                        Variables.Y = Y;
                         Variables.Buffer = M_B;
                         Variables.M_BF = M_BF;
                         Variables.M_FP = M_FP;
@@ -685,7 +686,7 @@ function buildContinuums(){
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
             var info=("<b>"+VM_libraries[cloud_provider].provider_name+" :</b><br>T="+Variables.T+", K="+Variables.K+", Z="+Variables.Z+", L="+Variables.L +"<br>M_B="+(Variables.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(Variables.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(Variables.M_FP/1024/1024/1024).toFixed(2)+" GB, "+Variables.VM_info);
-            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info];
+            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables];
             result_array.push(result);
         }
     }
@@ -1338,4 +1339,131 @@ function getBestDesignEverArray(result_array) {
         best_y_ever=result_array[best_design_index][1];
     }
     return bestDesignArray;
+}
+
+function drawDiagram(Variables){
+    var result_div=document.getElementById("diagram6")
+    removeAllChildren(result_div);
+    var L=Variables.L;
+    var K=Variables.K;
+    var Z=Variables.Z;
+    var T=Variables.T;
+    var Y=Variables.Y;
+
+    var max_button_size=120;
+    if (screen.width<=1200)
+    {
+        max_button_size=Math.max(screen.width-700,350);
+    }
+    var lsm_button_size_ratio=(max_button_size-70)/L;
+    var cur_length=70;
+    cur_length+=lsm_button_size_ratio;
+    for (var i=0;i<L;i++){
+        var div_new_row=document.createElement("div");
+        div_new_row.setAttribute("class","row");
+
+        var div_lsm_runs=document.createElement("div");
+        div_lsm_runs.setAttribute("style","text-align: center;height:18px");
+        div_new_row.appendChild(div_lsm_runs);
+
+        var levelcss=i+1;
+        if (L<5)
+            levelcss=5-L+1+i;
+        // console.log(i+":"+levelcss)
+        var n;
+        if (i >= L-Y-1) {
+            var maxRuns = Z;
+            //n = Math.min(Z, 7);
+            n=Z;
+            if(L != 1 && i >= L-Y && Y != 0){
+                // draw arrows
+                var div_tmp_row=document.createElement("div");
+                div_tmp_row.setAttribute("class","row");
+                var margin_left = (max_button_size-cur_length+lsm_button_size_ratio)/2;
+                div_tmp_row.setAttribute("style","text-align: center;font-weight:bold;margin-top:-15px;width:100%;z-index:2;position:absolute");
+                var div_tmp_lsm_runs=document.createElement("div");
+                div_tmp_lsm_runs.setAttribute("style","text-align: center;height:25px;width:"+cur_length+"px;margin:auto auto");
+                var tmp = Math.ceil((i-1)/3);
+                var length_percent = 100/(2*tmp+2);
+                for(j = 0; j <= tmp; j++){
+                    var div_col = document.createElement("div");
+                    div_col.setAttribute("class","col-sm-3");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset");
+                    div_col.innerHTML="&#8601;"
+                    div_tmp_lsm_runs.appendChild(div_col);
+                }
+
+
+
+                // var div_col = document.createElement("div");
+                // div_col.setAttribute("class","col-sm-3");
+                // div_col.setAttribute("style","width:"+length_percent+"%;font-size:25px;padding:unset");
+                //
+                // div_col.innerHTML="&#8595;"
+                // div_tmp_lsm_runs.appendChild(div_col);
+
+                for(j = 0; j <= tmp; j++){
+                    var div_col = document.createElement("div");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset");
+                    div_col.setAttribute("class","col-sm-3");
+                    div_col.innerHTML="&#8600;"
+                    div_tmp_lsm_runs.appendChild(div_col);
+                }
+                div_tmp_row.appendChild(div_tmp_lsm_runs);
+                result_div.appendChild(div_tmp_row);
+            }
+
+        } else {
+            maxRuns = K;
+            n=K;
+            //n = Math.min(K, 7);
+        }
+
+        for (var j = 0; j < n; j++) {
+            /*if (maxRuns > 6 && j == 5) {
+                var span =document.createElement("span");
+                var message="This level contains "+maxRuns+" runs";
+                span.setAttribute("data-tooltip", message);
+                span.setAttribute("data-tooltip-position", "left");
+                span.setAttribute("style", "width:19.27px; font-size: 20px; color: #a51c30;");
+                span.id = i + "span";
+                span.textContent=" ...";
+                div_lsm_runs.appendChild(span);
+            } else*/ {
+                var button=document.createElement("button");
+                //button.setAttribute("class","lsm_button lsm_button"+(levelcss));
+
+                button.setAttribute("class","lsm_button");
+
+                var full_flag=true;
+                // when some buttons are not full
+                // if(leveltier < 4){
+                // 		if((j+1)*tmp_previous_entries > filters[i].nokeys || (j == n-1 && previous_entries > filters[i].nokeys)){
+                // 			full_flag = false;
+                // 			button.setAttribute("class","lsm_button_not_solid");
+                // 		}
+                // }else{
+                //
+                // 	if(filters[i].nokeys == 0){
+                // 		full_flag = false;
+                // 		button.setAttribute("class","lsm_button_empty");
+                // 	}else if(((j+1)*tmp_previous_entries > filters[i].nokeys) || (j == n-1 && previous_entries > filters[i].nokeys)){
+                // 		full_flag = false;
+                // 		button.setAttribute("class","lsm_button_not_solid");
+                // 	}
+                // }
+
+                console.log(cur_length);
+                /*if(maxRuns >= 7){
+                    button.setAttribute("style","width: "+(cur_length- 19.27)/6+"px; height: 12px; padding: 1px 0px 2px 0px");
+                }else*/{
+                    button.setAttribute("style","width: "+cur_length/n+"px; height: 12px; background-color: white; padding: 1px 0px 2px 0px");
+                }
+                div_lsm_runs.appendChild(button);
+            }
+        }
+        cur_length+=lsm_button_size_ratio;
+
+        result_div.appendChild(div_new_row);
+    }
 }
