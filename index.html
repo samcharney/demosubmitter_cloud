@@ -555,17 +555,31 @@
                         <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                         </div>
                         <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; bottom: 72px; width: 260px;">
-                        <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative;  width: 230px; height: 72px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:10px; background-color: white; border: 2px solid black;">
+                        <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative;  width: 255px; height: 72px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:10px; background-color: white; border: 2px solid black;">
                         </div>
-                        <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 230px; height: 230px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:10px; background-image: url(./images/box.png); background-size: 230px 230px;">
-                            <div id="diagram6" style="padding-top: 75px">
+                        <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 250px; height: 230px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:10px; background-image: url(./images/box2.png); background-size: 250px 230px;">
+                            <div id="diagram6" style="padding-top: 88px">
                             </div>
                         </div>
                         </div>
-                        <div id="tester7" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
+                        <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 260px; margin-left: 230px">
+                            <div id="cost_result" class="col-lg-1 col-md-1 col-sm-1" style="position: relative;  width: 255px; height: 230px; border-radius: 8px; font-size: 10px; margin-bottom:10px; background-color: white; border: 2px solid black;">
+                            </div>
                         </div>
-                        <div id="hoverinfo7" class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 230px; height: 72px; border-radius: 8px; font-size: 10px; margin-left: 30px; margin-bottom:5px; background-color: white; border: 2px solid black;">
+                    </div>
+
+                    <div class="row">
+                        <div>
+                            <div class="input-group">
+                                <select id="chart_style" name="" style="width:200px;height: 30px ; margin:0px 80px;text-align: center" class="input-group-addon">
+                                    <option value="1">Cost vs Latency</option>
+                                    <option value="2">Latency vs Cost</option>
+                                    <option value="3">Cost vs Memory</option>
+                                    <option value="4">Memory vs Cost</option>
+                                </select>
+                            </div>
                         </div>
+
                     </div>
 
 
@@ -838,6 +852,7 @@ Self-Designing Key-Value Stores that Know and Learn</a> <br />
     <script src="js/classie.js"></script>
     <script src="js/cbpAnimatedHeader.js"></script>
     <script src="js/lambertw.js"></script>
+    <script src="js/draw_chart.js"></script>
     <script src="js/plotly-latest.min.js"></script>
 
     <!-- Contact Form JavaScript -->

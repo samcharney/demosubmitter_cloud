@@ -26,7 +26,7 @@ var RAM_BLOCK_COST;
 var IOPS;
 var network_bandwidth;
 
-var machines = 10;
+var machines = 18;
 var workload_type = 0;
 
 function Variables()
@@ -54,6 +54,7 @@ function Variables()
     var X; //updated entries in LL-Bush
     var Y;
 
+    var memory_footprint;
     var Buffer;
     var M_F_HI;
     var M_F; // = ((B*E + (M - M_F)) > 0 ? B*E + (M - M_F) : (B*E)); // byte
@@ -665,6 +666,7 @@ function countContinuum(combination, cloud_provider) {
                         Variables.total_cost = total_cost;
                         Variables.latency = total_latency;
                         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
+                        Variables.memory_footprint=max_RAM_purchased*mem_sum;
                     }
                 }
             }
@@ -685,8 +687,8 @@ function buildContinuums(){
         for (var i = 0; i < VMCombinations.length; i++) {
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
-            var info=("<b>"+VM_libraries[cloud_provider].provider_name+" :</b><br>T="+Variables.T+", K="+Variables.K+", Z="+Variables.Z+", L="+Variables.L +"<br>M_B="+(Variables.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(Variables.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(Variables.M_FP/1024/1024/1024).toFixed(2)+" GB, "+Variables.VM_info);
-            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables];
+            var info=("<b>"+VM_libraries[cloud_provider].provider_name+" :</b><br>T="+Variables.T+", K="+Variables.K+", Z="+Variables.Z+", L="+Variables.L +", Latency="+Variables.latency.toFixed(5)+"<br>M_B="+(Variables.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(Variables.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(Variables.M_FP/1024/1024/1024).toFixed(2)+" GB, "+Variables.VM_info);
+            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
             result_array.push(result);
         }
     }

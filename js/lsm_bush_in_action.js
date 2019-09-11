@@ -988,7 +988,7 @@ function init(){
 	document.getElementById("AWS").style.fontWeight='bold';
 	document.getElementById("AWS").style.fontSize='16px';
 
-	document.getElementById("cost").value = 50000;
+	document.getElementById("cost").value = 40000;
 
 	document.getElementById("query_count").value=100000000;
 
