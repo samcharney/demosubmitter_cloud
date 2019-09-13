@@ -690,7 +690,7 @@ function buildContinuums(cloud_mode){
             for (var i = 0; i < VMCombinations.length; i++) {
                 var VMCombination = VMCombinations[i];
                 var Variables = countContinuum(VMCombination, cloud_provider);
-                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + Variables.latency.toFixed(5) + " days<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
+                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + fixTime(Variables.latency) + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
                 var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
                 result_array.push(result);
             }
@@ -701,7 +701,7 @@ function buildContinuums(cloud_mode){
         for (var i = 0; i < VMCombinations.length; i++) {
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
-            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + Variables.latency.toFixed(5) + " days<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
+            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + fixTime(Variables.latency) + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
             var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
             result_array.push(result);
         }
@@ -713,7 +713,21 @@ function buildContinuums(cloud_mode){
     return result_array;
 }
 
-
+function fixTime(time){
+    if(time<0.1) {
+        time *= 24;
+        if(time<0.1){
+            time*=60;
+            if(time<0.1){
+                time*=60
+                return  time.toFixed(3)+" sec"
+            }
+            return time.toFixed(3)+" min"
+        }
+        return time.toFixed(3)+" hour"
+    }
+    return time.toFixed(3)+" day"
+}
 function getCouponCollector( universe, number_of_entries) {
     if (number_of_entries == 1) return 1;
     if (number_of_entries > universe) return -1;

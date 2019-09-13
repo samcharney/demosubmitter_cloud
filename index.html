@@ -98,7 +98,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="intro-text">
-                        <span class="name">X, A Computation And Analytical Engine</span>
+                        <span class="name">X</span>
                     </div>
                 </div>
             </div>
@@ -478,22 +478,31 @@
                 </div>
 
                 <div class="row" style="width: 100%; margin-bottom: 100px">
-                    <button onclick="displayCharts()" style="border-radius: 2px; position:relative; left:620px; text-align: center" >
+                    <button class="input-group" onclick="displayCharts()" style="padding: 10px 15px;font-size: 13px;font-weight: normal;line-height: 0.5;color: #2c3e50;text-align: center;background-color: #ecf0f1;border: 1px solid #dce4ec;height: 30px;border-radius: 4px; position:relative; left:620px;" >
                         Help Me Out!
                     </button>
                 </div>
                 <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none">
                     <div class="row">
-                        <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 260px; margin-right: 230px ;border-radius: 8px;  padding-left:0px; background-color: white; border: 1px solid black;">
-                            <div id="cost_result_p1" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px; border-radius: 8px; font-size: 10px;  ">
+                        <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 550px; margin-right: 30px ;">
+                            <div id="cost_result_p1" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 550px; border-radius: 8px; font-size: 16px; text-align: center;padding-right: 40px">
                             </div>
-                            <div id="cost_result_diagram1" style="display:inline-block; width: 230px; height:75px; ">
+                            <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px; padding:0px 0px 0px 0px; position: relative; border-radius: 8px; background-color: white; border: 1px solid black; margin-right: 5px">
+                                <div id="cost_result_p2" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px;  border-radius: 8px; font-size: 10px; ">
+                                </div>
+
+                                <div id="cost_result_diagram1" style="display:inline-block; width: 230px; height:75px; ">
+                                </div>
+                                <div id="cost_result_p3" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px;  border-radius: 8px; font-size: 10px; ">
+                                </div>
                             </div>
-                            <div id="cost_result_p2" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px;  border-radius: 8px; font-size: 10px; ">
-                            </div>
-                            <div id="cost_result_diagram2" style="display:inline-block; width: 230px; height:75px; ">
-                            </div>
-                            <div id="cost_result_p3" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px;  border-radius: 8px; font-size: 10px;  b">
+                            <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px; padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 1px solid black;">
+                                <div id="cost_result_p4" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px;  border-radius: 8px; font-size: 10px; ">
+                                </div>
+                                <div id="cost_result_diagram2" style="display:inline-block; width: 230px; height:75px; ">
+                                </div>
+                                <div id="cost_result_p5" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px;  border-radius: 8px; font-size: 10px;  b">
+                                </div>
                             </div>
                         </div>
                         <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">

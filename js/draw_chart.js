@@ -847,17 +847,19 @@ function drawContinuums() {
     else{
 
         if(best_array[best_array.length-1][0]<cost) {
-            cost_result_text[0]=("There is one option with cost of "+cost+":<br>");
+            cost_result_text[0]=("Hey! We found you 1 options.<br><br>");
             drawDiagram(ContinuumArray[best_array.length-1][5], 'cost_result_diagram1');
-            cost_result_text[1] = best_array[best_array.length - 1][4];
+            cost_result_text[2] = best_array[best_array.length - 1][4];
         }else {
             for (var i = 1; i < best_array.length; i++) {
                 if (best_array[i][0] > cost) {
                     drawDiagram(ContinuumArray[i-1][5], 'cost_result_diagram1');
                     drawDiagram(ContinuumArray[i][5], 'cost_result_diagram2');
-                    cost_result_text[0]=("There are two option with cost of "+cost+":<br>"+"<b>Option1:</b>");
-                    cost_result_text[1] = best_array[i - 1][4] + "<br><br>"+"<b>Option2:</b>";
-                    cost_result_text[2] = best_array[i][4];
+                    cost_result_text[0]=("Hey! We found you 2 options.<br><br>");
+                    cost_result_text[1]="<b>Option1:</b>"
+                    cost_result_text[2] = best_array[i - 1][4];
+                    cost_result_text[3] = "<b>Option2:</b>";
+                    cost_result_text[4] = best_array[i][4];
                     break;
                 }
             }
@@ -867,6 +869,8 @@ function drawContinuums() {
     document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
     document.getElementById("cost_result_p2").innerHTML=cost_result_text[1];
     document.getElementById("cost_result_p3").innerHTML=cost_result_text[2];
+    document.getElementById("cost_result_p4").innerHTML=cost_result_text[3];
+    document.getElementById("cost_result_p5").innerHTML=cost_result_text[4];
 
     $("#chart_style").change(function(){
         var chart;
