@@ -103,9 +103,9 @@ header {
 
 header, hr.star-light:after {
     color: #000;
-    /*background: #222;*/ /*#85bcb5*/
+    background: white; /*#85bcb5*/
     /*background: url('../images/bg.jpg') repeat */ /*#85bcb5*/ /*;*/
-    background: url('../images/background.jpg') no-repeat center center;
+    /*background: url('../images/background.jpg') no-repeat center center;*/
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;

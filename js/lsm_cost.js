@@ -12,12 +12,11 @@ var workload_exec_time = 0;
 var total_budget;
 var max_RAM_purchased; // in GB
 var no_of_RAM_blocks;
-
-var U = 1000000000000;
+var U = 10000000000;
 // static double U = 300000000;
-var p_put = 0.1; // fraction of the time that you call get on elements in U_1
-var U_1 = 1000000;
-var U_2 = 1000000000000;
+var p_put = 0.0001; // fraction of the time that you call get on elements in U_1
+var U_1 = 10000;
+var U_2 = 100000000000;
 // NOTE: it must always be true that (p_put / U_1) > (1 / U_2)
 var p_get = 0.7;
 
@@ -620,7 +619,11 @@ function countContinuum(combination, cloud_provider) {
                     var long_scan_cost;
 
                     if (write_percentage != 0) {
-                        update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                        if(scenario=='A'){
+                            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 1);
+                        }else {
+                            update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                        }
                     }
                     if (read_percentage != 0) {
                         if (scenario == 'A') // Avg-case
@@ -677,17 +680,28 @@ function countContinuum(combination, cloud_provider) {
     return Variables;
 }
 
-function buildContinuums(){
+function buildContinuums(cloud_mode){
     var result_array=new Array();
 
     var VM_libraries=initializeVMLibraries();
-
-    for (var cloud_provider=0;cloud_provider<3;cloud_provider++) {
+    if(cloud_mode==0||cloud_mode==NaN) {
+        for (var cloud_provider = 0; cloud_provider < 3; cloud_provider++) {
+            var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
+            for (var i = 0; i < VMCombinations.length; i++) {
+                var VMCombination = VMCombinations[i];
+                var Variables = countContinuum(VMCombination, cloud_provider);
+                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + Variables.latency.toFixed(5) + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
+                var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
+                result_array.push(result);
+            }
+        }
+    }else{
+        cloud_provider=cloud_mode-1;
         var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
         for (var i = 0; i < VMCombinations.length; i++) {
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
-            var info=("<b>"+VM_libraries[cloud_provider].provider_name+" :</b><br>T="+Variables.T+", K="+Variables.K+", Z="+Variables.Z+", L="+Variables.L +", Latency="+Variables.latency.toFixed(5)+"<br>M_B="+(Variables.Buffer/1024/1024/1024).toFixed(2)+" GB, M_BF="+(Variables.M_BF/1024/1024/1024).toFixed(2)+" GB<br>M_FP="+(Variables.M_FP/1024/1024/1024).toFixed(2)+" GB, "+Variables.VM_info);
+            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + Variables.latency.toFixed(5) + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
             var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
             result_array.push(result);
         }
@@ -700,9 +714,92 @@ function buildContinuums(){
 }
 
 
+function getCouponCollector( universe, number_of_entries) {
+    if (number_of_entries == 1) return 1;
+    if (number_of_entries > universe) return -1;
+    var ratio = ( universe) /  (universe - number_of_entries + 1);
+    // printf("ratio:%f, universe:%f, number_of_entries:%f\n", ratio, universe, number_of_entries);
+    return U * Math.log(ratio)/Math.log(10);
+}
 
+function getQ( type, level, EB, T, K, worst_case) {
+    // uniform
+    var size_run = EB;
+    var worst_case_estimate = EB;
+    if (level != 0) {
+        size_run =  (EB * Math.pow(T, level))/K;
+        worst_case_estimate = size_run * K;
+    }
+    if (worst_case) return worst_case_estimate;
 
+    var avg_case_bound = 0;
+    if (type == 0) {
+        avg_case_bound = getCouponCollector(U, size_run);
+        if (level != 0) avg_case_bound *= K;
+    }
+    // skew
+    if (type == 1) {
+        var bound_1 = DBL_MIN;
+        var bound_2 = getCouponCollector(U_2, size_run);
+        // bound 1: some special key slots are not filled up
+        if (level != 0) bound_2 *= K;
 
+        // bound 2: all special key slots are filled up
+        if (size_run > U_1) {
+            bound_1 = getCouponCollector(U_2, size_run - U_1) / (1 - p_put);
+            if (level != 0) bound_1 *= K;
+        }
+
+        // printf("bound 1: %f, bound 2:%f\n", bound_1, bound_2);
+        avg_case_bound = (bound_2 >= bound_1) ? bound_2 : bound_1;
+    }
+    console.log(worst_case_estimate,avg_case_bound);
+    return (avg_case_bound <= worst_case_estimate) ? worst_case_estimate : avg_case_bound;
+}
+
+function aggregateAvgCaseUpdate( B, E, type, T, K, Z, L, Y, M_B, worst_case) {
+    var EB = M_B / (E);
+    var term1 = 0.0, term2 = 0.0, term3= 0.0, term3_2 = 0.0, term3_mult = 0.0;
+
+    for(var i = 1;i<=L-Y-1;i++)
+    {
+        var numerator = ( (EB * Math.pow(T, i)))/K;
+        var numerator_2 = EB * Math.pow(T, i - 1);
+        var Q  = getQ(type, i - 1, EB, T, K, worst_case);
+        if (Q > 0) {
+            term1 += (numerator + numerator_2) / Q;
+        }
+    }
+    term1 /=  B;
+
+    term2 = EB * Math.pow(T, L - Y - 1) + EB * Math.pow(T, L - Y);
+    term2 /=  B;
+    var Q = getQ(type, L - Y - 1, EB, T, K, worst_case);
+    if (Q < 0) {
+        term2 = 0;
+    }
+    else {
+        term2 /= Q;
+        for(i = L - Y + 1; i <= L ;i++)
+        {
+            var num_blocks = ( (EB * Math.pow(T, i)))/ ( B);
+            term3_2 = EB * Math.pow(T, L-Y-1) >= num_blocks ? num_blocks : EB * Math.pow(T, L-Y-1);
+            term3 += term3_2;
+        }
+        term3 /= Q;
+        term3_mult = 1.0;
+        if (T < B) {
+            term3_mult = T <= B-T ? T : B - T;
+            term3_mult += 1;
+            term3_mult /= ( (B - T));
+        }
+        term3 *= term3_mult;
+    }
+
+    // printf("term1:%f, term2:%f, term3:%f\n", term1, term2, term3);
+    // printf("T:%d, K:%d, Z:%d, L:%d, Y:%d, MB:%f, EB:%f, N:%ld\n", T, K, Z, L, Y, M_B, EB, N);
+    return term1 + term2 + term3;
+}
 
 function analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO) {
     var update_cost;
@@ -1343,8 +1440,8 @@ function getBestDesignEverArray(result_array) {
     return bestDesignArray;
 }
 
-function drawDiagram(Variables){
-    var result_div=document.getElementById("diagram6")
+function drawDiagram(Variables, id){
+    var result_div=document.getElementById(id)
     removeAllChildren(result_div);
     var L=Variables.L;
     var K=Variables.K;

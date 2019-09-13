@@ -518,7 +518,8 @@ function initChart(ContinuumArray, x, y, x_axis_title, y_axis_title, mode){
                 autorange: true
             },
             legend: {
-                x: 0.8,
+                "orientation": "h",
+                x: 0.1,
                 y: 1
             },
             autosize: true,
@@ -558,10 +559,13 @@ function drawContinuums() {
         legend_array[i].marker.color=colors[i];
         legend_array[i].name=cloud_array[i];
     }
+   document.getElementById("chart_style").value="1";
 
     var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
 
-    var ContinuumArray=buildContinuums();
+    var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
+
+    var ContinuumArray=buildContinuums(cloud_provider);
 
     var best_array=ContinuumArray;
     var latency_array=new Array();
@@ -783,7 +787,8 @@ function drawContinuums() {
                 autorange: true
             },
             legend: {
-                x: 0.66,
+                "orientation": "h",
+                x: 0.1,
                 y: 1
             },
             autosize: true,
@@ -811,6 +816,7 @@ function drawContinuums() {
                 range: [ 0, cost*2+100 ]
             },
             legend: {
+                "orientation": "h",
                 x: 0.66,
                 y: 1
             },
@@ -828,30 +834,39 @@ function drawContinuums() {
             }, title: ''
         };
     //Plotly.newPlot('tester5', data_ad, layout_ad);
-    Plotly.newPlot('tester', data2, layout);
-    Plotly.newPlot('tester3', data3, layout_ad);
+    //Plotly.newPlot('tester', data2, layout);
+   // Plotly.newPlot('tester3', data3, layout_ad);
     layout.width=375;
     layout_ad.width=375;
     Plotly.newPlot('tester6', data_ever, layout);
 
     console.log(best_array);
-    var cost_result_text;
+    var cost_result_text=new Array();
     if(cost<best_array[0][0])
-        cost_result_text="Cost is too little";
+        cost_result_text[0]="Cost is too little";
     else{
-        cost_result_text=("Best design with cost of "+cost+" is:<br>");
-        if(best_array[best_array.length-1][0]<cost)
-            cost_result_text=cost_result_text+best_array[best_array.length-1][4]
-        for(var i=1;i<best_array.length;i++){
-            if(best_array[i][0]>cost){
-                cost_result_text=cost_result_text+best_array[i-1][4]+"<br>";
-                cost_result_text=cost_result_text+best_array[i][4];
-                break;
+
+        if(best_array[best_array.length-1][0]<cost) {
+            cost_result_text[0]=("There is one option with cost of "+cost+":<br>");
+            drawDiagram(ContinuumArray[best_array.length-1][5], 'cost_result_diagram1');
+            cost_result_text[1] = best_array[best_array.length - 1][4];
+        }else {
+            for (var i = 1; i < best_array.length; i++) {
+                if (best_array[i][0] > cost) {
+                    drawDiagram(ContinuumArray[i-1][5], 'cost_result_diagram1');
+                    drawDiagram(ContinuumArray[i][5], 'cost_result_diagram2');
+                    cost_result_text[0]=("There are two option with cost of "+cost+":<br>"+"<b>Option1:</b>");
+                    cost_result_text[1] = best_array[i - 1][4] + "<br><br>"+"<b>Option2:</b>";
+                    cost_result_text[2] = best_array[i][4];
+                    break;
+                }
             }
         }
     }
 
-    document.getElementById("cost_result").innerHTML=cost_result_text;
+    document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
+    document.getElementById("cost_result_p2").innerHTML=cost_result_text[1];
+    document.getElementById("cost_result_p3").innerHTML=cost_result_text[2];
 
     $("#chart_style").change(function(){
         var chart;
@@ -870,11 +885,6 @@ function drawContinuums() {
             provider_num_array=chart.provider_num_array;
             Plotly.newPlot('tester6', chart.data, chart.layout);
         }
-        if(this.value=='4'){
-            chart=initChart(ContinuumArray,6,0,"Memory (GB)","Cost ($/month)", 1);
-            provider_num_array=chart.provider_num_array;
-            Plotly.newPlot('tester6', chart.data, chart.layout);
-        }
 
         var myPlot = document.getElementById('tester6');
         console.log(myPlot);
@@ -885,7 +895,7 @@ function drawContinuums() {
             //hoverInfo.innerHTML = infotext.join('<br/>');
             for(var i in ContinuumArray){
                 if(data.points[0].text==ContinuumArray[i][4])
-                    drawDiagram(ContinuumArray[i][5]);
+                    drawDiagram(ContinuumArray[i][5], 'diagram6');
             }
         })
 

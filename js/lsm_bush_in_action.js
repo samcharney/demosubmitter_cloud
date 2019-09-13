@@ -3129,3 +3129,7 @@ function hideCloudProvider(){
 	document.getElementById('cloud-provider-trigger').onclick=function(){showCloudProvider();}
 	document.getElementById("cloud-provider-setting").style.display='none';
 }
+
+function displayCharts() {
+	document.getElementById("charts").style.display='';
+}
