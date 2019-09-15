@@ -675,7 +675,7 @@ function drawContinuums() {
             cloud_provider=2;
 
         graph_array[cloud_provider][0].push(result_array[i][0]);
-        graph_array[cloud_provider][1].push(result_array[i][6]);
+        graph_array[cloud_provider][1].push(result_array[i][1]);
         graph_array[cloud_provider][2].push(result_array[i][4]);
     }
 
@@ -834,8 +834,8 @@ function drawContinuums() {
             }, title: ''
         };
     //Plotly.newPlot('tester5', data_ad, layout_ad);
-    //Plotly.newPlot('tester', data2, layout);
-   // Plotly.newPlot('tester3', data3, layout_ad);
+    Plotly.newPlot('tester', data2, layout);
+    Plotly.newPlot('tester3', data3, layout_ad);
     layout.width=375;
     layout_ad.width=375;
     Plotly.newPlot('tester6', data_ever, layout);
@@ -847,7 +847,7 @@ function drawContinuums() {
     else{
 
         if(best_array[best_array.length-1][0]<cost) {
-            cost_result_text[0]=("Hey! We found you 1 options.<br><br>");
+            cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
             drawDiagram(ContinuumArray[best_array.length-1][5], 'cost_result_diagram1');
             cost_result_text[2] = best_array[best_array.length - 1][4];
         }else {
@@ -856,9 +856,9 @@ function drawContinuums() {
                     drawDiagram(ContinuumArray[i-1][5], 'cost_result_diagram1');
                     drawDiagram(ContinuumArray[i][5], 'cost_result_diagram2');
                     cost_result_text[0]=("Hey! We found you 2 options.<br><br>");
-                    cost_result_text[1]="<b>Option1:</b>"
+                    cost_result_text[1]="<b>Option 1: Save money!</b>"
                     cost_result_text[2] = best_array[i - 1][4];
-                    cost_result_text[3] = "<b>Option2:</b>";
+                    cost_result_text[3] = "<b>Option 2: Save time!</b>";
                     cost_result_text[4] = best_array[i][4];
                     break;
                 }
@@ -920,7 +920,7 @@ function drawContinuums() {
         //hoverInfo.innerHTML = infotext.join('<br/>');
         for(var i in ContinuumArray){
             if(data.points[0].text==ContinuumArray[i][4])
-                drawDiagram(ContinuumArray[i][5]);
+                drawDiagram(ContinuumArray[i][5],"diagram6");
         }
     })
 

@@ -3133,3 +3133,7 @@ function hideCloudProvider(){
 function displayCharts() {
 	document.getElementById("charts").style.display='';
 }
+
+function displayContinuums() {
+	document.getElementById("continuums_chart").style.display='';
+}

@@ -565,7 +565,7 @@ function countContinuum(combination, cloud_provider) {
     }
 
     N=Variables.N/mem_sum;
-    for (var T = 2; T <= 15; T++) {
+    for (var T = 2; T <= 6; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
                 for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
@@ -881,6 +881,7 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
         term3 = term3 + (p_i * term3_2);
     }
     //console.log(c,q);
+    console.log(T,K,Z,term1,term2,term3);
     return term1 + term2 + term3;
 }
 
@@ -897,14 +898,16 @@ function getcq(type, T, K, Z, L, Y, M_B, E)
     {
         q = q * Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z);
     }
-    c = (1 - (q))*(1 - getAlpha_0(type, M_B, E));
-    q = 1 - (q)*(1 - getAlpha_0(type, M_B, E));
+    c = (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E)) * (1 - (q))*(1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
+    q = 1 - (q)*(1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
     return [c,q];
 }
 
 function getC_ri(type, r,  i, M_B, T, K, Z, L, Y, E)
 {
-    var term1 = 1 - getAlpha_0(type, M_B, E);
+    var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+
+    term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
     var term2 = 1.0;
     for(var h=1;h<i;h++)
     {
@@ -927,7 +930,8 @@ function getC_ri(type, r,  i, M_B, T, K, Z, L, Y, E)
 
 function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E)
 {
-    var term1 = 1.0 - getAlpha_0(type, M_B, E);
+    var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+    term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
     var term2 = 1.0;
     for(var h=1;h<=L-Y-1;h++)
     {
@@ -945,6 +949,7 @@ function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E)
     }
     term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z-r);
     term4 = 1 - term4;
+    console.log(term1,term2,term3,term4);
     return term1*term2*term3*term4;
 }
 
@@ -972,49 +977,60 @@ function getAlpha_0( type, M_B, E)
     return -1;
 }
 
-function getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)
+function getAlpha_i(type, M_B, T, K, Z, L, Y, i, E, M_BC)
 {
+    if(M_BC==undefined)
+        M_BC=0;
+    // not a valid input
+    if (i < -1) return -1;
+
+    // set up run size
+    var size_run = 0;
+    var p_skew = p_put;
+    // block cache
+    if (i == -1) {
+        size_run = M_BC / E;
+        p_skew = p_get;
+    }
+    // buffer
+    if (i == 0) {
+        size_run = M_B / E;
+    }
+    // hot levels except last
+    if (i <= L - Y - 1 && i > 0) {
+        size_run = M_B*Math.pow(T,i)/(K*E);
+    }
+    // last level
+    if (i == L) {
+        size_run = M_B*Math.pow(T,i)/(Z*E);
+    }
+    // cold levels
+    if (i > 0 && i < L && i > L - Y -1) {
+        size_run = M_B*Math.pow(T,i)/(E);
+        //size_run *= (B - T) / B;
+    }
+
+    // get alpha
     if (type == 0) {
-        var val;
-        if(i >= 1 && i <= L-Y-1)
-        {
-            val = M_B*Math.pow(T,i)/(K*E*U);
-        }
-        else
-        {
-            val = M_B*Math.pow(T,i)/(Z*E*U);
-        }
-        if(val < 1)
+        var val = size_run / U;
+        if(val < 1){
             return val;
+        }
         return 1;
     }
     if (type == 1) {
-        var val = 1 - (p_put / U_1);
-        if(i >= 1 && i <= L-Y-1)
-        {
-            val = Math.pow(val, (M_B*Math.pow(T,i)/(K*E)));
-        }
-        else
-        {
-            val = Math.pow(val, (M_B*Math.pow(T,i)/(Z*E)));
-        }
-        val = 1 - val;
+        var val = 1 - (p_skew / U_1);
+        val = 1 - Math.pow(val, size_run);
         return val;
     }
     if (type == 2) {
-        var val = (1-p_put) * M_B/(E*U_2);
-        if(i >= 1 && i <= L-Y-1)
-        {
-            val = (1-p_put) * M_B*Math.pow(T,i)/(K*E*U_2);
-        }
-        else
-        {
-            val = (1-p_put) * M_B*Math.pow(T,i)/(Z*E*U_2);
-        }
-        if(val < 1)
+        var val = (1 - p_skew) * size_run / U_2;
+        if(val < 1){
             return val;
+        }
         return 1;
     }
+
     return -1;
 }
 
