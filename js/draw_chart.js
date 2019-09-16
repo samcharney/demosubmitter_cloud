@@ -857,9 +857,9 @@ function drawContinuums() {
                     drawDiagram(ContinuumArray[i][5], 'cost_result_diagram2');
                     cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
                     cost_result_text[1]="<b>Option 1: Save money!</b>"
-                    cost_result_text[2] = best_array[i - 1][4];
+                    cost_result_text[2] = best_array[i - 1][5];
                     cost_result_text[3] = "<b>Option 2: Save time!</b>";
-                    cost_result_text[4] = best_array[i][4];
+                    cost_result_text[4] = best_array[i][5];
                     break;
                 }
             }
@@ -868,9 +868,9 @@ function drawContinuums() {
 
     document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
     document.getElementById("cost_result_p2").innerHTML=cost_result_text[1];
-    document.getElementById("cost_result_p3").innerHTML=cost_result_text[2];
+    outputParameters(cost_result_text[2],"cost_result_p3");
     document.getElementById("cost_result_p4").innerHTML=cost_result_text[3];
-    document.getElementById("cost_result_p5").innerHTML=cost_result_text[4];
+    outputParameters(cost_result_text[4],"cost_result_p5");
 
     $("#chart_style").change(function(){
         var chart;

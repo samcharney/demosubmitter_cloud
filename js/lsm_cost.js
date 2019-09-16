@@ -74,6 +74,8 @@ function Variables()
     var latency;
 
     var VM_info;
+    var VM_instance;
+    var VM_instance_num;
 
 }
 
@@ -503,6 +505,8 @@ function countThroughput(cost, cloud_provider) {
                             Variables.total_cost = total_cost;
                             Variables.latency = total_latency;
                             Variables.VM_info= (mem_sum+" X "+VM_libraries[cloud_provider].name_of_instance[VM_index]);
+                            Variables.VM_instance= VM_libraries[cloud_provider].name_of_instance[VM_index];
+                            Variables.VM_instance_num=mem_sum;
                         }
                     }
                 }
@@ -561,6 +565,8 @@ function countContinuum(combination, cloud_provider) {
             max_RAM_purchased=VM_libraries[cloud_provider].mem_of_instance[i];
             monthly_mem_cost=mem_sum*VM_libraries[cloud_provider].rate_of_instance[i]*24*30;
             Variables.VM_info= (mem_sum+" X "+VM_libraries[cloud_provider].name_of_instance[i]);
+            Variables.VM_instance= VM_libraries[cloud_provider].name_of_instance[i];
+            Variables.VM_instance_num=mem_sum;
         }
     }
 
@@ -767,7 +773,7 @@ function getQ( type, level, EB, T, K, worst_case) {
         // printf("bound 1: %f, bound 2:%f\n", bound_1, bound_2);
         avg_case_bound = (bound_2 >= bound_1) ? bound_2 : bound_1;
     }
-    console.log(worst_case_estimate,avg_case_bound);
+    //console.log(worst_case_estimate,avg_case_bound);
     return (avg_case_bound <= worst_case_estimate) ? worst_case_estimate : avg_case_bound;
 }
 
@@ -881,7 +887,7 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
         term3 = term3 + (p_i * term3_2);
     }
     //console.log(c,q);
-    console.log(T,K,Z,term1,term2,term3);
+    //console.log(T,K,Z,term1,term2,term3);
     return term1 + term2 + term3;
 }
 
@@ -949,7 +955,7 @@ function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E)
     }
     term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z-r);
     term4 = 1 - term4;
-    console.log(term1,term2,term3,term4);
+    //console.log(term1,term2,term3,term4);
     return term1*term2*term3*term4;
 }
 
@@ -1595,4 +1601,34 @@ function drawDiagram(Variables, id){
 
         result_div.appendChild(div_new_row);
     }
+}
+
+function outputParameters(Variables, id) {
+    var result_div = document.getElementById(id)
+    removeAllChildren(result_div);
+    outputParameter(result_div,(Variables.latency*24*60).toFixed(2),"Latency (min)");
+    outputParameter(result_div,Variables.T,"Growth Factor (T)");
+    outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
+    outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
+    outputParameter(result_div,Variables.L,"Levels (L)");
+    outputParameter(result_div,(Variables.M_BF/1024/1024/1024).toFixed(2),"M<sub>bf</sub> (GB)");
+    outputParameter(result_div,(Variables.M_FP/1024/1024/1024).toFixed(2),"M<sub>fp</sub> (GB)");
+    outputParameter(result_div,(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer size (GB)");
+    outputParameter(result_div,Variables.VM_instance_num,Variables.VM_instance);
+}
+
+function outputParameter(result_div,value,text){
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("class", "input-group");
+    var span_tmp = document.createElement("span");
+    span_tmp.setAttribute("class","input-group-addon");
+    span_tmp.innerHTML=text;
+    div_tmp.appendChild(span_tmp);
+    var input_tmp = document.createElement("input");
+    input_tmp.setAttribute("class","form-control")
+    input_tmp.setAttribute("readonly","true");
+    input_tmp.setAttribute("style","text-align:right")
+    input_tmp.value=value;
+    div_tmp.appendChild(input_tmp);
+    result_div.appendChild(div_tmp);
 }
