@@ -434,7 +434,7 @@ function drawChart2() {
     //});
 }
 
-function initChart(ContinuumArray, x, y, x_axis_title, y_axis_title, mode){
+function initChart(ContinuumArray, x, y, x_axis_title, y_axis_title, mode, cost){
     var chart=new Chart();
     var result_array=ContinuumArray;
     result_array.sort(function (a,b) {return a[x]-b[x];});
@@ -774,17 +774,55 @@ function drawContinuums() {
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
 
+    console.log(best_array);
+    var cost_result_text=new Array();
+    var start_point;
+    var end_point;
+    if(cost<best_array[0][0]) {
+        cost_result_text[0] = "Cost is too little";
+        start_point=0;
+        end_point=Math.ceil(best_array/5);
+    }
+    else{
 
+        if(best_array[best_array.length-1][0]<cost) {
+            cost_result_text[0]=("We found 1 options for you at $"+cost+".<br><br>");
+            drawDiagram(ContinuumArray[best_array.length-1][5], 'cost_result_diagram1');
+            cost_result_text[2] = best_array[best_array.length - 1][4];
+            start_point=Math.floor(best_array.length*4/5);
+            end_point=best_array.length-1;
+        }else {
+            for (var i = 1; i < best_array.length; i++) {
+                if (best_array[i][0] > cost) {
+                    drawDiagram(ContinuumArray[i-1][5], 'cost_result_diagram1');
+                    drawDiagram(ContinuumArray[i][5], 'cost_result_diagram2');
+                    cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
+                    cost_result_text[1]="<b>Option 1: Save money!</b>"
+                    cost_result_text[2] = best_array[i - 1][5];
+                    cost_result_text[3] = "<b>Option 2: Save time!</b>";
+                    cost_result_text[4] = best_array[i][5];
+                    start_point=Math.floor(i-best_array.length/5);
+                    if(start_point<0)
+                        start_point=0;
+                    end_point=Math.ceil(i+best_array.length/5);
+                    if(end_point>best_array.length-1)
+                        end_point=best_array.length-1;
+                    break;
+                }
+            }
+        }
+    }
+    console.log(start_point);
     var layout =
         {
             xaxis: {
                 title: 'Cost ($/month)',
-                range: [ 0, 51000 ],
+                range: [ best_array[start_point][0], best_array[end_point][0] ],
                 dtick: 10000
             },
             yaxis: {
                 title: 'Latency (day)',
-                autorange: true
+                range: [ best_array[end_point][1], best_array[start_point][1] ]
             },
             legend: {
                 "orientation": "h",
@@ -840,31 +878,7 @@ function drawContinuums() {
     layout_ad.width=375;
     Plotly.newPlot('tester6', data_ever, layout);
 
-    console.log(best_array);
-    var cost_result_text=new Array();
-    if(cost<best_array[0][0])
-        cost_result_text[0]="Cost is too little";
-    else{
 
-        if(best_array[best_array.length-1][0]<cost) {
-            cost_result_text[0]=("We found 1 options for you at $"+cost+".<br><br>");
-            drawDiagram(ContinuumArray[best_array.length-1][5], 'cost_result_diagram1');
-            cost_result_text[2] = best_array[best_array.length - 1][4];
-        }else {
-            for (var i = 1; i < best_array.length; i++) {
-                if (best_array[i][0] > cost) {
-                    drawDiagram(ContinuumArray[i-1][5], 'cost_result_diagram1');
-                    drawDiagram(ContinuumArray[i][5], 'cost_result_diagram2');
-                    cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
-                    cost_result_text[1]="<b>Option 1: Save money!</b>"
-                    cost_result_text[2] = best_array[i - 1][5];
-                    cost_result_text[3] = "<b>Option 2: Save time!</b>";
-                    cost_result_text[4] = best_array[i][5];
-                    break;
-                }
-            }
-        }
-    }
 
     document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
     document.getElementById("cost_result_p2").innerHTML=cost_result_text[1];
@@ -875,17 +889,17 @@ function drawContinuums() {
     $("#chart_style").change(function(){
         var chart;
         if(this.value=='1'){
-            chart=initChart(ContinuumArray,0,1,"Cost ($/month)","Latency (day)", 0);
+            chart=initChart(ContinuumArray,0,1,"Cost ($/month)","Latency (day)", 0, cost);
             provider_num_array=chart.provider_num_array;
             Plotly.newPlot('tester6', chart.data, chart.layout);
         }
         if(this.value=='2'){
-            chart=initChart(ContinuumArray,1,0,"Latency (day)","Cost ($/month)", 0);
+            chart=initChart(ContinuumArray,1,0,"Latency (day)","Cost ($/month)", 0, cost);
             provider_num_array=chart.provider_num_array;
             Plotly.newPlot('tester6', chart.data, chart.layout);
         }
         if(this.value=='3'){
-            chart=initChart(ContinuumArray,0,6,"Cost ($/month)","Memory (GB)", 1);
+            chart=initChart(ContinuumArray,0,6,"Cost ($/month)","Memory (GB)", 1, cost);
             provider_num_array=chart.provider_num_array;
             Plotly.newPlot('tester6', chart.data, chart.layout);
         }
