@@ -74,6 +74,7 @@ function Variables()
     var latency;
 
     var VM_info;
+    var cloud_provider;
     var VM_instance;
     var VM_instance_num;
 
@@ -587,7 +588,7 @@ function countContinuum(combination, cloud_provider) {
                     M_F = M - M_B;
                     if (M_F < M_F_LO)
                         M_F = M_F_LO;
-                    L = Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T));
+                    L = Math.max(1,Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T)));
 
                     if (M_F >= M_F_HI) {
                         Y = 0;
@@ -676,6 +677,7 @@ function countContinuum(combination, cloud_provider) {
                         Variables.latency = total_latency;
                         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
                         Variables.memory_footprint=max_RAM_purchased*mem_sum;
+                        Variables.cloud_provider=cloud_provider;
                     }
                 }
             }
@@ -1606,15 +1608,16 @@ function drawDiagram(Variables, id){
 function outputParameters(Variables, id) {
     var result_div = document.getElementById(id)
     removeAllChildren(result_div);
+    outputParameter(result_div,cloud_array[Variables.cloud_provider],"Cloud provider");
     outputParameter(result_div,(Variables.latency*24*60).toFixed(2),"Latency (min)");
     outputParameter(result_div,Variables.T,"Growth Factor (T)");
     outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
     outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
     outputParameter(result_div,Variables.L,"Levels (L)");
-    outputParameter(result_div,(Variables.M_BF/1024/1024/1024).toFixed(2),"M<sub>bf</sub> (GB)");
-    outputParameter(result_div,(Variables.M_FP/1024/1024/1024).toFixed(2),"M<sub>fp</sub> (GB)");
+    outputParameter(result_div,(Variables.M_BF/1024/1024/1024).toFixed(2),"M<sub>BF</sub> (GB)");
+    outputParameter(result_div,(Variables.M_FP/1024/1024/1024).toFixed(2),"M<sub>FP</sub> (GB)");
     outputParameter(result_div,(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer size (GB)");
-    outputParameter(result_div,Variables.VM_instance_num,Variables.VM_instance);
+    outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM instances");
 }
 
 function outputParameter(result_div,value,text){

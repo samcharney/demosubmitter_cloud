@@ -88,7 +88,7 @@ function re_run(e, input_type) {
 
     navigateDesignSpace();
     //drawCharts();
-    drawChart2();
+    //drawChart2();
     drawContinuums();
     /*
     if(event.target.id.endsWith("mfilter_per_entry"))

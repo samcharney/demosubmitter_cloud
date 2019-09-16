@@ -511,11 +511,15 @@ function initChart(ContinuumArray, x, y, x_axis_title, y_axis_title, mode, cost)
         {
             xaxis: {
                 title: x_axis_title,
-                autorange: true
+                autorange: true,
+                showline: true,
+                zeroline: false
             },
             yaxis: {
                 title: y_axis_title,
-                autorange: true
+                autorange: true,
+                showline: true,
+                zeroline: false
             },
             legend: {
                 "orientation": "h",
@@ -818,11 +822,15 @@ function drawContinuums() {
             xaxis: {
                 title: 'Cost ($/month)',
                 range: [ best_array[start_point][0], best_array[end_point][0] ],
-                dtick: 10000
+                dtick: 10000,
+                showline: true,
+                zeroline: false
             },
             yaxis: {
                 title: 'Latency (day)',
-                range: [ best_array[end_point][1], best_array[start_point][1] ]
+                range: [ best_array[end_point][1], best_array[start_point][1] ],
+                showline: true,
+                zeroline: false
             },
             legend: {
                 "orientation": "h",

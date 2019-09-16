@@ -990,7 +990,7 @@ function init(){
 
 	document.getElementById("cost").value = 30000;
 
-	document.getElementById("query_count").value=100000000;
+	document.getElementById("query_count").value=10000000000;
 
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
@@ -998,7 +998,7 @@ function init(){
 
 	navigateDesignSpace();
 	//drawCharts();
-	drawChart2();
+	//drawChart2();
 	drawContinuums();
 	//document.getElementById("Optimal-FPR").style.fontWeight='bold';
 	//document.getElementById("Optimal-FPR").style.fontSize='16px';
