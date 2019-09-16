@@ -1617,7 +1617,7 @@ function outputParameters(Variables, id) {
     outputParameter(result_div,(Variables.M_BF/1024/1024/1024).toFixed(2),"M<sub>BF</sub> (GB)");
     outputParameter(result_div,(Variables.M_FP/1024/1024/1024).toFixed(2),"M<sub>FP</sub> (GB)");
     outputParameter(result_div,(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer size (GB)");
-    outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM instances");
+    outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VMI");
 }
 
 function outputParameter(result_div,value,text){
@@ -1630,7 +1630,9 @@ function outputParameter(result_div,value,text){
     var input_tmp = document.createElement("input");
     input_tmp.setAttribute("class","form-control")
     input_tmp.setAttribute("readonly","true");
-    input_tmp.setAttribute("style","text-align:right")
+    input_tmp.setAttribute("style","text-align:right");
+    if(text=="VMI")
+        input_tmp.setAttribute("style","text-align:right; font-size:14px;");
     input_tmp.value=value;
     div_tmp.appendChild(input_tmp);
     result_div.appendChild(div_tmp);
