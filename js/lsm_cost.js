@@ -571,7 +571,7 @@ function countContinuum(combination, cloud_provider) {
     }
 
     N=Variables.N/mem_sum;
-    for (var T = 2; T <= 6; T++) {
+    for (var T = 2; T <= 12; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
                 for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
