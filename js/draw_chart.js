@@ -822,7 +822,6 @@ function drawContinuums() {
             xaxis: {
                 title: 'Cost ($/month)',
                 range: [ best_array[start_point][0], best_array[end_point][0] ],
-                dtick: 10000,
                 showline: true,
                 zeroline: false
             },

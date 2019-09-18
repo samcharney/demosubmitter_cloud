@@ -1606,18 +1606,17 @@ function drawDiagram(Variables, id){
 }
 
 function outputParameters(Variables, id) {
-    var result_div = document.getElementById(id)
+    var result_div = document.getElementById(id);
     removeAllChildren(result_div);
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"Cloud provider");
+    outputParameter(result_div,parseFloat(Variables.cost).toFixed(1),"Cost ($)");
     outputParameter(result_div,(Variables.latency*24*60).toFixed(2),"Latency (min)");
     outputParameter(result_div,Variables.T,"Growth Factor (T)");
     outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
     outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
-    outputParameter(result_div,Variables.L,"Levels (L)");
-    outputParameter(result_div,(Variables.M_BF/1024/1024/1024).toFixed(2),"M<sub>BF</sub> (GB)");
-    outputParameter(result_div,(Variables.M_FP/1024/1024/1024).toFixed(2),"M<sub>FP</sub> (GB)");
-    outputParameter(result_div,(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer size (GB)");
-    outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VMI");
+    outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"M<sub>BF</sub>"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"M<sub>FP</sub>"]]);
+    outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
 }
 
 function outputParameter(result_div,value,text){
@@ -1631,9 +1630,54 @@ function outputParameter(result_div,value,text){
     input_tmp.setAttribute("class","form-control")
     input_tmp.setAttribute("readonly","true");
     input_tmp.setAttribute("style","text-align:right");
-    if(text=="VMI")
-        input_tmp.setAttribute("style","text-align:right; font-size:14px;");
+    if(text=="VM type")
+        input_tmp.setAttribute("style","text-align:right; font-size:10px;");
     input_tmp.value=value;
     div_tmp.appendChild(input_tmp);
     result_div.appendChild(div_tmp);
+}
+
+function drawBar(result_div,value) {
+    var div_tmp = document.createElement("div");
+    var length=value.length;
+    var data=new Array();
+    for(var i=0;i<length;i++){
+        console.log(value[i][0])
+        data.push({
+            x:[parseFloat(value[i][0])],
+            name:value[i][1],
+            orientation: 'h',
+            width: [0.5],
+            hovertemplate:
+                "%{x} GB<br><br>",
+            type:"bar"
+        })
+    }
+    var layout = {
+        width: 255,
+        height: 60,
+        barmode: 'stack',
+        hovermode: "closest",
+        legend: {
+            "orientation": "h",
+            x: 0,
+            y: 0,
+            font: {
+                size:10
+            }
+        },
+        modebar: {
+          display: "none"
+        },
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+            pad: 20
+        }, title: ''
+    };
+    Plotly.newPlot(div_tmp, data, layout, {displayModeBar: false});
+    result_div.appendChild(div_tmp);
+
 }
