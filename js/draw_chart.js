@@ -782,6 +782,7 @@ function drawContinuums() {
     var cost_result_text=new Array();
     var start_point;
     var end_point;
+    var l1,l2;
     if(cost<best_array[0][0]) {
         cost_result_text[0] = "Cost is too little";
         start_point=0;
@@ -791,15 +792,17 @@ function drawContinuums() {
 
         if(best_array[best_array.length-1][0]<cost) {
             cost_result_text[0]=("We found 1 options for you at $"+cost+".<br><br>");
-            drawDiagram(ContinuumArray[best_array.length-1][5], 'cost_result_diagram1');
-            cost_result_text[2] = best_array[best_array.length - 1][4];
+            //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
+            cost_result_text[2] = best_array[best_array.length - 1][5];
             start_point=Math.floor(best_array.length*4/5);
             end_point=best_array.length-1;
+            l1=1;
+            l2=-1;
         }else {
             for (var i = 1; i < best_array.length; i++) {
                 if (best_array[i][0] > cost) {
-                    drawDiagram(ContinuumArray[i-1][5], 'cost_result_diagram1');
-                    drawDiagram(ContinuumArray[i][5], 'cost_result_diagram2');
+                    //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
+                    //drawDiagram(best_array[i][5], 'cost_result_diagram2');
                     cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
                     cost_result_text[1]="<b>Option 1: Save money!</b>"
                     cost_result_text[2] = best_array[i - 1][5];
@@ -811,6 +814,14 @@ function drawContinuums() {
                     end_point=Math.ceil(i+best_array.length/5);
                     if(end_point>best_array.length-1)
                         end_point=best_array.length-1;
+
+                    if(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num>cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num){
+                        l1=1;
+                        l2=(cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num)/(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num);
+                    }else{
+                        l2=1;
+                        l1=(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num)/(cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num);
+                    }
                     break;
                 }
             }
@@ -888,10 +899,18 @@ function drawContinuums() {
 
 
     document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
-    document.getElementById("cost_result_p2").innerHTML=cost_result_text[1];
-    outputParameters(cost_result_text[2],"cost_result_p3");
-    document.getElementById("cost_result_p4").innerHTML=cost_result_text[3];
-    outputParameters(cost_result_text[4],"cost_result_p5");
+
+    outputParameters(cost_result_text[2],"cost_result_p3", l1);
+
+    if(l2!=-1) {
+        document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
+        document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
+        outputParameters(cost_result_text[4], "cost_result_p5", l2);
+    }else{
+        removeAllChildren(document.getElementById("cost_result_p2"));
+        removeAllChildren(document.getElementById("cost_result_p4"));
+        removeAllChildren(document.getElementById("cost_result_p5"));
+    }
 
     $("#chart_style").change(function(){
         var chart;

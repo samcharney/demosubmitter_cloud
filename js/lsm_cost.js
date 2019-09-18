@@ -1480,6 +1480,9 @@ function getBestDesignEverArray(result_array) {
 
 function drawDiagram(Variables, id){
     var result_div=document.getElementById(id)
+    if(result_div==null)
+        result_div=id;
+    console.log(result_div);
     removeAllChildren(result_div);
     var L=Variables.L;
     var K=Variables.K;
@@ -1605,17 +1608,20 @@ function drawDiagram(Variables, id){
     }
 }
 
-function outputParameters(Variables, id) {
+function outputParameters(Variables, id, l) {
     var result_div = document.getElementById(id);
     removeAllChildren(result_div);
+    outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
+    var div_tmp = document.createElement("div");
+    drawDiagram(Variables, div_tmp);
+    result_div.appendChild(div_tmp);
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"Cloud provider");
     outputParameter(result_div,parseFloat(Variables.cost).toFixed(1),"Cost ($)");
     outputParameter(result_div,(Variables.latency*24*60).toFixed(2),"Latency (min)");
     outputParameter(result_div,Variables.T,"Growth Factor (T)");
     outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
     outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
-    outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
-    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"M<sub>BF</sub>"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"M<sub>FP</sub>"]]);
     outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
 }
 
@@ -1637,7 +1643,8 @@ function outputParameter(result_div,value,text){
     result_div.appendChild(div_tmp);
 }
 
-function drawBar(result_div,value) {
+function drawBar(result_div,value,l) {
+    /*
     var div_tmp = document.createElement("div");
     var length=value.length;
     var data=new Array();
@@ -1647,7 +1654,7 @@ function drawBar(result_div,value) {
             x:[parseFloat(value[i][0])],
             name:value[i][1],
             orientation: 'h',
-            width: [1],
+            width: [0.8],
             hovertemplate:
                 "%{x} GB<br><br>",
             type:"bar"
@@ -1657,9 +1664,9 @@ function drawBar(result_div,value) {
         width: 245,
         height: 60,
         barmode: 'stack',
-        hovermode: "closest",
+        hovermode: false,
         xaxis: {
-            side: 'top'
+            side: 'top',
         },
         legend: {
             "orientation": "h",
@@ -1677,10 +1684,40 @@ function drawBar(result_div,value) {
             r: 0,
             b: 0,
             t: 0,
-            pad: 10
+            pad: 0
         }, title: ''
     };
     Plotly.newPlot(div_tmp, data, layout, {displayModeBar: false});
+    result_div.appendChild(div_tmp);*/
+    var colors=[
+        "#837BFF",
+        "#83AAFF",
+        "#83DEFF"
+    ]
+    var div_tmp = document.createElement("div");
+    var width = 230*l;
+    var length=value.length;
+    var data=new Array();
+    var memory_sum=0;
+    for(var i=0;i<length;i++)
+        memory_sum+=parseFloat(value[i][0]);
+    for(var i=0;i<length;i++){
+        var bar=document.createElement("div");
+        bar.setAttribute("class","color_bar");
+        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]);
+        div_tmp.append(bar);
+    }
     result_div.appendChild(div_tmp);
-
+    div_tmp = document.createElement("div");
+    for(var i=0;i<length;i++){
+        var legend=document.createElement("div");
+        legend.setAttribute("class","color_bar");
+        legend.setAttribute("style","width: 10px;height: 10px;background-color:"+colors[i]);
+        div_tmp.append(legend);
+        var text=document.createElement("div");
+        text.setAttribute("style","display: inline-block;font-size:10px ; padding:4px 7px 8px 3px");
+        text.innerHTML=value[i][1];
+        div_tmp.append(text);
+    }
+    result_div.appendChild(div_tmp);
 }
