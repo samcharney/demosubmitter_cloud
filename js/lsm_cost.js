@@ -1647,17 +1647,20 @@ function drawBar(result_div,value) {
             x:[parseFloat(value[i][0])],
             name:value[i][1],
             orientation: 'h',
-            width: [0.5],
+            width: [1],
             hovertemplate:
                 "%{x} GB<br><br>",
             type:"bar"
         })
     }
     var layout = {
-        width: 255,
+        width: 245,
         height: 60,
         barmode: 'stack',
         hovermode: "closest",
+        xaxis: {
+            side: 'top'
+        },
         legend: {
             "orientation": "h",
             x: 0,
@@ -1674,7 +1677,7 @@ function drawBar(result_div,value) {
             r: 0,
             b: 0,
             t: 0,
-            pad: 20
+            pad: 10
         }, title: ''
     };
     Plotly.newPlot(div_tmp, data, layout, {displayModeBar: false});
