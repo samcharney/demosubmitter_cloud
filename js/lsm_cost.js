@@ -1623,6 +1623,8 @@ function outputParameters(Variables, id, l) {
     outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
     outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
     outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
+
+    generateDownload(Variables, result_div, id);
 }
 
 function outputParameter(result_div,value,text){
@@ -1707,6 +1709,10 @@ function drawBar(result_div,value,l) {
         bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]);
         div_tmp.append(bar);
     }
+    var legend=document.createElement("div");
+    legend.setAttribute("class","color_bar");
+    legend.setAttribute("style","position: absolute; width: 10px;height: 10px;background-color: white; z-index:10");
+    div_tmp.append(legend);
     result_div.appendChild(div_tmp);
     div_tmp = document.createElement("div");
     for(var i=0;i<length;i++){
@@ -1719,5 +1725,28 @@ function drawBar(result_div,value,l) {
         text.innerHTML=value[i][1];
         div_tmp.append(text);
     }
+
     result_div.appendChild(div_tmp);
+}
+
+function createAndDownloadFile(fileName, content) {
+    var aTag = document.createElement('a');
+    var blob = new Blob([content]);
+    aTag.download = fileName;
+    aTag.href = URL.createObjectURL(blob);
+    aTag.click();
+    URL.revokeObjectURL(blob);
+}
+
+function generateDownload(Variables, result_div, id) {
+    var div_tmp = document.createElement("div");
+    var download_id=id+"_download"
+    div_tmp.setAttribute("class","download_icon");
+    div_tmp.setAttribute("id",download_id);
+    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/download.png\"/>"
+    result_div.appendChild(div_tmp);
+    var download_content=("Cloud provider:"+ cloud_array[Variables.cloud_provider] +"\nCost="+Variables.cost+", Latency=" + fixTime(Variables.latency) +  "\nT=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L +"\nMemory="+ Variables.memory_footprint/Variables.VM_instance_num+ " GB\nBuffer=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB\nBloom filter=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB\nFence Pointer=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB\nVM instance: " + Variables.VM_info);
+    $("#"+download_id).click(function(){
+        createAndDownloadFile(("design_"+Variables.cost+".txt"),download_content);
+    });
 }

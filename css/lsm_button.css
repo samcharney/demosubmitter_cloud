@@ -183,17 +183,44 @@
 }
 
 .cloud_button:active {
-    background-color: #7379DE; background-image: -webkit-gradient(linear, left top, left bottom, from(#7379DE), to(#8189FF));
-    background-image: -webkit-linear-gradient(top, #7379DE, #8189FF);
-    background-image: -moz-linear-gradient(top, #7379DE, #8189FF);
-    background-image: -ms-linear-gradient(top, #7379DE, #8189FF);
-    background-image: -o-linear-gradient(top, #7379DE, #8189FF);
-    background-image: linear-gradient(to bottom, #7379DE, #8189FF);
+    background-color: #7379DE; background-image: -webkit-gradient(linear, left top, left bottom, from(#7379DE), to(#7F89FF));
+    background-image: -webkit-linear-gradient(top, #7379DE, #7F89FF);
+    background-image: -moz-linear-gradient(top, #7379DE, #7F89FF);
+    background-image: -ms-linear-gradient(top, #7379DE, #7F89FF);
+    background-image: -o-linear-gradient(top, #7379DE, #7F89FF);
+    background-image: linear-gradient(to bottom, #7379DE, #7F89FF);
 }
 
 .color_bar{
     display: inline-block;
     height: 30px;
+
+    -webkit-transition-duration: 0.4s;
+    -moz-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+.color_bar:hover{
+    transform: scale(0.9);
+    border-radius: 2px;
+}
+
+.download_icon{
+    cursor: default;
+    height: 40px;
+    width: 40px;
+    -webkit-transition-duration: 0.2s;
+    -moz-transition-duration: 0.2s;
+    transition-duration: 0.2s;
+}
+.download_icon:hover{
+    transform: scale(1.2);
+}
+
+.download_icon:active{
+    transform: scale(0.8);
+    -webkit-transition-duration: 0.07s;
+    -moz-transition-duration: 0.07s;
+    transition-duration: 0.07s;
 }
 /*.button:hover {
    border: 2px solid #000000;
