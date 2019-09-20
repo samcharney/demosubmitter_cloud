@@ -3132,10 +3132,10 @@ function hideCloudProvider(){
 
 function displayCharts() {
 	document.getElementById("charts").style.display='';
-	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-100}, 500);
+	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
 }
 
 function displayContinuums() {
 	document.getElementById("continuums_chart").style.display='';
-	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-100}, 500);
+	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
 }

@@ -823,7 +823,7 @@ function drawContinuums() {
                         l1=(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num)/(cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num);
                     }
                     break;
-                }else if(best_array[i][0] = cost){
+                }else if(best_array[i][0] == cost){
                     cost_result_text[0]=("We found the options for you at $"+cost+".<br><br>");
                     //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
                     cost_result_text[2] = best_array[best_array.length - 1][5];
@@ -955,7 +955,7 @@ function drawContinuums() {
         $("#hoverinfo6").html("");
         $("#tester6").hover(function(){
         }, function() {
-            $("#hoverinfo6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
+            //$("#hoverinfo6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
         });
     });
 

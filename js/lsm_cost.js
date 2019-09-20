@@ -28,6 +28,8 @@ var network_bandwidth;
 var machines = 18;
 var workload_type = 0;
 
+var time_unit;
+
 function Variables()
 {
     var N;
@@ -1611,19 +1613,30 @@ function drawDiagram(Variables, id){
 function outputParameters(Variables, id, l) {
     var result_div = document.getElementById(id);
     removeAllChildren(result_div);
-    outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("style","background-image: url(./images/doublearrow.png); background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
+    div_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
+    result_div.appendChild(div_tmp);
     drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
+
+    if(result_div.id=="cost_result_p3") {
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:95px; ");
+        text.innerHTML = "On-disk";
+        result_div.appendChild(text);
+    }
+
     var div_tmp = document.createElement("div");
     drawDiagram(Variables, div_tmp);
     result_div.appendChild(div_tmp);
-    outputParameter(result_div,cloud_array[Variables.cloud_provider],"Cloud provider");
-    outputParameter(result_div,parseFloat(Variables.cost).toFixed(1),"Cost ($)");
-    outputParameter(result_div,(Variables.latency*24*60).toFixed(2),"Latency (min)");
-    outputParameter(result_div,Variables.T,"Growth Factor (T)");
-    outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
-    outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
-    outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
-
+    outputParameter(result_div,cloud_array[Variables.cloud_provider],"./images/cloud.png");
+    outputParameter(result_div,parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
+    outputParameter(result_div,(Variables.latency*24*60).toFixed(2),"./images/performance.png");
+   // outputParameter(result_div,Variables.T,"Growth Factor (T)");
+   // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
+   // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
+   // outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
     generateDownload(Variables, result_div, id);
 }
 
@@ -1632,16 +1645,25 @@ function outputParameter(result_div,value,text){
     div_tmp.setAttribute("class", "input-group");
     var span_tmp = document.createElement("span");
     span_tmp.setAttribute("class","input-group-addon");
-    span_tmp.innerHTML=text;
+    //span_tmp.innerHTML=text;
+    var icon_tmp=document.createElement("div");
+    var img_tmp=document.createElement("img");
+    img_tmp.setAttribute("src",text);
+    img_tmp.setAttribute("class","img-responsive img-centered");
+    img_tmp.setAttribute("style", "width:30px")
+    icon_tmp.appendChild(img_tmp);
+    icon_tmp.setAttribute("style","width:44px; height:44px; position:absolute; bottom: -3px; left:-3px; background-color:white; border-radius:30px; border: 2px solid black; padding:7px; z-index:10")
+    div_tmp.appendChild(icon_tmp);
     div_tmp.appendChild(span_tmp);
     var input_tmp = document.createElement("input");
     input_tmp.setAttribute("class","form-control")
     input_tmp.setAttribute("readonly","true");
     input_tmp.setAttribute("style","text-align:right");
     if(text=="VM type")
-        input_tmp.setAttribute("style","text-align:right; font-size:10px;");
+        input_tmp.setAttribute("style","text-align:right; font-size:10px");
     input_tmp.value=value;
     div_tmp.appendChild(input_tmp);
+    div_tmp.setAttribute("style","margin-bottom:15px")
     result_div.appendChild(div_tmp);
 }
 
@@ -1703,6 +1725,14 @@ function drawBar(result_div,value,l) {
     var memory_sum=0;
     for(var i=0;i<length;i++)
         memory_sum+=parseFloat(value[i][0]);
+
+    if(result_div.id=="cost_result_p3") {
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:20px; ");
+        text.innerHTML = "In-memory";
+        result_div.appendChild(text);
+    }
+
     for(var i=0;i<length;i++){
         var bar=document.createElement("div");
         bar.setAttribute("class","color_bar");
