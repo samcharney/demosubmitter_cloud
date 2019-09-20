@@ -1641,7 +1641,7 @@ function outputParameters(Variables, id, l) {
     var result_div = document.getElementById(id);
     removeAllChildren(result_div);
     //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
-    outputParameter(result_div,Variables.Vcpu_num+" VCPUs","./images/cpu.png");
+    outputParameter(result_div,Variables.Vcpu_num+" vCPUs","./images/cpu.png");
     var div_tmp = document.createElement("div");
     div_tmp.setAttribute("style","background-image: url(./images/doublearrow.png); background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
     var text_tmp= document.createElement("div");
