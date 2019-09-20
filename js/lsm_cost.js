@@ -1631,8 +1631,8 @@ function outputParameters(Variables, id, l) {
     drawDiagram(Variables, div_tmp);
     result_div.appendChild(div_tmp);
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"./images/cloud.png");
-    outputParameter(result_div,parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
-    outputParameter(result_div,(Variables.latency*24*60).toFixed(2),"./images/performance.png");
+    outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
+    outputParameter(result_div,fixTime(Variables.latency),"./images/performance.png");
    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
    // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
