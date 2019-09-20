@@ -159,6 +159,46 @@
     transform:rotate(90deg);
 }
 
+.switch {
+    background-image: -webkit-radial-gradient(whitesmoke, lightgrey);
+    -moz-transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
+}
+
+.switchbar_before {
+    width: 100px;
+    height: 20px ;
+    border-radius: 30px;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(lightgrey), to(whitesmoke));
+
+    -moz-transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
+}
+
+.switchbar {
+    width: 0px;
+    height: 20px ;
+    border-radius: 30px;
+    -moz-transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
+}
+
+.switch.down {
+    -moz-transform:translateX(70px);
+    -webkit-transform:translateX(70px);
+    transform:translateX(70px);
+}
+
+.switchbar.down{
+    /*background-image: -webkit-gradient(linear, left top, left bottom, from(#7379DE), to(#95A3FD));*/
+    background-color: #7379DE;
+    width: 100px;
+    animation: 1s;
+}
+
 .cloud_button {
     padding: 17px 15px;
     font-size: 25px;
@@ -169,7 +209,7 @@
     border: 2px solid #7379DE;
     width: 225px;
     height: 50px;
-    border-radius: 25px;
+    border-radius: 8px;
     position: relative;
 
     -webkit-transition-duration: 0.2s;
@@ -221,6 +261,38 @@
     -webkit-transition-duration: 0.07s;
     -moz-transition-duration: 0.07s;
     transition-duration: 0.07s;
+}
+
+.tooltip1 {
+
+}
+
+.tooltip1 .tooltiptext {
+    visibility: hidden;
+    opacity: 0;
+    width: 40px;
+    height: 0px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    top:110px;
+    z-index: 15;
+
+    -webkit-transition-duration: 0.4s;
+    -moz-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+}
+
+.tooltip1:hover .tooltiptext {
+    top:80px;
+    opacity: 0.7;
+    visibility: visible;
+    height: 62px;
 }
 /*.button:hover {
    border: 2px solid #000000;

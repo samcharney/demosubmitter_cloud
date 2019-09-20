@@ -996,6 +996,11 @@ function init(){
 		$(this).toggleClass("down");
 	})
 
+	$(".switch").click(function () {
+		$(this).toggleClass("down");
+		$(".switchbar").toggleClass("down");
+	})
+
 	navigateDesignSpace();
 	//drawCharts();
 	//drawChart2();

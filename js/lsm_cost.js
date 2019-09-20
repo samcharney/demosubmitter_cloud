@@ -79,6 +79,7 @@ function Variables()
     var cloud_provider;
     var VM_instance;
     var VM_instance_num;
+    var Vcpu_num;
 
 }
 
@@ -570,6 +571,7 @@ function countContinuum(combination, cloud_provider) {
             Variables.VM_info= (mem_sum+" X "+VM_libraries[cloud_provider].name_of_instance[i]);
             Variables.VM_instance= VM_libraries[cloud_provider].name_of_instance[i];
             Variables.VM_instance_num=mem_sum;
+            Variables.Vcpu_num=VM_libraries[cloud_provider].num_of_vcpu[i];
         }
     }
 
@@ -700,7 +702,7 @@ function buildContinuums(cloud_mode){
             for (var i = 0; i < VMCombinations.length; i++) {
                 var VMCombination = VMCombinations[i];
                 var Variables = countContinuum(VMCombination, cloud_provider);
-                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + fixTime(Variables.latency) + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
+                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
                 var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
                 result_array.push(result);
             }
@@ -711,7 +713,7 @@ function buildContinuums(cloud_mode){
         for (var i = 0; i < VMCombinations.length; i++) {
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
-            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + ", Latency=" + fixTime(Variables.latency) + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info);
+            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
             var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
             result_array.push(result);
         }
@@ -1340,6 +1342,13 @@ function initializeVMLibraries()
     VM_libraries[0].rate_of_instance[4] = 2.181;
     VM_libraries[0].rate_of_instance[5] = 4.362;
 
+    VM_libraries[0].num_of_vcpu = new Array();
+    VM_libraries[0].num_of_vcpu[0] = 2;
+    VM_libraries[0].num_of_vcpu[1] = 4;
+    VM_libraries[0].num_of_vcpu[2] = 8;
+    VM_libraries[0].num_of_vcpu[3] = 16;
+    VM_libraries[0].num_of_vcpu[4] = 48;
+    VM_libraries[0].num_of_vcpu[5] = 96;
     /* ********************************** initialize VMs of GCP *********************************  */
 
     VM_libraries[1].provider_name = "GCP";
@@ -1372,6 +1381,15 @@ function initializeVMLibraries()
     VM_libraries[1].rate_of_instance[5] = 2.3849;
     VM_libraries[1].rate_of_instance[6] = 3.5773;
 
+    VM_libraries[1].num_of_vcpu = new Array();
+    VM_libraries[1].num_of_vcpu[0] = 2;
+    VM_libraries[1].num_of_vcpu[1] = 4;
+    VM_libraries[1].num_of_vcpu[2] = 8;
+    VM_libraries[1].num_of_vcpu[3] = 16;
+    VM_libraries[1].num_of_vcpu[4] = 32;
+    VM_libraries[1].num_of_vcpu[5] = 64;
+    VM_libraries[1].num_of_vcpu[6] = 96;
+
     /* ********************************** initialize VMs of AZURE *********************************  */
 
     VM_libraries[2].provider_name = "AZURE";
@@ -1403,6 +1421,15 @@ function initializeVMLibraries()
     VM_libraries[2].rate_of_instance[4] = 0.7409;
     VM_libraries[2].rate_of_instance[5] = 1.2512;
     VM_libraries[2].rate_of_instance[6] = 2.5024;
+
+    VM_libraries[2].num_of_vcpu = new Array();
+    VM_libraries[2].num_of_vcpu[0] = 2;
+    VM_libraries[2].num_of_vcpu[1] = 4;
+    VM_libraries[2].num_of_vcpu[2] = 8;
+    VM_libraries[2].num_of_vcpu[3] = 16;
+    VM_libraries[2].num_of_vcpu[4] = 20;
+    VM_libraries[2].num_of_vcpu[5] = 32;
+    VM_libraries[2].num_of_vcpu[6] = 64;
 
     //printVMLibraries();
    // console.log(VM_libraries)
@@ -1614,21 +1641,31 @@ function outputParameters(Variables, id, l) {
     var result_div = document.getElementById(id);
     removeAllChildren(result_div);
     //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    outputParameter(result_div,Variables.Vcpu_num+" VCPUs","./images/cpu.png");
     var div_tmp = document.createElement("div");
     div_tmp.setAttribute("style","background-image: url(./images/doublearrow.png); background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
-    div_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
+    var text_tmp= document.createElement("div");
+    text_tmp.setAttribute("style", "background-color:white; display:inline-block; position:relative; bottom: 2px; padding-left:2px; padding-right:2px");
+    text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
+    div_tmp.appendChild(text_tmp);
     result_div.appendChild(div_tmp);
     drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
 
     if(result_div.id=="cost_result_p3") {
         var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:95px; ");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:150px; ");
         text.innerHTML = "On-disk";
         result_div.appendChild(text);
     }
 
     var div_tmp = document.createElement("div");
     drawDiagram(Variables, div_tmp);
+    div_tmp.setAttribute("style", "height:100px;");
+    div_tmp.setAttribute("class", "tooltip1")
+    var span_tmp=document.createElement("span");
+    span_tmp.setAttribute("class","tooltiptext");
+    span_tmp.innerHTML="T="+Variables.T+"  K="+Variables.K+"  Z="+Variables.Z;
+    div_tmp.appendChild(span_tmp);
     result_div.appendChild(div_tmp);
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"./images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
@@ -1728,7 +1765,7 @@ function drawBar(result_div,value,l) {
 
     if(result_div.id=="cost_result_p3") {
         var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:20px; ");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:75px; ");
         text.innerHTML = "In-memory";
         result_div.appendChild(text);
     }

@@ -493,6 +493,16 @@ function initChart(ContinuumArray, x, y, x_axis_title, y_axis_title, mode, cost)
         }
     }
 
+    if(x==1){
+        x_array=fixTimeArray(x_array);
+        x_axis_title+=time_unit;
+    }
+
+    if(y==1){
+        y_array=fixTimeArray(y_array);
+        y_axis_title+=time_unit;
+    }
+
     chart.data=[{
         x: x_array,
         y: y_array,
@@ -835,18 +845,19 @@ function drawContinuums() {
             }
         }
     }
+    var chart_array=cutArray(best_array,start_point,end_point);
     console.log(start_point);
     var layout =
         {
             xaxis: {
                 title: 'Cost ($/month)',
-                range: [ best_array[start_point][0], best_array[end_point][0] ],
+                //range: [ best_array[start_point][0], best_array[end_point][0] ],
                 showline: true,
                 zeroline: false
             },
             yaxis: {
                 title: 'Latency (day)',
-                range: [ best_array[end_point][1], best_array[start_point][1] ],
+                //range: [ best_array[end_point][1], best_array[start_point][1] ],
                 showline: true,
                 zeroline: false
             },
@@ -923,17 +934,17 @@ function drawContinuums() {
     $("#chart_style").change(function(){
         var chart;
         if(this.value=='1'){
-            chart=initChart(ContinuumArray,0,1,"Cost ($/month)","Latency (day)", 0, cost);
+            chart=initChart(chart_array,0,1,"Cost ($/month)","Latency ", 0, cost);
             provider_num_array=chart.provider_num_array;
             Plotly.newPlot('tester6', chart.data, chart.layout);
         }
         if(this.value=='2'){
-            chart=initChart(ContinuumArray,1,0,"Latency (day)","Cost ($/month)", 0, cost);
+            chart=initChart(chart_array,1,0,"Latency ","Cost ($/month)", 0, cost);
             provider_num_array=chart.provider_num_array;
             Plotly.newPlot('tester6', chart.data, chart.layout);
         }
         if(this.value=='3'){
-            chart=initChart(ContinuumArray,0,6,"Cost ($/month)","Memory (GB)", 1, cost);
+            chart=initChart(chart_array,0,6,"Cost ($/month)","Memory (GB)", 1, cost);
             provider_num_array=chart.provider_num_array;
             Plotly.newPlot('tester6', chart.data, chart.layout);
         }
@@ -959,6 +970,10 @@ function drawContinuums() {
         });
     });
 
+
+    chart=initChart(chart_array,0,1,"Cost ($/month)","Latency ", 0, cost);
+    provider_num_array=chart.provider_num_array;
+    Plotly.newPlot('tester6', chart.data, chart.layout);
     var myPlot = document.getElementById('tester6');
     console.log(myPlot);
     myPlot.on('plotly_hover', function(data){
@@ -983,4 +998,48 @@ function drawContinuums() {
     });
 
 
+}
+
+function cutArray(array, start, end){
+    var result=new Array();
+    for(var i=start; i<=end; i++)
+        result.push(array[i]);
+    return result;
+}
+
+function multiplyArray(array, multiplier){
+    var result=new Array();
+    for(var i=0; i<array.length; i++){
+        result.push(array[i]*multiplier);
+    }
+    return result;
+}
+function fixTimeArray(array){
+    var result=array;
+    time_unit="(day)"
+    var mid=Math.floor(result.length/2);
+    if(result[mid]<1){
+        result=multiplyArray(result,24);
+        time_unit="(hour)";
+        if(result[mid]<1){
+            result=multiplyArray(result,60);
+            time_unit="(min)";
+            if(result[mid]<1){
+                result=multiplyArray(result,60);
+                time_unit="(second)";
+            }
+        }
+    }else if(result[mid]>365){
+        result=multiplyArray(result,1/365);
+        time_unit="(year)";
+        if(result[mid]>10){
+            result=multiplyArray(result,1/10);
+            time_unit="(decade)";
+            if(result[mid]>10){
+                result=multiplyArray(result,1/10);
+                time_unit="(century)";
+            }
+        }
+    }
+    return result;
 }
