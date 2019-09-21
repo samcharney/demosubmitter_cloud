@@ -1653,6 +1653,10 @@ function outputParameters(Variables, id, l) {
 
     if(result_div.id=="cost_result_p3") {
         var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:8px; ");
+        text.innerHTML = "Processor";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
         text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:150px; ");
         text.innerHTML = "On-disk";
         result_div.appendChild(text);

@@ -3144,3 +3144,11 @@ function displayContinuums() {
 	document.getElementById("continuums_chart").style.display='';
 	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
 }
+
+function switchText() {
+	if(document.getElementById("interactive_mode_text").innerHTML=="Interactive Mode: Off")
+		document.getElementById("interactive_mode_text").innerHTML="Interactive Mode: On";
+	else
+		document.getElementById("interactive_mode_text").innerHTML="Interactive Mode: Off";
+
+}

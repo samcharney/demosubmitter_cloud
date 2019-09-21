@@ -167,7 +167,7 @@
 }
 
 .switchbar_before {
-    width: 100px;
+    width: 70px;
     height: 20px ;
     border-radius: 30px;
     background-image: -webkit-gradient(linear, left top, left bottom, from(lightgrey), to(whitesmoke));
@@ -187,15 +187,15 @@
 }
 
 .switch.down {
-    -moz-transform:translateX(70px);
-    -webkit-transform:translateX(70px);
-    transform:translateX(70px);
+    -moz-transform:translateX(40px);
+    -webkit-transform:translateX(40px);
+    transform:translateX(40px);
 }
 
 .switchbar.down{
     /*background-image: -webkit-gradient(linear, left top, left bottom, from(#7379DE), to(#95A3FD));*/
     background-color: #7379DE;
-    width: 100px;
+    width: 70px;
     animation: 1s;
 }
 
