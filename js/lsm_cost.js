@@ -562,6 +562,8 @@ function countContinuum(combination, cloud_provider) {
     var mem_sum;
     var monthly_mem_cost;
 
+    var log_array=new Array();
+
 
     for(var i=0;i<VM_libraries[cloud_provider].no_of_instances;i++){
         if(combination[i]>0){
@@ -592,7 +594,10 @@ function countContinuum(combination, cloud_provider) {
                     M_F = M - M_B;
                     if (M_F < M_F_LO)
                         M_F = M_F_LO;
-                    L = Math.max(1,Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T)));
+                    var multiplier_from_buffer = N*(E) / (M_B);
+                    // handle case where data fits in buffer
+                    if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
+                    L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
 
                     if (M_F >= M_F_HI) {
                         Y = 0;
@@ -659,9 +664,10 @@ function countContinuum(combination, cloud_provider) {
                         //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                         //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
                     }
+                    //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                     var total_cost = (w * update_cost + v * read_cost) / (v + w);
                     var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
-
+                    log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
                     if (best_latency < 0 || total_latency < best_latency) {
                         best_latency = total_latency;
                         Variables.K = K;
@@ -687,6 +693,148 @@ function countContinuum(combination, cloud_provider) {
             }
         }
     }
+    console.log(Variables.VM_info,(monthly_storage_cost + monthly_mem_cost).toFixed(3),log_array);
+    //return  max_RAM_purchased;
+    //console.log(Variables.latency);
+    return Variables;
+}
+
+function countContinuumForExistingDesign(combination, cloud_provider, existing_system) {
+    var Variables = parseInputVariables();
+    var N = Variables.N;
+    var E = Variables.E;
+    var F = Variables.F;
+    var B = Math.floor(Variables.B/E);
+    var s = Variables.s;
+
+    var w = Variables.w;
+    var r = Variables.r;
+    var v = Variables.v;
+    var qL = Variables.qL;
+    var qS = Variables.qS;
+    var scenario = 'A';//Variables.scenario;
+
+    var query_count=Variables.query_count;
+
+    var VM_libraries=initializeVMLibraries();
+    Variables.cost=cost;
+
+    var X;
+    var Y;
+    var L;
+    var M_F_HI;
+    var M_F; // = ((B*E + (M - M_F)) > 0 ? B*E + (M - M_F) : (B*E)); // byte
+    var M_F_LO; // = (M_B*(F)*T)/((B)*(E));
+    var M_BF;
+    var M_FP;
+    var FPR_sum;
+
+    var Storage_Value=getStorageCost(Variables, cloud_provider);
+    B=Storage_Value[0];
+    var monthly_storage_cost=Storage_Value[1];
+
+    var best_cost=-1;
+    var best_latency=-1;
+
+    var mem_sum;
+    var monthly_mem_cost;
+
+
+    for(var i=0;i<VM_libraries[cloud_provider].no_of_instances;i++){
+        if(combination[i]>0){
+            mem_sum=combination[i];
+            max_RAM_purchased=VM_libraries[cloud_provider].mem_of_instance[i];
+            monthly_mem_cost=mem_sum*VM_libraries[cloud_provider].rate_of_instance[i]*24*30;
+            Variables.VM_info= (mem_sum+" X "+VM_libraries[cloud_provider].name_of_instance[i]);
+            Variables.VM_instance= VM_libraries[cloud_provider].name_of_instance[i];
+            Variables.VM_instance_num=mem_sum;
+            Variables.Vcpu_num=VM_libraries[cloud_provider].num_of_vcpu[i];
+        }
+    }
+    N=Variables.N/mem_sum;
+
+    if(existing_system="rocks") {
+        var T = 10;
+        var K = 1;
+        var Z = 1;
+        Y = 0;
+        var M = max_RAM_purchased * 1024 * 1024 * 1024;
+        M_FP = N * F / B;
+        M_BF = N * 10.0 / 8.0; // 10 bits/entry in RocksDB is default and convert to byte because everything else is in byte
+        M_F = M_FP + M_BF;
+        if (M_F >= M) {
+            //printf("System %s needs at least %f GB of memory\n", existing_system, ((M_F/(1024*1024*1024))+1.0));
+            return -1;
+        }
+        var M_B = M - M_F;
+        M_B = M_B < 0 ? 0.0 : M_B;
+    }
+
+    var multiplier_from_buffer = N*(E) / (M_B);
+    // handle case where data fits in buffer
+    if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
+    L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
+
+    var update_cost;
+    var read_cost;
+    var no_result_read_cost;
+    var short_scan_cost;
+    var long_scan_cost;
+
+    if (write_percentage != 0) {
+        if(scenario=='A'){
+            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 1);
+        }else {
+            update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+        }
+    }
+    if (read_percentage != 0) {
+        if (scenario == 'A') // Avg-case
+        {
+            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
+        } else // Worst-case
+        {
+            read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
+            //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
+        }
+
+    }
+    if (short_scan_percentage != 0) {
+        short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+    }
+    long_scan_cost = analyzeLongScanCost(B, s);
+    if (scenario == 'A') // Avg-case
+    {
+        //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
+    } else // Worst-case
+    {
+        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+        //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
+    }
+    var total_cost = (w * update_cost + v * read_cost) / (v + w);
+    var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+
+    if (best_latency < 0 || total_latency < best_latency) {
+        best_latency = total_latency;
+        Variables.K = K;
+        Variables.T = T;
+        Variables.L = L;
+        Variables.Z = Z;
+        Variables.Y = Y;
+        Variables.Buffer = M_B;
+        Variables.M_BF = M_BF;
+        Variables.M_FP = M_FP;
+        Variables.read_cost = read_cost;
+        Variables.update_cost = update_cost;
+        Variables.short_scan_cost = short_scan_cost;
+        Variables.long_scan_cost = long_scan_cost;
+        Variables.no_result_read_cost = read_cost - 1;
+        Variables.total_cost = total_cost;
+        Variables.latency = total_latency;
+        Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
+        Variables.memory_footprint=max_RAM_purchased*mem_sum;
+        Variables.cloud_provider=cloud_provider;
+    }
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
     return Variables;
@@ -702,8 +850,9 @@ function buildContinuums(cloud_mode){
             for (var i = 0; i < VMCombinations.length; i++) {
                 var VMCombination = VMCombinations[i];
                 var Variables = countContinuum(VMCombination, cloud_provider);
+                var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
                 var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
-                var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
+                var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables];
                 result_array.push(result);
             }
         }
@@ -713,8 +862,9 @@ function buildContinuums(cloud_mode){
         for (var i = 0; i < VMCombinations.length; i++) {
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
+            var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
             var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
-            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint];
+            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables];
             result_array.push(result);
         }
     }
@@ -726,11 +876,11 @@ function buildContinuums(cloud_mode){
 }
 
 function fixTime(time){
-    if(time<0.1) {
+    if(time<1) {
         time *= 24;
-        if(time<0.1){
+        if(time<1){
             time*=60;
-            if(time<0.1){
+            if(time<1){
                 time*=60
                 return  time.toFixed(3)+" sec"
             }
@@ -1708,7 +1858,7 @@ function outputParameter(result_div,value,text){
     result_div.appendChild(div_tmp);
 }
 
-function drawBar(result_div,value,l) {
+function drawBar(result_div,value,l,mode) {
     /*
     var div_tmp = document.createElement("div");
     var length=value.length;
@@ -1785,19 +1935,21 @@ function drawBar(result_div,value,l) {
     legend.setAttribute("style","position: absolute; width: 10px;height: 10px;background-color: white; z-index:10");
     div_tmp.append(legend);
     result_div.appendChild(div_tmp);
-    div_tmp = document.createElement("div");
-    for(var i=0;i<length;i++){
-        var legend=document.createElement("div");
-        legend.setAttribute("class","color_bar");
-        legend.setAttribute("style","width: 10px;height: 10px;background-color:"+colors[i]);
-        div_tmp.append(legend);
-        var text=document.createElement("div");
-        text.setAttribute("style","display: inline-block;font-size:10px ; padding:4px 7px 8px 3px");
-        text.innerHTML=value[i][1];
-        div_tmp.append(text);
-    }
+    if(mode!="no_legend") {
+        div_tmp = document.createElement("div");
+        for (var i = 0; i < length; i++) {
+            var legend = document.createElement("div");
+            legend.setAttribute("class", "color_bar");
+            legend.setAttribute("style", "width: 10px;height: 10px;background-color:" + colors[i]);
+            div_tmp.append(legend);
+            var text = document.createElement("div");
+            text.setAttribute("style", "display: inline-block;font-size:10px ; padding:4px 7px 8px 3px");
+            text.innerHTML = value[i][1];
+            div_tmp.append(text);
+        }
 
-    result_div.appendChild(div_tmp);
+        result_div.appendChild(div_tmp);
+    }
 }
 
 function createAndDownloadFile(fileName, content) {

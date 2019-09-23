@@ -793,16 +793,26 @@ function drawContinuums() {
     var start_point;
     var end_point;
     var l1,l2;
+    var index;
+    var max_mem;
     if(cost<best_array[0][0]) {
         cost_result_text[0] = "Cost is too little";
         start_point=0;
         end_point=Math.ceil(best_array/5);
+        removeAllChildren(document.getElementById("cost_result_p2"));
+        removeAllChildren(document.getElementById("cost_result_p3"));
+        removeAllChildren(document.getElementById("cost_result_p4"));
+        removeAllChildren(document.getElementById("cost_result_p5"));
+        removeAllChildren(document.getElementById("cost_result_p6"));
+        removeAllChildren(document.getElementById("cost_result_p7"));
     }
     else{
 
         if(best_array[best_array.length-1][0]<cost) {
+            index=0;
             cost_result_text[0]=("We found 1 option for you at $"+cost+".<br><br>");
             //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
+            cost_result_text[1]="<b>Our Option:</b>"
             cost_result_text[2] = best_array[best_array.length - 1][5];
             start_point=Math.floor(best_array.length*4/5);
             end_point=best_array.length-1;
@@ -813,6 +823,7 @@ function drawContinuums() {
                 if (best_array[i][0] > cost) {
                     //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
                     //drawDiagram(best_array[i][5], 'cost_result_diagram2');
+                    index=i-1;
                     cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
                     cost_result_text[1]="<b>Option 1: Save money!</b>"
                     cost_result_text[2] = best_array[i - 1][5];
@@ -826,21 +837,26 @@ function drawContinuums() {
                         end_point=best_array.length-1;
 
                     if(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num>cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num){
+                        //max_mem=cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num;
                         l1=1;
                         l2=(cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num)/(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num);
                     }else{
+                        //max_mem=cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num;
                         l2=1;
                         l1=(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num)/(cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num);
                     }
                     break;
                 }else if(best_array[i][0] == cost){
+                    index=i;
                     cost_result_text[0]=("We found the options for you at $"+cost+".<br><br>");
                     //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
+                    cost_result_text[1]="<b>Our Option:</b>"
                     cost_result_text[2] = best_array[best_array.length - 1][5];
                     start_point=Math.floor(best_array.length*4/5);
                     end_point=best_array.length-1;
                     l1=1;
                     l2=-1;
+                    break;
                 }
             }
         }
@@ -919,17 +935,22 @@ function drawContinuums() {
 
     document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
 
+    document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
     outputParameters(cost_result_text[2],"cost_result_p3", l1);
 
     if(l2!=-1) {
-        document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
         document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
         outputParameters(cost_result_text[4], "cost_result_p5", l2);
     }else{
-        removeAllChildren(document.getElementById("cost_result_p2"));
         removeAllChildren(document.getElementById("cost_result_p4"));
         removeAllChildren(document.getElementById("cost_result_p5"));
     }
+
+    if( cost_result_text[0] != "Cost is too little"){
+        document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB:</b>";
+        outputParameters(best_array[index][7], "cost_result_p7", l1);
+    }
+
 
     $("#chart_style").change(function(){
         var chart;
@@ -957,8 +978,10 @@ function drawContinuums() {
             //console.log(data);
             //hoverInfo.innerHTML = infotext.join('<br/>');
             for(var i in ContinuumArray){
-                if(data.points[0].text==ContinuumArray[i][4])
+                if(data.points[0].text==ContinuumArray[i][4]) {
+                    drawBar(result_div,[[(ContinuumArray[i][5].Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(ContinuumArray[i][5].M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(ContinuumArray[i][5].M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
                     drawDiagram(ContinuumArray[i][5], 'diagram6');
+                }
             }
         })
 
@@ -982,8 +1005,11 @@ function drawContinuums() {
         //console.log(data);
         //hoverInfo.innerHTML = infotext.join('<br/>');
         for(var i in ContinuumArray){
-            if(data.points[0].text==ContinuumArray[i][4])
-                drawDiagram(ContinuumArray[i][5],"diagram6");
+            if(data.points[0].text==ContinuumArray[i][4]) {
+                var result_div=document.getElementById("continuums_bar");
+                addTextAndBar(result_div, ContinuumArray[i][5]);
+                drawDiagram(ContinuumArray[i][5], "diagram6");
+            }
         }
     })
 
@@ -998,6 +1024,18 @@ function drawContinuums() {
     });
 
 
+}
+
+function addTextAndBar(result_div,Variables){
+    removeAllChildren(result_div);
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("style","background-image: url(./images/doublearrow.png); background-size:100% 100%; text-align: center; width:"+230+"px; height: 17px; padding-bottom:3px");
+    var text_tmp= document.createElement("div");
+    text_tmp.setAttribute("style", "background-color:white; display:inline-block; position:relative; bottom: 2px; padding-left:2px; padding-right:2px");
+    text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
+    div_tmp.appendChild(text_tmp);
+    result_div.appendChild(div_tmp);
+    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],1,'no_legend');
 }
 
 function cutArray(array, start, end){

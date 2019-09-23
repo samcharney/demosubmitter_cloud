@@ -996,9 +996,14 @@ function init(){
 		$(this).toggleClass("down");
 	})
 
-	$(".switch").click(function () {
+	$("#switch_1").click(function () {
 		$(this).toggleClass("down");
-		$(".switchbar").toggleClass("down");
+		$("#switchbar_1").toggleClass("down");
+	})
+
+	$("#switch_2").click(function () {
+		$(this).toggleClass("down");
+		$("#switchbar_2").toggleClass("down");
 	})
 
 	navigateDesignSpace();
@@ -3137,12 +3142,24 @@ function hideCloudProvider(){
 
 function displayCharts() {
 	document.getElementById("charts").style.display='';
-	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
+	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-170}, 500);
 }
 
 function displayContinuums() {
-	document.getElementById("continuums_chart").style.display='';
-	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
+	if(document.getElementById("continuums_chart").style.display=='none'||document.getElementById("continuums_chart").style.opacity==0) {
+
+		document.getElementById("continuums_chart").style.display = 'inline-block';
+		$("#continuums_chart").animate({height: '660px',opacity:'1'}, "slow");
+	}
+	else {
+		$("#continuums_chart").animate({height: '0px',opacity: '0'}, "slow");
+		//document.getElementById("continuums_chart").style.display = 'none';
+	}
+	//$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
+	if(document.getElementById("explore_text").innerHTML=="Explore More Design: Off")
+		document.getElementById("explore_text").innerHTML="Explore More Design: On";
+	else
+		document.getElementById("explore_text").innerHTML="Explore More Design: Off";
 }
 
 function switchText() {
