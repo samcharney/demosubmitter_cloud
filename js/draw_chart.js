@@ -796,7 +796,7 @@ function drawContinuums() {
     var index;
     var max_mem;
     if(cost<best_array[0][0]) {
-        cost_result_text[0] = "Cost is too little";
+        cost_result_text[0] = "Sorry, you have insufficient budget. The minimum budget to run the workload is $"+best_array[0][0]+".<br>";
         start_point=0;
         end_point=Math.ceil(best_array/5);
         removeAllChildren(document.getElementById("cost_result_p2"));
@@ -805,6 +805,7 @@ function drawContinuums() {
         removeAllChildren(document.getElementById("cost_result_p5"));
         removeAllChildren(document.getElementById("cost_result_p6"));
         removeAllChildren(document.getElementById("cost_result_p7"));
+        document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
     }
     else{
 
@@ -858,6 +859,23 @@ function drawContinuums() {
                     l2=-1;
                     break;
                 }
+            }
+            document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
+
+            document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
+            outputParameters(cost_result_text[2],"cost_result_p3", l1);
+
+            if(l2!=-1) {
+                document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
+                outputParameters(cost_result_text[4], "cost_result_p5", l2);
+            }else{
+                removeAllChildren(document.getElementById("cost_result_p4"));
+                removeAllChildren(document.getElementById("cost_result_p5"));
+            }
+
+            if( cost_result_text[0] != "Cost is too little"){
+                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB:</b>";
+                outputParameters(best_array[index][7], "cost_result_p7", l1);
             }
         }
     }
@@ -933,23 +951,7 @@ function drawContinuums() {
 
 
 
-    document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
 
-    document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
-    outputParameters(cost_result_text[2],"cost_result_p3", l1);
-
-    if(l2!=-1) {
-        document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
-        outputParameters(cost_result_text[4], "cost_result_p5", l2);
-    }else{
-        removeAllChildren(document.getElementById("cost_result_p4"));
-        removeAllChildren(document.getElementById("cost_result_p5"));
-    }
-
-    if( cost_result_text[0] != "Cost is too little"){
-        document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB:</b>";
-        outputParameters(best_array[index][7], "cost_result_p7", l1);
-    }
 
 
     $("#chart_style").change(function(){
@@ -1007,7 +1009,7 @@ function drawContinuums() {
         for(var i in ContinuumArray){
             if(data.points[0].text==ContinuumArray[i][4]) {
                 var result_div=document.getElementById("continuums_bar");
-                addTextAndBar(result_div, ContinuumArray[i][5]);
+                addTextAndBar(result_div, ContinuumArray[i][5],80,12);
                 drawDiagram(ContinuumArray[i][5], "diagram6");
             }
         }
@@ -1026,16 +1028,16 @@ function drawContinuums() {
 
 }
 
-function addTextAndBar(result_div,Variables){
+function addTextAndBar(result_div,Variables,w,h){
     removeAllChildren(result_div);
     var div_tmp = document.createElement("div");
-    div_tmp.setAttribute("style","background-image: url(./images/doublearrow.png); background-size:100% 100%; text-align: center; width:"+230+"px; height: 17px; padding-bottom:3px");
+    div_tmp.setAttribute("style","background-image: url(./images/doublearrow.png); background-size:100% 100%; text-align: center; width:"+w+"px; height: 17px; padding-bottom:3px");
     var text_tmp= document.createElement("div");
     text_tmp.setAttribute("style", "background-color:white; display:inline-block; position:relative; bottom: 2px; padding-left:2px; padding-right:2px");
     text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
     div_tmp.appendChild(text_tmp);
-    result_div.appendChild(div_tmp);
-    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],1,'no_legend');
+    //result_div.appendChild(div_tmp);
+    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],1,'no_legend', w, h);
 }
 
 function cutArray(array, start, end){

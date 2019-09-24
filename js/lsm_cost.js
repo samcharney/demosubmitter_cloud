@@ -1858,7 +1858,7 @@ function outputParameter(result_div,value,text){
     result_div.appendChild(div_tmp);
 }
 
-function drawBar(result_div,value,l,mode) {
+function drawBar(result_div,value,l,mode,w=230,h=15) {
     /*
     var div_tmp = document.createElement("div");
     var length=value.length;
@@ -1910,7 +1910,7 @@ function drawBar(result_div,value,l,mode) {
         "#83DEFF"
     ]
     var div_tmp = document.createElement("div");
-    var width = 230*l;
+    var width = w*l;
     var length=value.length;
     var data=new Array();
     var memory_sum=0;
@@ -1927,7 +1927,7 @@ function drawBar(result_div,value,l,mode) {
     for(var i=0;i<length;i++){
         var bar=document.createElement("div");
         bar.setAttribute("class","color_bar");
-        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]);
+        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]+"; height:"+h+"px");
         div_tmp.append(bar);
     }
     var legend=document.createElement("div");

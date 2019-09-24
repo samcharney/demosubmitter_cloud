@@ -181,7 +181,7 @@
             <!-- </div>  -->
             <div class="row" style="text-align: left; margin-bottom: 2px; color: black">
                  <span style="font-size:16px">
-                     <b>Inputs</b>
+                     <b>Inputs&#160</b> <i> (The mandatory inputs are indicated by *)</i>
                  </span>
             </div>
             <div class="row" style="text-align: center; border: 2px solid #7379DE; border-radius: 8px; " >
@@ -190,7 +190,7 @@
                             <div style="display: inline-block">
                             <!--<img class="img-responsive img-centered" style="width:105px" src="./images/data.png"/>-->
                             <span style="font-size:25px" id="data-text" >
-                                data
+                                data<span style="font-size:25px;color: blue"><sup>*</sup></span>
                             </span>
                             </div>
                         <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#dataset-setting" role="button" aria-expanded="false">
@@ -220,7 +220,7 @@
                     <div class="row">
                     <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
-                          <span style="cursor: pointer;font-size:25px" id="workload-text" >workload</span>
+                          <span style="cursor: pointer;font-size:25px" id="workload-text" >workload<span style="font-size:25px;color: blue"><sup>*</sup></span></span>
                     </div>
                         <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#workload-setting" role="button" aria-expanded="false">
                             <div id="workload-trigger" onclick="">
@@ -279,7 +279,7 @@
                           <div class="row">
                               <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
-                                  <span style="cursor: pointer; font-size:25px" id="cost-text" >cost</span>
+                                  <span style="cursor: pointer; font-size:25px" id="cost-text" >budget<span style="font-size:25px;color: blue"><sup>*</sup></span></span>
                               </div>
                               <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#cost-setting" role="button" aria-expanded="false">
                                   <div id="cost-trigger" onclick="">
@@ -290,7 +290,7 @@
                           <div id="cost-setting" class="collapse multi-collapse">
                               <div class="row">
                                       <div class="input-group" style="text-align: center;">
-                                          <span class="input-group-addon"><span data-tooltip="The cost" data-tooltip-position="bottom">Cost </span></span>
+                                          <span class="input-group-addon"><span data-tooltip="The budget" data-tooltip-position="bottom">Budget </span></span>
                                           <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
                                       </div>
                               </div>
@@ -537,10 +537,10 @@
                             <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; bottom: 50px; width: 380px;">
-                                <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative;  width: 260px; height: 100px;  font-size: 10px; left: 100px; top:230px; padding:10px 20px;margin-bottom:10px; z-index: 5">
+                                <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative;  width: 260px; height: 100px;  font-size: 10px; left: 100px; top:220px; padding:10px 20px;margin-bottom:10px; z-index: 5">
                                 </div>
-                                <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 360px; height: 300px; border-radius: 8px; font-size: 10px; margin-left: 10px; margin-bottom:10px; background-image: url(./images/board.png); background-size: 360px 300px;">
-                                    <div id="continuums_bar" style=" margin-left: 92px; margin-top: 10px">
+                                <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; width: 360px; height: 280px; border-radius: 8px; font-size: 10px; margin-left: 10px; margin-bottom:10px; background-image: url(./images/board2.png); background-size: 360px 280px;">
+                                    <div id="continuums_bar" style=" margin-left: 167px; margin-top: 18px">
                                     </div>
                                     <div class="col-lg-9 col-md-9 col-sm-9" style=" margin-left: 84px; margin-top: 0px" id="diagram6">
                                     </div>
