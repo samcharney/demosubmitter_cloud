@@ -29,6 +29,7 @@ var machines = 18;
 var workload_type = 0;
 
 var time_unit;
+var M_BC;
 
 function Variables()
 {
@@ -578,10 +579,11 @@ function countContinuum(combination, cloud_provider) {
     }
 
     N=Variables.N/mem_sum;
+    M_BC=0;
     for (var T = 2; T <= 12; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
-                for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
+                for (var M_B_percent = 0.19; M_B_percent < 1; M_B_percent += 0.2) {
                     var M_B = M_B_percent * max_RAM_purchased * 1024 * 1024 * 1024;
                     var M = max_RAM_purchased * 1024 * 1024 * 1024;
                     X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z) / T) * 8);
@@ -693,7 +695,7 @@ function countContinuum(combination, cloud_provider) {
             }
         }
     }
-    console.log(Variables.VM_info,(monthly_storage_cost + monthly_mem_cost).toFixed(3),log_array);
+    //console.log(Variables.VM_info,(monthly_storage_cost + monthly_mem_cost).toFixed(3),log_array);
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
     return Variables;
@@ -752,8 +754,9 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         }
     }
     N=Variables.N/mem_sum;
+    var M_B
 
-    if(existing_system="rocks") {
+    if(existing_system=="rocks") {
         var T = 10;
         var K = 1;
         var Z = 1;
@@ -766,14 +769,39 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
             //printf("System %s needs at least %f GB of memory\n", existing_system, ((M_F/(1024*1024*1024))+1.0));
             return -1;
         }
-        var M_B = M - M_F;
+        M_BC=0;
+        M_B = M - M_F;
         M_B = M_B < 0 ? 0.0 : M_B;
+    }
+
+    if(existing_system=="WT")
+    {
+        var T = 64;
+        var K = 1;
+        var Z = 1;
+        var M = max_RAM_purchased * 1024 * 1024 * 1024;
+        M_B = M * (B*E) / ( (F*T) + (B*E) );
+        M_FP = M - M_B;
+        M_BF = 0.0; // 10 bits/entry in RocksDB is default and convert to byte because everything else is in byte
+        M_F = M_FP + M_BF;
+        if(M_F >= M)
+        {
+            //printf("System %s needs at least %f GB of memory\n", existing_system, ((M_F/(1024*1024*1024))+1.0));
+            return -1;
+        }
+        // WT uses 50% of memory to cache
+        M_BC = M_B/2.0;
+        M_B = M_B - M_BC;
+        //scenario == 'A'? getNoOfLevelsAvgCase(&L, M_B, T, data) : getNoOfLevels(&L, M_B, T, data);
     }
 
     var multiplier_from_buffer = N*(E) / (M_B);
     // handle case where data fits in buffer
     if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
     L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
+
+    if(existing_system=="WT")
+        Y=L-1;
 
     var update_cost;
     var read_cost;
@@ -851,8 +879,9 @@ function buildContinuums(cloud_mode){
                 var VMCombination = VMCombinations[i];
                 var Variables = countContinuum(VMCombination, cloud_provider);
                 var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
+                var WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
                 var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
-                var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables];
+                var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables,WT_Variables];
                 result_array.push(result);
             }
         }
@@ -863,8 +892,9 @@ function buildContinuums(cloud_mode){
             var VMCombination = VMCombinations[i];
             var Variables = countContinuum(VMCombination, cloud_provider);
             var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
+            var WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
             var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
-            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables];
+            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables,WT_Variables];
             result_array.push(result);
         }
     }
@@ -1044,6 +1074,8 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
     }
     //console.log(c,q);
     //console.log(T,K,Z,term1,term2,term3);
+    if((term1 + term2 + term3)==0)
+        console.log(T,K,Z,term1,term2,term3,cq);
     return term1 + term2 + term3;
 }
 
@@ -1139,10 +1171,8 @@ function getAlpha_0( type, M_B, E)
     return -1;
 }
 
-function getAlpha_i(type, M_B, T, K, Z, L, Y, i, E, M_BC)
+function getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)
 {
-    if(M_BC==undefined)
-        M_BC=0;
     // not a valid input
     if (i < -1) return -1;
 
@@ -1634,6 +1664,7 @@ function getBestDesignEverArray(result_array) {
     var best_design_index;
     var best_y_ever = -1;
     var bestDesignArray = new Array();
+    console.log(result_array);
     for (var i = 0; i < result_array.length; i++) {
         if (result_array[i][0] == last_x) {
             if (best_y == -1 || result_array[i][1] < best_y) {
@@ -1788,6 +1819,8 @@ function drawDiagram(Variables, id){
 }
 
 function outputParameters(Variables, id, l) {
+    if(l<0.2)
+        l=0.2;
     var result_div = document.getElementById(id);
     removeAllChildren(result_div);
     //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");

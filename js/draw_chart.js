@@ -617,18 +617,25 @@ function drawContinuums() {
     info_array=new Array();
     var name_array=new Array();
     var color_array=new Array();
+    var rocks_array=new Array();
     for(var i=0;i<best_array.length;i++){
         cost_array.push(best_array[i][0]);
         latency_array.push(best_array[i][1]);
         info_array.push(best_array[i][4]);
         name_array.push(best_array[i][3]);
+        if(best_array[i][7].latency!=undefined)
+            rocks_array.push(best_array[i][7].latency-best_array[i][1])
+        else
+            rocks_array.push(undefined);
+        //rocks_array.push(best_array[i][7].latency);
+
         for(var j=0;j<3;j++){
             if(best_array[i][3]==cloud_array[j]) {
                 color_array.push(colors[j]);
             }
         }
     }
-
+    console.log(rocks_array)
     var data_ever=[{
         x: cost_array,
         y: latency_array,
@@ -642,6 +649,33 @@ function drawContinuums() {
             "<b>%{hovertext}</b><extra></extra>",
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
+
+    var data_compare=[/*{
+        x: cost_array,
+        y: latency_array,
+        marker: { size: 7, symbol: 'circle', color: "purple"},
+        name: 'self-design',
+        mode: 'lines+markers',
+        showlegend: true,
+        text: info_array,
+        hovertext: name_array,
+        line: {color: 'purple', width: 2},
+        hovertemplate:
+            "<b>%{y}</b><extra></extra>",
+        type: 'scatter'},*/
+        {
+        x: cost_array,
+        y: rocks_array,
+        marker: { size: 5, symbol: 'circle', color: "purple"},
+        name: 'rocksdb latency minus self-design latency',
+        mode: 'lines+markers',
+        showlegend: true,
+        text: info_array,
+        hovertext: name_array,
+        line: {color: 'pink', width: 2},
+        hovertemplate:
+            "<b>%{y}</b><extra></extra>",
+        type: 'scatter'}]
 
     var result_array_ad=ContinuumArray;
     result_array_ad.sort(function (a,b) {return a[1]-b[1];});
@@ -805,6 +839,8 @@ function drawContinuums() {
         removeAllChildren(document.getElementById("cost_result_p5"));
         removeAllChildren(document.getElementById("cost_result_p6"));
         removeAllChildren(document.getElementById("cost_result_p7"));
+        removeAllChildren(document.getElementById("cost_result_p8"));
+        removeAllChildren(document.getElementById("cost_result_p9"));
         document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
     }
     else{
@@ -874,13 +910,27 @@ function drawContinuums() {
             }
 
             if( cost_result_text[0] != "Cost is too little"){
-                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB:</b>";
-                outputParameters(best_array[index][7], "cost_result_p7", l1);
+
+                //document.getElementById("cost_result_p6").setAttribute("style","position:relative;top:0px");
+                if(best_array[index][7]!=-1) {
+                    document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB:</b>";
+                    outputParameters(best_array[index][7], "cost_result_p7", l1);
+                }else{
+                    document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory</b>";
+                    removeAllChildren(document.getElementById("cost_result_p7"));
+                }
+                document.getElementById("cost_result_p8").innerHTML = "<b>WireTiger:</b>";
+                console.log(best_array[index][8])
+                outputParameters(best_array[index][8], "cost_result_p9", l1);
             }
         }
     }
+    console.log(best_array,start_point,end_point);
     var chart_array=cutArray(best_array,start_point,end_point);
-    console.log(start_point);
+
+
+
+
     var layout =
         {
             xaxis: {
@@ -932,7 +982,7 @@ function drawContinuums() {
             autosize: true,
             hovermode: "closest",
             width: 750,
-            height: 300,
+            height: 500,
             //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {
                 l: 60,
@@ -943,7 +993,8 @@ function drawContinuums() {
             }, title: ''
         };
     //Plotly.newPlot('tester5', data_ad, layout_ad);
-    //Plotly.newPlot('tester', data2, layout);
+    //Plotly.newPlot('tester5', data2, layout);
+    //Plotly.newPlot('tester', data_compare, layout);
     //Plotly.newPlot('tester3', data3, layout_ad);
     layout.width=375;
     layout_ad.width=375;
