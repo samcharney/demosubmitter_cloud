@@ -919,7 +919,7 @@ function drawContinuums() {
                     document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory</b>";
                     removeAllChildren(document.getElementById("cost_result_p7"));
                 }
-                document.getElementById("cost_result_p8").innerHTML = "<b>WireTiger:</b>";
+                document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger:</b>";
                 console.log(best_array[index][8])
                 outputParameters(best_array[index][8], "cost_result_p9", l1);
             }

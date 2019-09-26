@@ -3163,9 +3163,22 @@ function displayContinuums() {
 }
 
 function switchText() {
-	if(document.getElementById("interactive_mode_text").innerHTML=="Interactive Mode: Off")
-		document.getElementById("interactive_mode_text").innerHTML="Interactive Mode: On";
-	else
-		document.getElementById("interactive_mode_text").innerHTML="Interactive Mode: Off";
+	if(document.getElementById("interactive_mode_text").innerHTML=="Interactive Mode: Off") {
+		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
+		$("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
+		$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
+		$("#interactive-panel").animate({width: '42%',borderWidth:1,borderOpacity:1}, "slow");
+		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
+		$("#interactive_banner").animate({height: "50px", opacity:"1", borderWidth:1}, "slow");
+
+	}
+	else {
+		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
+		$("#questions_block").animate({width: '0px',opacity:'0'}, "slow");
+		$("#rocks,#WT").animate({width: '255px',opacity:'1'}, "slow");
+		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
+		$("#interactive-panel").animate({width: '98%',borderWidth:0,borderOpacity:0}, "slow");
+		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
+	}
 
 }

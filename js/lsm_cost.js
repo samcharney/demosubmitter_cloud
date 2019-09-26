@@ -583,7 +583,7 @@ function countContinuum(combination, cloud_provider) {
     for (var T = 2; T <= 12; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
-                for (var M_B_percent = 0.19; M_B_percent < 1; M_B_percent += 0.2) {
+                for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
                     var M_B = M_B_percent * max_RAM_purchased * 1024 * 1024 * 1024;
                     var M = max_RAM_purchased * 1024 * 1024 * 1024;
                     X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z) / T) * 8);
@@ -880,7 +880,7 @@ function buildContinuums(cloud_mode){
                 var Variables = countContinuum(VMCombination, cloud_provider);
                 var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
                 var WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
-                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
+                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+"<br>Cost="+Variables.cost);
                 var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables,WT_Variables];
                 result_array.push(result);
             }
@@ -893,7 +893,7 @@ function buildContinuums(cloud_mode){
             var Variables = countContinuum(VMCombination, cloud_provider);
             var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
             var WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
-            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+", Cost="+Variables.cost);
+            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+"<br>Cost="+Variables.cost);
             var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables,WT_Variables];
             result_array.push(result);
         }
