@@ -3170,7 +3170,7 @@ function switchText() {
 		$("#interactive-panel").animate({width: '80%',borderWidth:1,borderOpacity:1}, "slow");
 		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
-		$("#interactive_banner").animate({height: "50px", opacity:"1", borderWidth:1}, "slow");
+		$("#interactive_banner").animate({height: "35px", opacity:"1", borderWidth:1}, "slow");
 
 	}
 	else {
