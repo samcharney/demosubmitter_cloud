@@ -998,6 +998,7 @@ function drawContinuums() {
     //Plotly.newPlot('tester3', data3, layout_ad);
     layout.width=375;
     layout_ad.width=375;
+    //layout.title="Sub-space of configurations tailored to your inputs";
     Plotly.newPlot('tester6', data_ever, layout);
 
 
@@ -1024,7 +1025,6 @@ function drawContinuums() {
         }
 
         var myPlot = document.getElementById('tester6');
-        console.log(myPlot);
         myPlot.on('plotly_hover', function(data){
             var hoverInfo = document.getElementById('hoverinfo6');
             hoverInfo.innerHTML=(data.points[0].text);
@@ -1032,16 +1032,21 @@ function drawContinuums() {
             //hoverInfo.innerHTML = infotext.join('<br/>');
             for(var i in ContinuumArray){
                 if(data.points[0].text==ContinuumArray[i][4]) {
-                    drawBar(result_div,[[(ContinuumArray[i][5].Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(ContinuumArray[i][5].M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(ContinuumArray[i][5].M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
-                    drawDiagram(ContinuumArray[i][5], 'diagram6');
+                    var result_div=document.getElementById("continuums_bar");
+                    addTextAndBar(result_div, ContinuumArray[i][5],80,12);
+                    drawDiagram(ContinuumArray[i][5], "diagram6");
                 }
             }
         })
 
-        $("#diagram6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
+        $("#diagram6").html("<div style=\"font-size:16px;text-align: center;vertical-align: middle\">Hover along the continuum to learn more.</span>");
         $("#hoverinfo6").html("");
+        $("#continuums_bar").html("");
         $("#tester6").hover(function(){
         }, function() {
+            $("#hoverinfo6").html("");
+            $("#continuums_bar").html("");
+            $("#diagram6").html("<div style=\"font-size:16px;text-align: center;vertical-align: middle\">Hover along the continuum to learn more.</span>");
             //$("#hoverinfo6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
         });
     });
@@ -1051,7 +1056,6 @@ function drawContinuums() {
     provider_num_array=chart.provider_num_array;
     Plotly.newPlot('tester6', chart.data, chart.layout);
     var myPlot = document.getElementById('tester6');
-    console.log(myPlot);
     myPlot.on('plotly_hover', function(data){
         var hoverInfo = document.getElementById('hoverinfo6');
         hoverInfo.innerHTML=(data.points[0].text);
@@ -1067,13 +1071,16 @@ function drawContinuums() {
     })
 
 
-    /*$("#tester6").hover(function(){
+    $("#tester6").hover(function(){
     }, function() {
-        $("#hoverinfo6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
-    });*/
+        $("#hoverinfo6").html("");
+        $("#continuums_bar").html("");
+        $("#diagram6").html("<div style=\"font-size:16px;text-align: center;vertical-align: middle\">Hover along the continuum to learn more.</span>");
+    });
 
     $(document).ready(function(){
-        $("#diagram6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
+        $("#diagram6").html("<div style=\"font-size:16px;text-align: center;vertical-align: middle\">Hover along the continuum to learn more.</span>");
+        //$("#diagram6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
     });
 
 
