@@ -3149,7 +3149,7 @@ function displayContinuums() {
 	if(document.getElementById("continuums_chart").style.display=='none'||document.getElementById("continuums_chart").style.opacity==0) {
 
 		document.getElementById("continuums_chart").style.display = 'inline-block';
-		$("#continuums_chart").animate({height: '660px',opacity:'1'}, "slow");
+		$("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
 	}
 	else {
 		$("#continuums_chart").animate({height: '0px',opacity: '0'}, "slow");
@@ -3167,7 +3167,8 @@ function switchText() {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
 		$("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
 		$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
-		$("#interactive-panel").animate({width: '42%',borderWidth:1,borderOpacity:1}, "slow");
+		$("#interactive-panel").animate({width: '80%',borderWidth:1,borderOpacity:1}, "slow");
+		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
 		$("#interactive_banner").animate({height: "50px", opacity:"1", borderWidth:1}, "slow");
 
@@ -3178,7 +3179,31 @@ function switchText() {
 		$("#rocks,#WT").animate({width: '255px',opacity:'1'}, "slow");
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '98%',borderWidth:0,borderOpacity:0}, "slow");
+		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
 	}
 
+}
+
+function switchQuestion() {
+	document.getElementById("question1").style.display="none";
+	document.getElementById("question2").style.display="none";
+	if(document.getElementById("questions").value=="1") {
+		document.getElementById("question1").style.display = "";
+		var input = document.getElementById("question1_input");
+		input.addEventListener("keydown", function (e) {
+			if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
+				document.getElementById("cost").value=parseFloat(document.getElementById("cost").value)+parseFloat(input.value);
+				re_run(e);
+			}
+		});
+	}
+	if(document.getElementById("questions").value=="2") {
+		document.getElementById("question2").style.display = "";
+		var input = document.getElementById("question2_input");
+		input.addEventListener("change", function (e) {
+			document.getElementById("cloud-provider").value=input.value;
+			re_run(e);
+		});
+	}
 }

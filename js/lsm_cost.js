@@ -1477,7 +1477,7 @@ function getCloudProvider(buttonName){
     //var buttons = document.getElementsByName(buttonName);
     var buttons = document.getElementById(buttonName);
     var val=buttons.selectedIndex;
-    console.log("VAL="+val);
+    //console.log("VAL="+val);
     /*
     for(var i = 0; i < buttons.length; i++){
         if(buttons[i].style.fontWeight=='bold'){
