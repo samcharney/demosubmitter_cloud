@@ -3173,7 +3173,8 @@ function switchText() {
 		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
 		$("#interactive_banner").animate({height: "35px", opacity:"1", borderWidth:1}, "slow");
-		$("#explore_switch").css('transform','translateY(-50px)');
+		$("#explore_switch").css('transform','translateY(-50px) ');
+		$("#explore_switch").animate({opacity:"1"}, "slow");
 		$("#split_1").animate({opacity:"1"}, "slow");
 
 	}
@@ -3187,6 +3188,7 @@ function switchText() {
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
 		$("#explore_switch").css('transform','translateY(0px)');
 		$("#split_1").animate({opacity:"0"}, "slow");
+		$("#explore_switch").animate({opacity:"0"}, "slow");
 	}
 
 }
