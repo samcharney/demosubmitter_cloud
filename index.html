@@ -180,17 +180,17 @@
             <!-- <div id="interactiveDemo" class="row" style="">  -->
             <!-- </div>  -->
             <div class="row" style="text-align: left; margin-bottom: 2px; color: black">
-                 <span style="font-size:16px">
+                 <span style="font-size:16px;border-bottom: 1px solid #C0CCE8;">
                      <b>Inputs&#160</b> <i> (The mandatory inputs are indicated by *)</i>
                  </span>
             </div>
-            <div class="row" style="text-align: center; border: 1px solid #E1EAFF; background-color: #EDF5FF; border-radius: 8px; " >
+            <div class="row" style="text-align: center;  background-color: #F0F7FF; background-color: white; border-radius: 0px; " >
                 <div class="col-sm-3" >
                     <div class="row">
                             <div style="display: inline-block">
                             <!--<img class="img-responsive img-centered" style="width:105px" src="./images/data.png"/>-->
-                            <span style="font-size:25px" id="data-text" >
-                                data<span style="font-size:25px;color: blue;margin-top:15px"><sup>*</sup></span>
+                            <span style="font-size:20px" id="data-text" >
+                                data<span style="color: blue;margin-top:15px"><sup>*</sup></span>
                             </span>
                             </div>
                         <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#dataset-setting" role="button" aria-expanded="false">
@@ -220,7 +220,7 @@
                     <div class="row">
                     <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
-                        <span style="cursor: pointer;font-size:25px" id="workload-text" >workload<span style="font-size:25px;color: blue;margin-top:15px"><sup>*</sup></span></span>
+                        <span style="cursor: pointer;font-size:20px" id="workload-text" >workload<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
                     </div>
                         <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#workload-setting" role="button" aria-expanded="false">
                             <div id="workload-trigger" onclick="">
@@ -279,7 +279,7 @@
                           <div class="row">
                               <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
-                                  <span style="cursor: pointer; font-size:25px" id="cost-text" >budget<span style="font-size:25px;color: blue;margin-top:15px"><sup>*</sup></span></span>
+                                  <span style="cursor: pointer; font-size:20px" id="cost-text" >budget<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
                               </div>
                               <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#cost-setting" role="button" aria-expanded="false">
                                   <div id="cost-trigger" onclick="">
@@ -300,7 +300,7 @@
                       <div class="col-sm-3" >
                               <div style="display: inline-block">
                                   <!--<img class="img-responsive img-centered" style="width:105px" src="./images/cloud.png"/>-->
-                                  <span style="cursor: pointer; font-size:25px" id="cloud-provider-text" >cloud</span>
+                                  <span style="cursor: pointer; font-size:20px" id="cloud-provider-text" >cloud</span>
                               </div>
                           <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#cloud-provider-setting" role="button" aria-expanded="false">
                               <div id="cloud-provider-trigger" onclick="">
@@ -472,9 +472,9 @@
                     </div>
 
 
-                </div>
+             </div>
                 <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; right: 35px">
-                    <div style="display:inline-block; position:relative; width: 250px; left:600px; top:0px; font-size: 16px; margin-bottom: 10px">
+                    <div style="display:inline-block; position:relative; width: 250px; left:400px; top:0px; font-size: 16px; margin-bottom: 10px">
                         <div id="interactive_mode_text" style="margin-bottom: 8px;">Interactive Mode: Off</div>
                     <div class="switchbar_before" style="position: relative; left: 50px" >
                         <div id="switchbar_1" class="switchbar"  style="position: absolute; " >
@@ -484,12 +484,22 @@
                     </div>
                     </div>
 
+                    <div id="exsys_switch" style=" display:inline-block; position:relative; width: 250px; height:50px; top:0px; left:500px; margin:15px; font-size: 16px; opacity: 1; ">
+                        <div id="exsys_text" style="margin-bottom: 8px;">Compare with existing systems: Off</div>
+                        <div class="switchbar_before" style="position: relative; left: 60px" >
+                            <div  id="switchbar_3" class="switchbar"  style="position: absolute; " >
+                            </div>
+                            <div id="switch_3" class="switch" onclick="displayRocks()" style=" ">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div id="questions_block" style="position:relative; left:0px;width:0px; height:537px; border:1px solid #7379DE; border-radius:0px; opacity:0; display: inline-block;vertical-align:top">
                             <div style="width:100%; height:35px; background-color:#7379DE; color: white; font-size: 20px; text-align: center; padding:3px">
                                 Question Panel
                             </div>
-                            <div class="myinput" style="width:100%;background-color:#7379DE; color: white; margin: 1px 0px 0px 0px; border: 0;">Choose your what-if question</div>
+                            <div class="myinput" style="width:100%;background-color:white; color: black; margin: 1px 0px 0px 0px; border: 0; text-align: left"><b>Choose your what-if question</b></div>
                             <select  class="myinput myselect" onchange="switchQuestion()" id="questions" style="width:98%; border-radius: 0; " >
                                 <option value="0">Select a question! </option>
                                 <option value="1">What if I increase my budget</option>
@@ -532,11 +542,11 @@
 
                                 <div id="cost_result_diagram2" style="display:inline-block; width: 230px; ">
                                 </div>
-                                <div id="cost_result_p5" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 260px;  border-radius: 8px; font-size: 10px;  b">
+                                <div id="cost_result_p5" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 260px;  border-radius: 8px; font-size: 10px; ">
                                 </div>
                             </div>
                             </div>
-                            <div id="rocks" style="width:255px; display:inline-block;vertical-align:top">
+                            <div id="rocks" style="width:255px; display:inline-block;vertical-align:top;opacity: 0">
                             <div id="cost_result_p6" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 255px; border-radius: 8px; font-size: 14px; text-align: center;vertical-align:top">
                             </div>
                             <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px;  padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 0px solid black;">
@@ -548,7 +558,7 @@
                                 </div>
                             </div>
                             </div>
-                            <div id="WT" style="width:255px; display:inline-block;vertical-align:top">
+                            <div id="WT" style="width:255px; display:inline-block;vertical-align:top;opacity: 0">
                                 <div id="cost_result_p8" class="col-lg-1 col-md-1 col-sm-1" style=" width: 255px; border-radius: 8px; font-size: 14px; text-align: center;">
                                 </div>
                                 <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px;  padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 0px solid black;">
@@ -563,7 +573,7 @@
                                <div id="split_1" style="position:absolute; display:inline-block; width: 1px; height:0px; background-color:#7379DE; top:-50px; opacity: 0"></div>
                             <div style="width: 405px; display: inline-block " >
                                 <div id="explore_switch" style=" display:inline-block; position:relative; width: 250px; height:50px; left:150px; margin:15px; font-size: 16px; opacity: 0; ">
-                                    <div id="explore_text" style="margin-bottom: 8px;">Explore More Design: Off</div>
+                                    <div id="explore_text" style="margin-bottom: 8px;">Explore More Designs: Off</div>
                                     <div class="switchbar_before" style="position: relative; left: 60px" >
                                         <div  id="switchbar_2" class="switchbar"  style="position: absolute; " >
                                         </div>
@@ -572,8 +582,8 @@
                                     </div>
                                 </div>
                                 <div id="continuums_chart"  style="display: none; width:805px; height: 0px;">
-                                    <div id="chart_banner" style="width: 635px; height:35px; background-color:#7379DE; color: white; font-size: 20px; text-align: center; padding:3px; opacity: 1">
-                                        Sub-space of configurations tailored to your inputs
+                                    <div id="chart_banner" style="width: 635px; height:35px; background-color:white; color: black; font-size: 20px; text-align: center; padding:3px; opacity: 1">
+                                        <b>Sub-space of configurations tailored to your inputs</b>
                                     </div>
                                     <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                                     </div>

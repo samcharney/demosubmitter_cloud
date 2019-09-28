@@ -913,13 +913,13 @@ function drawContinuums() {
 
                 //document.getElementById("cost_result_p6").setAttribute("style","position:relative;top:0px");
                 if(best_array[index][7]!=-1) {
-                    document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB:</b>";
+                    document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB</b>";
                     outputParameters(best_array[index][7], "cost_result_p7", l1);
                 }else{
                     document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory</b>";
                     removeAllChildren(document.getElementById("cost_result_p7"));
                 }
-                document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger:</b>";
+                document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger</b>";
                 console.log(best_array[index][8])
                 outputParameters(best_array[index][8], "cost_result_p9", l1);
             }
