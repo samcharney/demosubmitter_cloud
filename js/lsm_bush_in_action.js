@@ -3238,8 +3238,35 @@ function switchQuestion() {
     if(document.getElementById("questions").value=="3") {
         document.getElementById("question3").style.display = "";
         var input = document.getElementById("question3_input");
-        input.addEventListener("change", function (e) {
-
+        input.addEventListener("keydown", function (e) {
+            if (e.keyCode == 13) {
+                var cost = parseFloat(document.getElementById("cost").value);
+                var result_array = global_continuums_array;
+                result_array.sort(function (a,b) {return a[0]-b[0];});
+                result_array=getBestDesignEverArray(result_array);
+                var index;
+                for (var i = 0; i < result_array.length; i++) {
+                    if (cost < result_array[i][0]) {
+                        console.log(cost,i,result_array[i][0])
+                        if ((cost - result_array[i - 1][0]) > (result_array[i][0] - cost))
+                            index = i;
+                        else
+                            index = i - 1;
+                        break;
+                    }
+                    if (i == result_array.length - 1)
+                        alert("Design not exist!");
+                }
+                for (var i = index + 1; i < result_array.length; i++) {
+                    if (result_array[i][1] < result_array[index][1] * (1 - input.value / 100)) {
+                        document.getElementById("cost").value = Math.ceil(result_array[i][0]);
+                        re_run(e);
+                        break;
+                    }
+                    if (i == result_array.length - 1)
+                        alert("Design not exist!");
+                }
+            }
         });
     }
     if(document.getElementById("questions").value=="4") {
