@@ -3151,7 +3151,7 @@ function displayCharts() {
 }
 
 function displayContinuums() {
-	if(document.getElementById("continuums_chart").style.display=='none'||document.getElementById("continuums_chart").style.opacity==0) {
+	if(document.getElementById("explore_text").innerHTML=="Explore More Designs: Off") {
 
 		document.getElementById("continuums_chart").style.display = 'inline-block';
 		$("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
@@ -3163,10 +3163,10 @@ function displayContinuums() {
 		//document.getElementById("continuums_chart").style.display = 'none';
 	}
 	//$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
-	if(document.getElementById("explore_text").innerHTML=="Explore More Design: Off")
-		document.getElementById("explore_text").innerHTML="Explore More Design: On";
+	if(document.getElementById("explore_text").innerHTML=="Explore More Designs: Off")
+		document.getElementById("explore_text").innerHTML="Explore More Designs: On";
 	else
-		document.getElementById("explore_text").innerHTML="Explore More Design: Off";
+		document.getElementById("explore_text").innerHTML="Explore More Designs: Off";
 }
 
 function switchText() {
@@ -3183,7 +3183,9 @@ function switchText() {
 		$("#explore_switch").animate({opacity:"1"}, "slow");
 		$("#exsys_switch").animate({opacity:"0"}, "slow");
 		$("#split_1").animate({opacity:"1"}, "slow");
-
+        if(document.getElementById("explore_text").innerHTML=="Explore More Designs: On") {
+            $("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
+        }
 	}
 	else {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
@@ -3204,6 +3206,8 @@ function switchText() {
 		$("#split_1").animate({opacity:"0"}, "slow");
 		$("#explore_switch").animate({opacity:"0"}, "slow");
 		$("#exsys_switch").animate({opacity:"1"}, "slow");
+
+            $("#continuums_chart").animate({height: '0px',opacity:'0'}, "slow");
 	}
 
 }
@@ -3211,6 +3215,8 @@ function switchText() {
 function switchQuestion() {
 	document.getElementById("question1").style.display="none";
 	document.getElementById("question2").style.display="none";
+    document.getElementById("question3").style.display="none";
+    document.getElementById("question4").style.display="none";
 	if(document.getElementById("questions").value=="1") {
 		document.getElementById("question1").style.display = "";
 		var input = document.getElementById("question1_input");
@@ -3229,6 +3235,67 @@ function switchQuestion() {
 			re_run(e);
 		});
 	}
+    if(document.getElementById("questions").value=="3") {
+        document.getElementById("question3").style.display = "";
+        var input = document.getElementById("question3_input");
+        input.addEventListener("change", function (e) {
+
+        });
+    }
+    if(document.getElementById("questions").value=="4") {
+        document.getElementById("question4").style.display = "";
+        var input = document.getElementById("question4_input");
+        input.addEventListener("change", function (e) {
+            document.getElementById("v").value=input.value/100;
+            document.getElementById("w").value=1-input.value/100;
+            re_run(e);
+        });
+    }
+}
+
+function switchStatistics() {
+    removeAllChildren(document.getElementById("statistics_result"));
+    if(document.getElementById("statistics").value=="1") {
+        document.getElementById("statistic1").style.display = "";
+        var input = document.getElementById("statistic1_input");
+        input.addEventListener("keydown", function (e) {
+            if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
+                removeAllChildren(document.getElementById("statistics_result"));
+                var result_array=global_continuums_array;
+                result_array.sort(function (a,b) {return a[1]-b[1];});
+                var cloud_provider_num=[0,0,0];
+                for(var i=0;i<Math.ceil(result_array.length*input.value/100);i++){
+                    for (var j = 0; j < 3; j++) {
+                        if (result_array[i][3] == cloud_array[j]) {
+                            cloud_provider_num[j]++;
+                        }
+                    }
+                }
+                var max_num=Math.max(cloud_provider_num[0],cloud_provider_num[1],cloud_provider_num[2]);
+                var width=100;
+                console.log(max_num);
+                var div_result=document.getElementById("statistics_result");
+                for(var i=0;i<3;i++){
+                    var div_temp=document.createElement("div");
+                    div_temp.setAttribute("style","width:98%;text-align:left");
+                    div_temp.setAttribute("class","myinput")
+                    var text=document.createElement("div");
+                    text.setAttribute("style","display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+                    text.innerHTML=cloud_array[i];
+                    div_temp.appendChild(text);
+                    var bar=document.createElement("div");
+                    bar.setAttribute("class","color_bar");
+                    bar.setAttribute("style","width:"+width*cloud_provider_num[i]/max_num+"px;background-color:"+colors[i]+"; height:20px");
+                    div_temp.appendChild(bar);
+                    var percent=document.createElement("div");
+                    percent.setAttribute("style","display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+                    percent.innerHTML=((cloud_provider_num[i]/result_array.length)*100).toFixed(1)+"%";
+                    div_temp.appendChild(percent);
+                    div_result.appendChild(div_temp);
+                }
+            }
+        });
+    }
 }
 
 function displayRocks() {

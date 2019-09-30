@@ -580,6 +580,7 @@ function drawContinuums() {
     var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
 
     var ContinuumArray=buildContinuums(cloud_provider);
+    global_continuums_array=ContinuumArray;
 
     var best_array=ContinuumArray;
     var latency_array=new Array();
@@ -612,6 +613,7 @@ function drawContinuums() {
     }];
 
     best_array=getBestDesignEverArray(ContinuumArray);
+
     latency_array=new Array();
     cost_array=new Array();
     info_array=new Array();
@@ -863,9 +865,9 @@ function drawContinuums() {
                     //drawDiagram(best_array[i][5], 'cost_result_diagram2');
                     index=i-1;
                     cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
-                    cost_result_text[1]="<b>Option 1: Save money!</b>"
+                    cost_result_text[1]="<b>Key-value store 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
-                    cost_result_text[3] = "<b>Option 2: Save time!</b>";
+                    cost_result_text[3] = "<b>Key-value store 2 saves time</b>";
                     cost_result_text[4] = best_array[i][5];
                     start_point=Math.floor(i-best_array.length/5);
                     if(start_point<0)
@@ -907,9 +909,9 @@ function drawContinuums() {
 
             if(l2!=-1) {
                 if(switch_option==true){
-                    document.getElementById("cost_result_p4").innerHTML= "<b>Option 2: Save money!</b>";
+                    document.getElementById("cost_result_p4").innerHTML= "<b>Key-value store 2 saves money</b>";
                     outputParameters(cost_result_text[2],"cost_result_p5", l1);
-                    document.getElementById("cost_result_p2").innerHTML = "<b>Option 1: Save time!</b>";
+                    document.getElementById("cost_result_p2").innerHTML = "<b>Key-value store 1 saves time</b>";
                     outputParameters(cost_result_text[4], "cost_result_p3", l2);
                 }else {
                     document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];

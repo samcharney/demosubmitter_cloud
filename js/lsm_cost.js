@@ -31,6 +31,8 @@ var workload_type = 0;
 var time_unit;
 var M_BC;
 
+var global_continuums_array;
+
 function Variables()
 {
     var N;
@@ -1851,6 +1853,14 @@ function outputParameters(Variables, id, l) {
         text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:280px; text-align:right");
         text.innerHTML = "Cost";
         result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:330px; text-align:right");
+        text.innerHTML = "Latency";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:375px; text-align:right");
+        text.innerHTML = "Download";
+        result_div.appendChild(text);
     }
 
     var div_tmp = document.createElement("div");
@@ -1966,7 +1976,7 @@ function createPopup(Variables){
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"https://volatill.github.io/demosubmitter_cloud/images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"https://volatill.github.io/demosubmitter_cloud//images/dollar.png");
     outputParameter(result_div,fixTime(Variables.latency),"https://volatill.github.io/demosubmitter_cloud//images/performance.png");
-
+    removeAllChildren(popup.document.body);
     popup.document.body.appendChild(result_div);
 }
 
