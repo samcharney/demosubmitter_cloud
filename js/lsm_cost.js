@@ -1826,7 +1826,7 @@ function outputParameters(Variables, id, l) {
     //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
     outputParameter(result_div,Variables.Vcpu_num+" vCPUs","./images/cpu.png");
     var div_tmp = document.createElement("div");
-    div_tmp.setAttribute("style","background-image: url(./images/doublearrow.png); background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
+    div_tmp.setAttribute("style"," background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
     var text_tmp= document.createElement("div");
     text_tmp.setAttribute("style", "background-color:white; display:inline-block; position:relative; bottom: 2px; padding-left:2px; padding-right:2px");
     text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
@@ -1836,12 +1836,20 @@ function outputParameters(Variables, id, l) {
 
     if(result_div.id=="cost_result_p3") {
         var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:8px; ");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:8px; text-align:right");
         text.innerHTML = "Processor";
         result_div.appendChild(text);
         var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:150px; ");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:150px;text-align:right ");
         text.innerHTML = "On-disk";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:226px; text-align:right");
+        text.innerHTML = "Cloud";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:280px; text-align:right");
+        text.innerHTML = "Cost";
         result_div.appendChild(text);
     }
 
@@ -1862,6 +1870,104 @@ function outputParameters(Variables, id, l) {
    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
    // outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
     generateDownload(Variables, result_div, id);
+}
+
+function outputNote(Variables, id){
+    var result_div = document.getElementById(id);
+    var text = document.createElement("div");
+    text.setAttribute("style", "width:90%; position:absolute; top:410px");
+    text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the input takes $"+Variables.cost+".</i>"
+    result_div.appendChild(text);
+    var div_tmp = document.createElement("div");
+    var popup_id=id+"_popup"
+    div_tmp.setAttribute("class","download_icon");
+    div_tmp.setAttribute("id",popup_id);
+    div_tmp.setAttribute("style","position:absolute; top:405px; left:120px")
+    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/popup.png\"/>"
+    result_div.appendChild(div_tmp);
+    $("#"+popup_id).click(function(){
+        createPopup(Variables);
+        console.log("____");
+    });
+}
+
+function createPopup(Variables){
+    var popup = open("", "Popup", "width=300,height=600");
+    popup.document.head.innerHTML=" <meta charset=\"utf-8\">\n" +
+
+        "    <title>X</title>\n" +
+        "\n" +
+        "    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+        "\n" +
+        "    <!-- Custom CSS -->\n" +
+        "        <link href=\"https://volatill.github.io/demosubmitter_cloud/css/lsm_button.css\" rel=\"stylesheet\">\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/tooltip.css\" rel=\"stylesheet\">\n" +
+
+        "\n" +
+        "    <!-- Font Awesome -->\n" +
+        "    <script src=\"https://use.fontawesome.com/3227f266ec.js\"></script>\n" +
+        "\n" +
+        "    <!-- Custom Fonts -->\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker|Reenie+Beanie|Rock+Salt|Indie+Flower' rel='stylesheet' type='text/css'>\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Raleway|Source+Sans+Pro\" rel=\"stylesheet\">\n" +
+        "      <!--[if lt IE 9]>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js\"></script>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js\"></script>\n" +
+        "    <![endif]-->"
+    var result_div = popup.document.createElement("div");
+    result_div.setAttribute("id","popup");
+    result_div.setAttribute("class","col-lg-1 col-md-1 col-sm-1")
+    result_div.setAttribute("style","width: 260px;  border-radius: 8px; font-size: 10px; padding-top:20px;");
+    var l=1;
+
+    removeAllChildren(result_div);
+    //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    outputParameter(result_div,Variables.Vcpu_num+" vCPUs","https://volatill.github.io/demosubmitter_cloud//images/cpu.png");
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("style"," background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
+    var text_tmp= document.createElement("div");
+    text_tmp.setAttribute("style", "background-color:white; display:inline-block; position:relative; bottom: 2px; padding-left:2px; padding-right:2px");
+    text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
+    div_tmp.appendChild(text_tmp);
+    result_div.appendChild(div_tmp);
+    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
+
+    if(result_div.id=="cost_result_p3") {
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:8px; text-align:right");
+        text.innerHTML = "Processor";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:150px;text-align:right ");
+        text.innerHTML = "On-disk";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:226px; text-align:right");
+        text.innerHTML = "Cloud";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:280px; text-align:right");
+        text.innerHTML = "Cost";
+        result_div.appendChild(text);
+    }
+
+    var div_tmp = document.createElement("div");
+    drawDiagram(Variables, div_tmp);
+    div_tmp.setAttribute("style", "height:100px;");
+    div_tmp.setAttribute("class", "tooltip1")
+    var span_tmp=document.createElement("span");
+    span_tmp.setAttribute("class","tooltiptext");
+    span_tmp.innerHTML="T="+Variables.T+"  K="+Variables.K+"  Z="+Variables.Z;
+    div_tmp.appendChild(span_tmp);
+    result_div.appendChild(div_tmp);
+    outputParameter(result_div,cloud_array[Variables.cloud_provider],"https://volatill.github.io/demosubmitter_cloud/images/cloud.png");
+    outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"https://volatill.github.io/demosubmitter_cloud//images/dollar.png");
+    outputParameter(result_div,fixTime(Variables.latency),"https://volatill.github.io/demosubmitter_cloud//images/performance.png");
+
+    popup.document.body.appendChild(result_div);
 }
 
 function outputParameter(result_div,value,text){
@@ -1963,10 +2069,6 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
         bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]+"; height:"+h+"px");
         div_tmp.append(bar);
     }
-    var legend=document.createElement("div");
-    legend.setAttribute("class","color_bar");
-    legend.setAttribute("style","position: absolute; width: 10px;height: 10px;background-color: white; z-index:10");
-    div_tmp.append(legend);
     result_div.appendChild(div_tmp);
     if(mode!="no_legend") {
         div_tmp = document.createElement("div");
@@ -2006,3 +2108,4 @@ function generateDownload(Variables, result_div, id) {
         createAndDownloadFile(("design_"+Variables.cost+".txt"),download_content);
     });
 }
+

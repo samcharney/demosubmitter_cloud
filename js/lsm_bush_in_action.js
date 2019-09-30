@@ -3174,6 +3174,7 @@ function switchText() {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
 		$("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
 		$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
+		$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
 		$("#interactive-panel").animate({width: '80%',borderWidth:1,borderOpacity:1}, "slow");
 		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
@@ -3187,10 +3188,14 @@ function switchText() {
 	else {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
 		$("#questions_block").animate({width: '0px',opacity:'0'}, "slow");
-		if(document.getElementById("exsys_text").innerHTML=="Compare with existing systems: On")
-			$("#rocks,#WT").animate({width: '255px',opacity:'1'}, "slow");
-		else
-			$("#rocks,#WT").animate({width: '255px',opacity:'0'}, "slow");
+		if(document.getElementById("exsys_text").innerHTML=="Compare with existing systems: On") {
+			$("#rocks,#WT").animate({width: '255px', opacity: '1'}, "slow");
+			$("#exist_title").animate({width: '30%', opacity: '1'}, "slow");
+		}
+		else {
+			$("#rocks,#WT").animate({width: '255px', opacity: '0'}, "slow");
+			$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
+		}
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '98%',borderWidth:0,borderOpacity:0}, "slow");
 		$("#interactive-content").css('transform','scale(1)');
@@ -3230,10 +3235,10 @@ function displayRocks() {
 	//$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
 	if(document.getElementById("exsys_text").innerHTML=="Compare with existing systems: Off") {
 		document.getElementById("exsys_text").innerHTML = "Compare with existing systems: On";
-		$("#WT,#rocks").animate({opacity:"1"}, "slow");
+		$("#WT,#rocks,#exist_title").animate({opacity:"1"}, "slow");
 	}
 	else {
 		document.getElementById("exsys_text").innerHTML = "Compare with existing systems: Off";
-		$("#WT,#rocks").animate({opacity:"0"}, "slow");
+		$("#WT,#rocks,#exist_title").animate({opacity:"0"}, "slow");
 	}
 }
