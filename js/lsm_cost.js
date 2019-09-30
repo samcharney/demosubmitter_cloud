@@ -1875,7 +1875,7 @@ function outputParameters(Variables, id, l) {
 function outputNote(Variables, id){
     var result_div = document.getElementById(id);
     var text = document.createElement("div");
-    text.setAttribute("style", "width:90%; position:absolute; top:410px");
+    text.setAttribute("style", "width:90%; position:absolute; top:410px; font-size:12px");
     text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the input takes $"+Variables.cost+".</i>"
     result_div.appendChild(text);
     var div_tmp = document.createElement("div");
