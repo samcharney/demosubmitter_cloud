@@ -850,7 +850,7 @@ function drawContinuums() {
 
         if(best_array[best_array.length-1][0]<cost) {
             index=0;
-            cost_result_text[0]=("We found 1 option for you at $"+cost+".<br><br>");
+            cost_result_text[0]=("We found 1 key-value stores for you at "+cost+".<br><br>");
             //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
             cost_result_text[1]="<b>Our Option:</b>"
             cost_result_text[2] = best_array[best_array.length - 1][5];
@@ -864,7 +864,7 @@ function drawContinuums() {
                     //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
                     //drawDiagram(best_array[i][5], 'cost_result_diagram2');
                     index=i-1;
-                    cost_result_text[0]=("We found 2 options for you at $"+cost+".<br><br>");
+                    cost_result_text[0]=("We found 2 key-value stores for you at $"+cost+".<br><br>");
                     cost_result_text[1]="<b>Key-value store 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
                     cost_result_text[3] = "<b>Key-value store 2 saves time</b>";
@@ -891,7 +891,7 @@ function drawContinuums() {
                     break;
                 }else if(best_array[i][0] == cost){
                     index=i;
-                    cost_result_text[0]=("We found the options for you at $"+cost+".<br><br>");
+                    cost_result_text[0]=("We found the key-value stores for you at $"+cost+".<br><br>");
                     //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
                     cost_result_text[1]="<b>Our Option:</b>"
                     cost_result_text[2] = best_array[best_array.length - 1][5];

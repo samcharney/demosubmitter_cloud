@@ -1011,6 +1011,46 @@ function init(){
 		$("#switchbar_3").toggleClass("down");
 	})
 
+	var e=event;
+	$('#myForm_1 input').on('change', function() {
+		if($('input[name=radio_1]:checked', '#myForm_1').val()=="skew")
+			$("#myForm_2").animate({height: '168px',opacity:'1',margin:'7px 6px 6px 6px',padding:'5px',borderWidth:'1px'}, "slow");
+		else{
+			$("#myForm_2").animate({height: '0px',opacity:'0',margin:'0px',padding:'0px',borderWidth:'0px'}, "slow");
+			workload_type = 0;
+			U_1 = 10000;
+			U_2=100000000000;
+			p_get = 0.7;
+			p_put=0.0001;
+			//navigateDesignSpace();
+			drawContinuums();
+		}
+	});
+
+	$('#myForm_2 input').on('change', function() {
+		workload_type = 1;
+		U_1 = 10000;
+		U_2=100000000;
+		if($('input[name=radio_2]:checked', '#myForm_2').val()=="1"){
+			p_get=0.8;
+			p_put=0.0001;
+		}
+		if($('input[name=radio_2]:checked', '#myForm_2').val()=="2"){
+			p_get=0.0001;
+			p_put=0.8;
+		}
+		if($('input[name=radio_2]:checked', '#myForm_2').val()=="3"){
+			p_get=0.2;
+			p_put=0.2;
+		}
+		if($('input[name=radio_2]:checked', '#myForm_2').val()=="4"){
+			p_get=0.5;
+			p_put=0.5;
+		}
+		//navigateDesignSpace();
+		drawContinuums();
+	});
+
 	navigateDesignSpace();
 	//drawCharts();
 	//drawChart2();
@@ -3217,6 +3257,7 @@ function switchQuestion() {
 	document.getElementById("question2").style.display="none";
     document.getElementById("question3").style.display="none";
     document.getElementById("question4").style.display="none";
+	document.getElementById("question5").style.display="none";
 	if(document.getElementById("questions").value=="1") {
 		document.getElementById("question1").style.display = "";
 		var input = document.getElementById("question1_input");
@@ -3278,10 +3319,20 @@ function switchQuestion() {
             re_run(e);
         });
     }
+	if(document.getElementById("questions").value=="5") {
+		document.getElementById("question4").style.display = "";
+		var input = document.getElementById("question5_input");
+		input.addEventListener("change", function (e) {
+			document.getElementById("w").value=input.value/100;
+			document.getElementById("v").value=1-input.value/100;
+			re_run(e);
+		});
+	}
 }
 
 function switchStatistics() {
     removeAllChildren(document.getElementById("statistics_result"));
+	document.getElementById("question1").style.display="none";
     if(document.getElementById("statistics").value=="1") {
         document.getElementById("statistic1").style.display = "";
         var input = document.getElementById("statistic1_input");

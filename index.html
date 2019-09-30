@@ -247,6 +247,32 @@
                           <div class="col-lg-4 col-md-4 col-sm-4"> <h4>Range Lookups</h4> </div>
                           <div class="col-lg-4 col-md-4 col-sm-4"> <h4>Point Lookups</h4> </div>
                         </div> -->
+                        <form id="myForm_1" style=" text-align: left; height:30px; padding:5px; background-color:#F0F7FF; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px">
+                            <label class="radiobutton"  style=" margin:0px 80px 0px 30px"><input type="radio" name="radio_1" value="uniform" checked="checked"/> uniform <br />
+                                <span class="check_mark"></span>
+                            </label>
+
+                            <label class="radiobutton"><input type="radio" name="radio_1" value="skew" /> skew <br />
+                                <span class="check_mark"></span>
+                            </label>
+                        </form>
+
+                        <form id="myForm_2" style="text-align: left; height: 0px; opacity: 0; padding:0px; background-color:#F0F7FF; border:1px solid  #D3EBFF;border-radius:4px; margin:0px">
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="1" /> a) 80% reads are skewed <br />
+                                <span class="check_mark"></span>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="2" /> b) 80% writes are skewed <br />
+                                <span class="check_mark"></span>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="3" /> c) both read and writes are skewed by 20% <br />
+                                <span class="check_mark"></span>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 0px 10px; display: block"><input type="radio" name="radio_2" value="4" /> d) both read and writes are skewed by 50% <br />
+                                <span class="check_mark"></span>
+                            </label>
+                        </form>
+
+
                         <div class="input-group">
                             <span class="input-group-addon"><span data-tooltip="Proportion of Write" data-tooltip-position="bottom"> Proportion of Write </span></span>
                             <input id="w" type="text" class="form-control" aria-label="Proportion of write operation" placeholder=" w (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')" />
@@ -519,6 +545,7 @@
                                 <option value="2">What if I change my cloud provider</option>
                                 <option value="3">What if I increase my performance</option>
                                 <option value="4">What if I change the proportion of read</option>
+                                <option value="4">What if I change the proportion of write</option>
                             </select>
 
                             <div id="question1" style="display: none">
@@ -537,6 +564,9 @@
                             </div>
                             <div id="question4" style="display: none">
                                 <div class="myinput" style="width:51px; ">to</div><input class="myinput" type="number" id="question4_input" style="width:100px; background-color: white"/><div class="myinput" style="width:20px; ">%</div>
+                            </div>
+                            <div id="question5" style="display: none">
+                                <div class="myinput" style="width:51px; ">to</div><input class="myinput" type="number" id="question5_input" style="width:100px; background-color: white"/><div class="myinput" style="width:20px; ">%</div>
                             </div>
                             <div class="myinput" style="width:100%;background-color:white; color: black; margin:40px 0px 2px 0px; border: 0; text-align: left"><b>Statistics queries</b></div>
                             <select  class="myinput myselect" onchange="switchStatistics()" id="statistics" style="width:98%; border-radius: 0; " >

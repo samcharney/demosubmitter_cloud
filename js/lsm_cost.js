@@ -152,7 +152,7 @@ function navigateDesignSpace() {
 
     var best_cost=-1;
 
-    for (var T = 2; T <= 15; T++) {
+    for (var T = 2; T <= 5; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
                 for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
@@ -1076,8 +1076,8 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
     }
     //console.log(c,q);
     //console.log(T,K,Z,term1,term2,term3);
-    if((term1 + term2 + term3)==0)
-        console.log(T,K,Z,term1,term2,term3,cq);
+    //if((term1 + term2 + term3)==0)
+        //console.log(T,K,Z,term1,term2,term3,cq);
     return term1 + term2 + term3;
 }
 
@@ -1096,6 +1096,7 @@ function getcq(type, T, K, Z, L, Y, M_B, E)
     }
     c = (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E)) * (1 - (q))*(1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
     q = 1 - (q)*(1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
+   // console.log( getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
     return [c,q];
 }
 
