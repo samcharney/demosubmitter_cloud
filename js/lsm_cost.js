@@ -1885,7 +1885,11 @@ function outputParameters(Variables, id, l) {
         text.innerHTML = "Latency";
         result_div.appendChild(text);
         var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:375px; text-align:right");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:382px; text-align:right");
+        text.innerHTML = "Throughput";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:427px; text-align:right");
         text.innerHTML = "Download";
         result_div.appendChild(text);
     }
@@ -1902,6 +1906,7 @@ function outputParameters(Variables, id, l) {
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"./images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
     outputParameter(result_div,fixTime(Variables.latency),"./images/performance.png");
+    outputParameter(result_div,parseInt(Variables.query_count/(Variables.latency*24*60*60))+" querys/s","./images/throughput.png");
    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
    // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
@@ -1912,14 +1917,14 @@ function outputParameters(Variables, id, l) {
 function outputNote(Variables, id){
     var result_div = document.getElementById(id);
     var text = document.createElement("div");
-    text.setAttribute("style", "width:90%; position:absolute; top:410px; font-size:12px");
+    text.setAttribute("style", "width:90%; position:absolute; top:462px; font-size:12px");
     text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the input takes $"+Variables.cost+".</i>"
     result_div.appendChild(text);
     var div_tmp = document.createElement("div");
     var popup_id=id+"_popup"
     div_tmp.setAttribute("class","download_icon");
     div_tmp.setAttribute("id",popup_id);
-    div_tmp.setAttribute("style","position:absolute; top:405px; left:120px")
+    div_tmp.setAttribute("style","position:absolute; top:457px; left:120px")
     div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/popup.png\"/>"
     result_div.appendChild(div_tmp);
     $("#"+popup_id).click(function(){

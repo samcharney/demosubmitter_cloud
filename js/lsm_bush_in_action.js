@@ -1056,6 +1056,14 @@ function init(){
 			});
 	});
 
+	$('[name=interactive_tab]').on('click',function(){
+		if(!$(this).hasClass("down")){
+			$('[name=interactive_tab]').removeClass('down');
+			$(this).addClass('down');
+			switchText();
+		}
+	})
+
 	navigateDesignSpace();
 	//drawCharts();
 	//drawChart2();
@@ -3200,7 +3208,7 @@ function displayContinuums() {
 
 		document.getElementById("continuums_chart").style.display = 'inline-block';
 		$("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
-		$("#split_1").animate({height: "579px"}, "slow");
+		$("#split_1").animate({height: "633px"}, "slow");
 	}
 	else {
 		$("#continuums_chart").animate({height: '0px',opacity: '0'}, "slow");
