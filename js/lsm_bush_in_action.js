@@ -1014,7 +1014,7 @@ function init(){
 	var e=event;
 	$('#myForm_1 input').on('change', function() {
 		if($('input[name=radio_1]:checked', '#myForm_1').val()=="skew")
-			$("#myForm_2").animate({height: '168px',opacity:'1',margin:'7px 6px 6px 6px',padding:'5px',borderWidth:'1px'}, "slow");
+			$("#myForm_2").animate({height: '168px',opacity:'1',margin:'7px 6px 6px 6px',padding:'5px',borderWidth:'0px'}, "slow");
 		else{
 			$("#myForm_2").animate({height: '0px',opacity:'0',margin:'0px',padding:'0px',borderWidth:'0px'}, "slow");
 			workload_type = 0;
@@ -1032,6 +1032,7 @@ function init(){
 		U_1 = 10000;
 		U_2=100000000;
 		if($('input[name=radio_2]:checked', '#myForm_2').val()=="1"){
+			//$("#check_mark_1").animate({top: "3px", left: "3px", width: "12px",height: "12px",opacity: 1}, {speed:"slow",quene:false});
 			p_get=0.8;
 			p_put=0.0001;
 		}
@@ -1048,7 +1049,11 @@ function init(){
 			p_put=0.5;
 		}
 		//navigateDesignSpace();
-		drawContinuums();
+		var check_boxes=$('.check_mark');
+		check_boxes.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+			function(e) {
+				drawContinuums();
+			});
 	});
 
 	navigateDesignSpace();

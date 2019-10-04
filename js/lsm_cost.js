@@ -152,10 +152,11 @@ function navigateDesignSpace() {
 
     var best_cost=-1;
 
-    for (var T = 2; T <= 5; T++) {
-        for (var K = 1; K <= T - 1; K++) {
-            for (var Z = 1; Z <= T - 1; Z++) {
+    for (var T = 4; T <= 4; T++) {
+        for (var K = 3; K <= T - 1; K++) {
+            for (var Z = 3; Z <= T - 1; Z++) {
                 for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
+                    M_BC=0;
                     var M_B = M_B_percent * max_RAM_purchased*1024*1024*1024;
                     var M=max_RAM_purchased*1024*1024*1024;
                     X = (Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z)  / T) * 8);
@@ -168,7 +169,15 @@ function navigateDesignSpace() {
                     M_F = M - M_B;
                     if (M_F < M_F_LO)
                         M_F = M_F_LO;
-                    L = Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T));
+                    var universe_max = workload_type == 0 ? U : U_1 + U_2;
+                    if (workload_type == 1) {
+                        universe_max = U_1 + (1 - p_put) * (N);
+                    }
+                    var size = universe_max < N ? universe_max : N;
+                    var multiplier_from_buffer = size*(E) / (M_B);
+                    // handle case where data fits in buffer
+                    if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
+                    L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
 
                     if (M_F >= M_F_HI) {
                         Y = 0;
@@ -206,16 +215,19 @@ function navigateDesignSpace() {
                     var long_scan_cost;
 
                     if (write_percentage != 0) {
-                        update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                        if(scenario=='A'){
+                            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
+                        }else {
+                            update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                        }
                     }
                     if (read_percentage != 0) {
                         if (scenario == 'A') // Avg-case
                         {
-                            read_cost = analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
+                            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
                         } else // Worst-case
                         {
                             read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
-                            FPR_sum = Math.exp((-M_BF*8/N)*Math.pow(Math.log(2)/Math.log(2.7182),2)*Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
                             //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
                         }
 
@@ -226,7 +238,7 @@ function navigateDesignSpace() {
                     long_scan_cost = analyzeLongScanCost(B, s);
                     if (scenario == 'A') // Avg-case
                     {
-                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+                        logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                     } else // Worst-case
                     {
                         //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
@@ -467,18 +479,21 @@ function countThroughput(cost, cloud_provider) {
                         var FPR_sum;
 
                         if (write_percentage != 0) {
-                            update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                            if(scenario=='A'){
+                                update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 1);
+                            }else {
+                                update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                            }
                         }
                         if (read_percentage != 0) {
                             if (scenario == 'A') // Avg-case
                             {
-                                //read_cost=analyzeReadCostAvgCase(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+                                read_cost = analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
                             } else // Worst-case
                             {
                                 read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
                                 //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
                             }
-
                         }
                         if (short_scan_percentage != 0) {
                             short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
@@ -598,7 +613,13 @@ function countContinuum(combination, cloud_provider) {
                     M_F = M - M_B;
                     if (M_F < M_F_LO)
                         M_F = M_F_LO;
-                    var multiplier_from_buffer = N*(E) / (M_B);
+
+                    var universe_max = workload_type == 0 ? U : U_1 + U_2;
+                    if (workload_type == 1) {
+                        universe_max = U_1 + (1 - p_put) * (N);
+                    }
+                    var size = universe_max < N ? universe_max : N;
+                    var multiplier_from_buffer = size*(E) / (M_B);
                     // handle case where data fits in buffer
                     if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
                     L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
@@ -640,7 +661,7 @@ function countContinuum(combination, cloud_provider) {
 
                     if (write_percentage != 0) {
                         if(scenario=='A'){
-                            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 1);
+                            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
                         }else {
                             update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
                         }
@@ -813,7 +834,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
 
     if (write_percentage != 0) {
         if(scenario=='A'){
-            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 1);
+            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
         }else {
             update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
         }
@@ -900,10 +921,13 @@ function buildContinuums(cloud_mode){
             result_array.push(result);
         }
     }
+
     result_array.sort(function (a,b) {
         return a[0]-b[0];
     })
-    console.log(result_array);
+    var log=result_array;
+    for(var i=0;i<10;i++)
+        console.log(log[i]);
     return result_array;
 }
 
@@ -927,7 +951,8 @@ function getCouponCollector( universe, number_of_entries) {
     if (number_of_entries > universe) return -1;
     var ratio = ( universe) /  (universe - number_of_entries + 1);
     // printf("ratio:%f, universe:%f, number_of_entries:%f\n", ratio, universe, number_of_entries);
-    return U * Math.log(ratio)/Math.log(10);
+    //console.log(universe,ratio,Math.log(ratio),Math.log(ratio)/Math.log(10));
+    return universe * Math.log(ratio);
 }
 
 function getQ( type, level, EB, T, K, worst_case) {
@@ -947,7 +972,7 @@ function getQ( type, level, EB, T, K, worst_case) {
     }
     // skew
     if (type == 1) {
-        var bound_1 = DBL_MIN;
+        var bound_1 = 0;
         var bound_2 = getCouponCollector(U_2, size_run);
         // bound 1: some special key slots are not filled up
         if (level != 0) bound_2 *= K;
@@ -980,7 +1005,7 @@ function aggregateAvgCaseUpdate( B, E, type, T, K, Z, L, Y, M_B, worst_case) {
     }
     term1 /=  B;
 
-    term2 = EB * Math.pow(T, L - Y - 1) + EB * Math.pow(T, L - Y);
+    term2 = EB * Math.pow(T, L - Y)/Z + EB * Math.pow(T, L - Y-1);
     term2 /=  B;
     var Q = getQ(type, L - Y - 1, EB, T, K, worst_case);
     if (Q < 0) {
@@ -1003,7 +1028,7 @@ function aggregateAvgCaseUpdate( B, E, type, T, K, Z, L, Y, M_B, worst_case) {
         }
         term3 *= term3_mult;
     }
-
+    //console.log(term1,term2,term3);
     // printf("term1:%f, term2:%f, term3:%f\n", term1, term2, term3);
     // printf("T:%d, K:%d, Z:%d, L:%d, Y:%d, MB:%f, EB:%f, N:%ld\n", T, K, Z, L, Y, M_B, EB, N);
     return term1 + term2 + term3;
@@ -1273,6 +1298,7 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
     if(cloud_provider==undefined) {
         cloud_provider = getCloudProvider("cloud-provider");
     }
+    cloud_provider=2;
     var B;
     if(cloud_provider == 0)
     {
@@ -1740,8 +1766,8 @@ function drawDiagram(Variables, id){
                 var length_percent = 100/(2*tmp+2);
                 for(j = 0; j <= tmp; j++){
                     var div_col = document.createElement("div");
-                    div_col.setAttribute("class","col-sm-3");
-                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset");
+                    div_col.setAttribute("class","");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset;display:inline-block");
                     div_col.innerHTML="&#8601;"
                     div_tmp_lsm_runs.appendChild(div_col);
                 }
@@ -1757,8 +1783,8 @@ function drawDiagram(Variables, id){
 
                 for(j = 0; j <= tmp; j++){
                     var div_col = document.createElement("div");
-                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset");
-                    div_col.setAttribute("class","col-sm-3");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset;display:inline-block");
+                    div_col.setAttribute("class","");
                     div_col.innerHTML="&#8600;"
                     div_tmp_lsm_runs.appendChild(div_col);
                 }
