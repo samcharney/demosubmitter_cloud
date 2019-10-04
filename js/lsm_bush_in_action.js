@@ -992,6 +992,8 @@ function init(){
 
 	document.getElementById("query_count").value=10000000000;
 
+	//$("#interactive_mode_tab").width(screen.width);
+
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
 	})
@@ -1055,6 +1057,14 @@ function init(){
 				drawContinuums();
 			});
 	});
+
+	$('[name=exsys_tab]').on('click',function(){
+		if(!$(this).hasClass("down")){
+			$('[name=exsys_tab]').removeClass('down');
+			$(this).addClass('down');
+			displayRocks();
+		}
+	})
 
 	$('[name=interactive_tab]').on('click',function(){
 		if(!$(this).hasClass("down")){
@@ -3200,7 +3210,8 @@ function hideCloudProvider(){
 
 function displayCharts() {
 	document.getElementById("charts").style.display='';
-	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-170}, 500);
+	document.getElementById("interactive_mode_tab").style.display='';
+	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-200}, 500);
 }
 
 function displayContinuums() {

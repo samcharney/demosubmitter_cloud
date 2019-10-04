@@ -185,6 +185,11 @@
         </div>
     </section> -->
 
+    <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 290px; width: 100%; font-size: 16px; margin-bottom: 10px; display: none">
+        <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
+        <div class="tab_l down" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ">Explore Mode</div><div name="interactive_tab" class="tab_l" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%">Interactive Mode</div>
+    </div>
+
     <section id="interactiveDemo">
         <div class="container page-scroll" style="width:1350px;">
 
@@ -513,6 +518,9 @@
 
 
              </div>
+
+
+
                 <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; right: 35px">
                     <div style="display:inline-block; position:relative; width: 250px; left:400px; top:0px; font-size: 16px; margin-bottom: 10px;display: none">
                         <div id="interactive_mode_text2" style="margin-bottom: 8px;">Interactive Mode: Off</div>
@@ -524,19 +532,21 @@
                     </div>
                     </div>
 
-                    <div style="display:inline-block; position:relative; width: 250px; left:300px; top:30px; font-size: 16px; margin-bottom: 10px">
-                        <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px">Interactive Mode: Off</div>
-                        <div class="tab down" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px">Off</div><div name="interactive_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px">On</div>
-                    </div>
 
-                    <div id="exsys_switch" style=" display:inline-block; position:relative; width: 250px; height:50px; top:0px; left:500px; margin:15px; font-size: 16px; opacity: 1; ">
-                        <div id="exsys_text" style="margin-bottom: 8px;">Compare with existing systems: Off</div>
+
+                    <div id="exsys_switch" style=" display:none; position:relative; width: 250px; height:50px; top:0px; left:500px; margin:15px; font-size: 16px; opacity: 1; ">
+                        <div id="exsys_text_2" style="margin-bottom: 8px;">Compare with existing systems: Off</div>
                         <div class="switchbar_before" style="position: relative; left: 60px" >
                             <div  id="switchbar_3" class="switchbar"  style="position: absolute; " >
                             </div>
                             <div id="switch_3" class="switch" onclick="displayRocks()" style=" ">
                             </div>
                         </div>
+                    </div>
+
+                    <div style="display:inline-block; position:relative; width: 250px; left:800px; top:0px; font-size: 16px; margin-bottom: 10px">
+                        <div id="exsys_text" style="margin-bottom: 8px;position: relative;left: -70px">Compare with existing systems: Off</div>
+                        <div class="tab down" name="exsys_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px">Off</div><div name="exsys_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px">On</div>
                     </div>
 
                     <div class="row">

@@ -122,7 +122,8 @@ function parseInputVariables()
 
 function navigateDesignSpace() {
     var Variables = parseInputVariables();
-    var N = Variables.N;
+    Variables.cost=50000;
+    var N = Variables.N/10;
     var E = Variables.E;
     var F = Variables.F;
     var B = Math.floor(Variables.B/E);
