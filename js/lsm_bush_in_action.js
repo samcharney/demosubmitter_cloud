@@ -1074,6 +1074,14 @@ function init(){
 		}
 	})
 
+	$('[name=explore_tab]').on('click',function(){
+		if(!$(this).hasClass("down")){
+			$('[name=explore_tab]').removeClass('down');
+			$(this).addClass('down');
+			displayContinuums();
+		}
+	})
+
 	navigateDesignSpace();
 	//drawCharts();
 	//drawChart2();
