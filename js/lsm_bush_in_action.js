@@ -3211,7 +3211,7 @@ function hideCloudProvider(){
 function displayCharts() {
 	document.getElementById("charts").style.display='';
 	document.getElementById("interactive_mode_tab").style.display='';
-	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-200}, 500);
+	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-206}, 500);
 }
 
 function displayContinuums() {
