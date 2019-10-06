@@ -849,8 +849,9 @@ function drawContinuums() {
     else{
 
         if(best_array[best_array.length-1][0]<cost) {
-            index=0;
+            index=best_array.length-2;
             cost_result_text[0]=("We found 1 key-value stores for you at "+cost+".<br><br>");
+            console.log(cost_result_text[0],cost);
             //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
             cost_result_text[1]="<b>Our Option:</b>"
             cost_result_text[2] = best_array[best_array.length - 1][5];
@@ -863,45 +864,46 @@ function drawContinuums() {
                 if (best_array[i][0] > cost) {
                     //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
                     //drawDiagram(best_array[i][5], 'cost_result_diagram2');
-                    index=i-1;
-                    cost_result_text[0]=("We found 2 key-value stores for you at $"+cost+".<br><br>");
-                    cost_result_text[1]="<b>Key-value store 1 saves money</b>"
+                    index = i - 1;
+                    cost_result_text[0] = ("We found 2 key-value stores for you at $" + cost + ".<br><br>");
+                    cost_result_text[1] = "<b>Key-value store 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
                     cost_result_text[3] = "<b>Key-value store 2 saves time</b>";
                     cost_result_text[4] = best_array[i][5];
-                    start_point=Math.floor(i-best_array.length/5);
-                    if(start_point<0)
-                        start_point=0;
-                    end_point=Math.ceil(i+best_array.length/5);
-                    if(end_point>best_array.length-1)
-                        end_point=best_array.length-1;
+                    start_point = Math.floor(i - best_array.length / 5);
+                    if (start_point < 0)
+                        start_point = 0;
+                    end_point = Math.ceil(i + best_array.length / 5);
+                    if (end_point > best_array.length - 1)
+                        end_point = best_array.length - 1;
 
-                    if(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num>cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num){
+                    if (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num > cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num) {
                         //max_mem=cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num;
-                        l1=1;
-                        l2=(cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num)/(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num);
-                    }else{
+                        l1 = 1;
+                        l2 = (cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num) / (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num);
+                    } else {
                         //max_mem=cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num;
-                        l2=1;
-                        l1=(cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num)/(cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num);
+                        l2 = 1;
+                        l1 = (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num) / (cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num);
                     }
 
-                    if((cost-best_array[i-1][0])>(best_array[i][0]-cost))
-                        switch_option=true;
+                    if ((cost - best_array[i - 1][0]) > (best_array[i][0] - cost))
+                        switch_option = true;
                     break;
-                }else if(best_array[i][0] == cost){
-                    index=i;
-                    cost_result_text[0]=("We found the key-value stores for you at $"+cost+".<br><br>");
+                } else if (best_array[i][0] == cost) {
+                    index = i;
+                    cost_result_text[0] = ("We found the key-value stores for you at $" + cost + ".<br><br>");
                     //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
-                    cost_result_text[1]="<b>Our Option:</b>"
+                    cost_result_text[1] = "<b>Our Option:</b>"
                     cost_result_text[2] = best_array[best_array.length - 1][5];
-                    start_point=Math.floor(best_array.length*4/5);
-                    end_point=best_array.length-1;
-                    l1=1;
-                    l2=-1;
+                    start_point = Math.floor(best_array.length * 4 / 5);
+                    end_point = best_array.length - 1;
+                    l1 = 1;
+                    l2 = -1;
                     break;
                 }
             }
+        }
             document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
 
             document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
@@ -948,7 +950,6 @@ function drawContinuums() {
                     outputNote(best_array[index+1][8], "cost_result_p9");
                 }
             }
-        }
     }
     console.log(best_array,start_point,end_point);
     var chart_array=cutArray(best_array,start_point,end_point);

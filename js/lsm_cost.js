@@ -1898,16 +1898,26 @@ function outputParameters(Variables, id, l) {
     var div_tmp = document.createElement("div");
     drawDiagram(Variables, div_tmp);
     div_tmp.setAttribute("style", "height:100px;");
-    div_tmp.setAttribute("class", "tooltip1")
-    var span_tmp=document.createElement("span");
-    span_tmp.setAttribute("class","tooltiptext");
-    span_tmp.innerHTML="T="+Variables.T+"  K="+Variables.K+"  Z="+Variables.Z;
-    div_tmp.appendChild(span_tmp);
+    if(Variables.L==0)
+        div_tmp.innerHTML="<span style='font-size: 12px'><i>The data fits in "+Variables.memory_footprint+" GB of memory (no I/Os).</i></span>";
+    else {
+        div_tmp.setAttribute("class", "tooltip1")
+        var span_tmp = document.createElement("span");
+        span_tmp.setAttribute("class", "tooltiptext");
+        span_tmp.innerHTML = "T=" + Variables.T + "  K=" + Variables.K + "  Z=" + Variables.Z;
+        div_tmp.appendChild(span_tmp);
+
+    }
     result_div.appendChild(div_tmp);
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"./images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
-    outputParameter(result_div,fixTime(Variables.latency),"./images/performance.png");
-    outputParameter(result_div,parseInt(Variables.query_count/(Variables.latency*24*60*60))+" querys/s","./images/throughput.png");
+    if(Variables.L==0){
+        outputParameter(result_div,"No Latency","./images/performance.png");
+        outputParameter(result_div,"","./images/throughput.png");
+    }else {
+        outputParameter(result_div, fixTime(Variables.latency), "./images/performance.png");
+        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " querys/s", "./images/throughput.png");
+    }
    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
    // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
@@ -1995,6 +2005,18 @@ function createPopup(Variables){
         text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:280px; text-align:right");
         text.innerHTML = "Cost";
         result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:330px; text-align:right");
+        text.innerHTML = "Latency";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:382px; text-align:right");
+        text.innerHTML = "Throughput";
+        result_div.appendChild(text);
+        var text = document.createElement("div");
+        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:427px; text-align:right");
+        text.innerHTML = "Download";
+        result_div.appendChild(text);
     }
 
     var div_tmp = document.createElement("div");
@@ -2009,6 +2031,7 @@ function createPopup(Variables){
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"https://volatill.github.io/demosubmitter_cloud/images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"https://volatill.github.io/demosubmitter_cloud//images/dollar.png");
     outputParameter(result_div,fixTime(Variables.latency),"https://volatill.github.io/demosubmitter_cloud//images/performance.png");
+    outputParameter(result_div,parseInt(Variables.query_count/(Variables.latency*24*60*60))+" querys/s","https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
     removeAllChildren(popup.document.body);
     popup.document.body.appendChild(result_div);
 }
