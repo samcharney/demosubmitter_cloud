@@ -83,9 +83,15 @@ function re_run(e, input_type) {
 	    }
 	}
 
+    var inputIdList=[
+        "N","E","F","qS","qL","w","r","query_count","v","s","cost"
+    ]
 
-
-
+    for(var i=0;i<inputIdList.length;i++) {
+        if (!checkInput(document.getElementById(inputIdList[i]))){
+            return;
+        }
+    }
     navigateDesignSpace();
     //drawCharts();
     //drawChart2();

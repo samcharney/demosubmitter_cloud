@@ -1082,6 +1082,15 @@ function init(){
 		}
 	})
 
+	$(window).scroll(function(){
+		$(".navbar").css({opacity:Math.max(0,(500-$(document).scrollTop()+1000))/500});
+		console.log($(".navbar").css("opacity"));
+		if($(".navbar").css("opacity")==0)
+			$(".navbar").css('transform','scale(0)');
+		else
+			$(".navbar").css('transform','scale(1)');
+	});
+
 	navigateDesignSpace();
 	//drawCharts();
 	//drawChart2();
@@ -3219,6 +3228,7 @@ function hideCloudProvider(){
 function displayCharts() {
 	document.getElementById("charts").style.display='';
 	document.getElementById("interactive_mode_tab").style.display='';
+
 	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-206}, 500);
 }
 
@@ -3284,6 +3294,22 @@ function switchText() {
 
 }
 
+function checkInput(input){
+	if(isNaN(parseFloat(input.value))||parseFloat(input.value)<0){
+		alert("Invalid input!");
+		return false;
+	}else
+		return true
+}
+
+function checkInput2(input){
+	if(isNaN(parseFloat(input.value))||parseFloat(input.value)<0||parseFloat(input.value)>100){
+		alert("Invalid input!");
+		return false;
+	}else
+		return true
+}
+
 function switchQuestion() {
 	document.getElementById("question1").style.display="none";
 	document.getElementById("question2").style.display="none";
@@ -3295,8 +3321,10 @@ function switchQuestion() {
 		var input = document.getElementById("question1_input");
 		input.addEventListener("keydown", function (e) {
 			if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
-				document.getElementById("cost").value=parseFloat(document.getElementById("cost").value)+parseFloat(input.value);
-				re_run(e);
+				if(checkInput(input)) {
+					document.getElementById("cost").value = parseFloat(document.getElementById("cost").value) + parseFloat(input.value);
+					re_run(e);
+				}
 			}
 		});
 	}
@@ -3313,32 +3341,36 @@ function switchQuestion() {
         var input = document.getElementById("question3_input");
         input.addEventListener("keydown", function (e) {
             if (e.keyCode == 13) {
-                var cost = parseFloat(document.getElementById("cost").value);
-                var result_array = global_continuums_array;
-                result_array.sort(function (a,b) {return a[0]-b[0];});
-                result_array=getBestDesignEverArray(result_array);
-                var index;
-                for (var i = 0; i < result_array.length; i++) {
-                    if (cost < result_array[i][0]) {
-                        console.log(cost,i,result_array[i][0])
-                        if ((cost - result_array[i - 1][0]) > (result_array[i][0] - cost))
-                            index = i;
-                        else
-                            index = i - 1;
-                        break;
-                    }
-                    if (i == result_array.length - 1)
-                        alert("Design not exist!");
-                }
-                for (var i = index + 1; i < result_array.length; i++) {
-                    if (result_array[i][1] < result_array[index][1] * (1 - input.value / 100)) {
-                        document.getElementById("cost").value = Math.ceil(result_array[i][0]);
-                        re_run(e);
-                        break;
-                    }
-                    if (i == result_array.length - 1)
-                        alert("Design not exist!");
-                }
+				if(checkInput(input)) {
+					var cost = parseFloat(document.getElementById("cost").value);
+					var result_array = global_continuums_array;
+					result_array.sort(function (a, b) {
+						return a[0] - b[0];
+					});
+					result_array = getBestDesignEverArray(result_array);
+					var index;
+					for (var i = 0; i < result_array.length; i++) {
+						if (cost < result_array[i][0]) {
+							console.log(cost, i, result_array[i][0])
+							if ((cost - result_array[i - 1][0]) > (result_array[i][0] - cost))
+								index = i;
+							else
+								index = i - 1;
+							break;
+						}
+						if (i == result_array.length - 1)
+							alert("Design not exist!");
+					}
+					for (var i = index + 1; i < result_array.length; i++) {
+						if (result_array[i][1] < result_array[index][1] * (1 - input.value / 100)) {
+							document.getElementById("cost").value = Math.ceil(result_array[i][0]);
+							re_run(e);
+							break;
+						}
+						if (i == result_array.length - 1)
+							alert("Design not exist!");
+					}
+				}
             }
         });
     }
@@ -3346,66 +3378,160 @@ function switchQuestion() {
         document.getElementById("question4").style.display = "";
         var input = document.getElementById("question4_input");
         input.addEventListener("change", function (e) {
-            document.getElementById("v").value=input.value/100;
-            document.getElementById("w").value=1-input.value/100;
-            re_run(e);
+			if(checkInput2(input)) {
+				document.getElementById("v").value = input.value / 100;
+				document.getElementById("w").value = 1 - input.value / 100;
+				re_run(e);
+			}
         });
     }
 	if(document.getElementById("questions").value=="5") {
 		document.getElementById("question4").style.display = "";
 		var input = document.getElementById("question5_input");
 		input.addEventListener("change", function (e) {
-			document.getElementById("w").value=input.value/100;
-			document.getElementById("v").value=1-input.value/100;
-			re_run(e);
+			if(checkInput2(input)) {
+				document.getElementById("w").value = input.value / 100;
+				document.getElementById("v").value = 1 - input.value / 100;
+				re_run(e);
+			}
 		});
 	}
 }
 
 function switchStatistics() {
     removeAllChildren(document.getElementById("statistics_result"));
-	document.getElementById("question1").style.display="none";
+	document.getElementById("statistic1").style.display="none";
     if(document.getElementById("statistics").value=="1") {
         document.getElementById("statistic1").style.display = "";
         var input = document.getElementById("statistic1_input");
         input.addEventListener("keydown", function (e) {
             if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
-                removeAllChildren(document.getElementById("statistics_result"));
-                var result_array=global_continuums_array;
-                result_array.sort(function (a,b) {return a[1]-b[1];});
-                var cloud_provider_num=[0,0,0];
-                for(var i=0;i<Math.ceil(result_array.length*input.value/100);i++){
-                    for (var j = 0; j < 3; j++) {
-                        if (result_array[i][3] == cloud_array[j]) {
-                            cloud_provider_num[j]++;
-                        }
-                    }
-                }
-                var max_num=Math.max(cloud_provider_num[0],cloud_provider_num[1],cloud_provider_num[2]);
-                var width=100;
-                console.log(max_num);
-                var div_result=document.getElementById("statistics_result");
-                for(var i=0;i<3;i++){
-                    var div_temp=document.createElement("div");
-                    div_temp.setAttribute("style","width:98%;text-align:left");
-                    div_temp.setAttribute("class","myinput")
-                    var text=document.createElement("div");
-                    text.setAttribute("style","display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
-                    text.innerHTML=cloud_array[i];
-                    div_temp.appendChild(text);
-                    var bar=document.createElement("div");
-                    bar.setAttribute("class","color_bar");
-                    bar.setAttribute("style","width:"+width*cloud_provider_num[i]/max_num+"px;background-color:"+colors[i]+"; height:20px");
-                    div_temp.appendChild(bar);
-                    var percent=document.createElement("div");
-                    percent.setAttribute("style","display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
-                    percent.innerHTML=((cloud_provider_num[i]/result_array.length)*100).toFixed(1)+"%";
-                    div_temp.appendChild(percent);
-                    div_result.appendChild(div_temp);
-                }
+				if(checkInput2(input)) {
+					removeAllChildren(document.getElementById("statistics_result"));
+					var result_array = global_continuums_array;
+					result_array.sort(function (a, b) {
+						return a[1] - b[1];
+					});
+					var cloud_provider_num = [0, 0, 0];
+					for (var i = 0; i < Math.ceil(result_array.length * input.value / 100); i++) {
+						for (var j = 0; j < 3; j++) {
+							if (result_array[i][3] == cloud_array[j]) {
+								cloud_provider_num[j]++;
+							}
+						}
+					}
+					var max_num = Math.max(cloud_provider_num[0], cloud_provider_num[1], cloud_provider_num[2]);
+					var width = 100;
+					console.log(max_num);
+					var div_result = document.getElementById("statistics_result");
+					for (var i = 0; i < 3; i++) {
+						var div_temp = document.createElement("div");
+						div_temp.setAttribute("style", "width:98%;text-align:left");
+						div_temp.setAttribute("class", "myinput")
+						var text = document.createElement("div");
+						text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+						text.innerHTML = cloud_array[i];
+						div_temp.appendChild(text);
+						var bar = document.createElement("div");
+						bar.setAttribute("class", "color_bar");
+						bar.setAttribute("style", "width:" + width * cloud_provider_num[i] / max_num + "px;background-color:" + colors[i] + "; height:20px");
+						div_temp.appendChild(bar);
+						var percent = document.createElement("div");
+						percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+						percent.innerHTML = ((cloud_provider_num[i] / result_array.length) * 100).toFixed(1) + "%";
+						div_temp.appendChild(percent);
+						div_result.appendChild(div_temp);
+					}
+				}
             }
         });
     }
+
+    if(document.getElementById("statistics").value=="2"){
+		var div_result = document.getElementById("statistics_result");
+		var result_array = global_continuums_array;
+		result_array.sort(function (a, b) {
+			return a[0] - b[0];
+		});
+		for (var i = 0; i < 5; i++) {
+			var div_temp = document.createElement("div");
+			div_temp.setAttribute("class", "myinput");
+			div_temp.setAttribute("style", "width:98%;text-align:left");
+			div_temp.innerHTML = (i+1)+": $"+result_array[i][0] ;
+			div_result.appendChild(div_temp);
+		}
+	}
+
+	if(document.getElementById("statistics").value=="3"){
+		removeAllChildren(document.getElementById("statistics_result"));
+		var div_result = document.getElementById("statistics_result");
+		var div_temp = document.createElement("div");
+		div_temp.setAttribute("class", "myinput");
+		div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
+		div_temp.innerHTML = "Current Design:" ;
+		div_result.appendChild(div_temp);
+
+		var result_array = global_continuums_array;
+		result_array.sort(function (a, b) {
+			return a[1] - b[1];
+		});
+
+		var query_IO=[result_array[global_index][5].read_cost*result_array[global_index][5].v,result_array[global_index][5].update_cost*result_array[global_index][5].w];
+		var query_type=["Read","Write"];
+		var colors=["#837BFF","#83DEFF"];
+
+
+
+		for (var i = 0; i < 2; i++) {
+			var div_temp = document.createElement("div");
+			div_temp.setAttribute("style", "width:98%;text-align:left");
+			div_temp.setAttribute("class", "myinput")
+			var text = document.createElement("div");
+			text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+			text.innerHTML = query_type[i];
+			div_temp.appendChild(text);
+			var bar = document.createElement("div");
+			bar.setAttribute("class", "color_bar");
+			bar.setAttribute("style", "width:" + 90 * query_IO[i] / (query_IO[1]+query_IO[0]) + "px;background-color:" + colors[i] + "; height:20px");
+			div_temp.appendChild(bar);
+			var percent = document.createElement("div");
+			percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+			percent.innerHTML = ((query_IO[i] / (query_IO[1]+query_IO[0])) * 100).toFixed(1) + "%";
+			div_temp.appendChild(percent);
+			div_result.appendChild(div_temp);
+		}
+
+		var div_temp = document.createElement("div");
+		div_temp.setAttribute("class", "myinput");
+		div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
+		div_temp.innerHTML = "All Design:" ;
+		div_result.appendChild(div_temp);
+
+		query_IO=[0,0];
+		for (var i=0; i<result_array.length;i++){
+			query_IO[0]+=result_array[i][5].read_cost*result_array[i][5].v;
+			query_IO[1]+=result_array[i][5].update_cost*result_array[i][5].w;
+		}
+
+		for (var i = 0; i < 2; i++) {
+			var div_temp = document.createElement("div");
+			div_temp.setAttribute("style", "width:98%;text-align:left");
+			div_temp.setAttribute("class", "myinput")
+			var text = document.createElement("div");
+			text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+			text.innerHTML = query_type[i];
+			div_temp.appendChild(text);
+			var bar = document.createElement("div");
+			bar.setAttribute("class", "color_bar");
+			bar.setAttribute("style", "width:" + 90 * query_IO[i] / (query_IO[1]+query_IO[0]) + "px;background-color:" + colors[i] + "; height:20px");
+			div_temp.appendChild(bar);
+			var percent = document.createElement("div");
+			percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+			percent.innerHTML = ((query_IO[i] / (query_IO[1]+query_IO[0])) * 100).toFixed(1) + "%";
+			div_temp.appendChild(percent);
+			div_result.appendChild(div_temp);
+		}
+	}
 }
 
 function displayRocks() {

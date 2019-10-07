@@ -12,6 +12,8 @@ var cloud_array=[
     'AZURE'
 ];
 
+var global_index;
+
 function Chart(){
     var data;
     var layout;
@@ -895,7 +897,7 @@ function drawContinuums() {
                     cost_result_text[0] = ("We found the key-value stores for you at $" + cost + ".<br><br>");
                     //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
                     cost_result_text[1] = "<b>Our Option:</b>"
-                    cost_result_text[2] = best_array[best_array.length - 1][5];
+                    cost_result_text[2] = best_array[i][5];
                     start_point = Math.floor(best_array.length * 4 / 5);
                     end_point = best_array.length - 1;
                     l1 = 1;
@@ -951,6 +953,7 @@ function drawContinuums() {
                 }
             }
     }
+    global_index=index;
     console.log(best_array,start_point,end_point);
     var chart_array=cutArray(best_array,start_point,end_point);
 

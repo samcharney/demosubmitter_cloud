@@ -818,11 +818,17 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         M_B = M_B - M_BC;
         //scenario == 'A'? getNoOfLevelsAvgCase(&L, M_B, T, data) : getNoOfLevels(&L, M_B, T, data);
     }
-
-    var multiplier_from_buffer = N*(E) / (M_B);
+    var universe_max = workload_type == 0 ? U : U_1 + U_2;
+    if (workload_type == 1) {
+        universe_max = U_1 + (1 - p_put) * (N);
+    }
+    var size = universe_max < N ? universe_max : N;
+    var multiplier_from_buffer = size*(E) / (M_B);
     // handle case where data fits in buffer
     if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
     L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
+
+
 
     if(existing_system=="WT")
         Y=L-1;
@@ -1738,12 +1744,17 @@ function drawDiagram(Variables, id){
     var lsm_button_size_ratio=(max_button_size-70)/L;
     var cur_length=70;
     cur_length+=lsm_button_size_ratio;
+
+    var height=18;
+    if(L>5){
+        height=96/L;
+    }
     for (var i=0;i<L;i++){
         var div_new_row=document.createElement("div");
         div_new_row.setAttribute("class","row");
 
         var div_lsm_runs=document.createElement("div");
-        div_lsm_runs.setAttribute("style","text-align: center;height:18px");
+        div_lsm_runs.setAttribute("style","text-align: center;height:"+height+"px");
         div_new_row.appendChild(div_lsm_runs);
 
         var levelcss=i+1;
@@ -1760,7 +1771,7 @@ function drawDiagram(Variables, id){
                 var div_tmp_row=document.createElement("div");
                 div_tmp_row.setAttribute("class","row");
                 var margin_left = (max_button_size-cur_length+lsm_button_size_ratio)/2;
-                div_tmp_row.setAttribute("style","text-align: center;font-weight:bold;margin-top:-15px;width:100%;z-index:2;position:absolute");
+                div_tmp_row.setAttribute("style","text-align: center;font-weight:bold;margin-top:-"+(height-3)+"px;width:100%;z-index:2;position:absolute");
                 var div_tmp_lsm_runs=document.createElement("div");
                 div_tmp_lsm_runs.setAttribute("style","text-align: center;height:25px;width:"+cur_length+"px;margin:auto auto");
                 var tmp = Math.ceil((i-1)/3);
@@ -1768,7 +1779,7 @@ function drawDiagram(Variables, id){
                 for(j = 0; j <= tmp; j++){
                     var div_col = document.createElement("div");
                     div_col.setAttribute("class","");
-                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset;display:inline-block");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:"+(height+2)+"px;padding:unset;display:inline-block");
                     div_col.innerHTML="&#8601;"
                     div_tmp_lsm_runs.appendChild(div_col);
                 }
@@ -1784,7 +1795,7 @@ function drawDiagram(Variables, id){
 
                 for(j = 0; j <= tmp; j++){
                     var div_col = document.createElement("div");
-                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:20px;padding:unset;display:inline-block");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:"+(height+2)+"px;padding:unset;display:inline-block");
                     div_col.setAttribute("class","");
                     div_col.innerHTML="&#8600;"
                     div_tmp_lsm_runs.appendChild(div_col);
@@ -1837,7 +1848,7 @@ function drawDiagram(Variables, id){
                 /*if(maxRuns >= 7){
                     button.setAttribute("style","width: "+(cur_length- 19.27)/6+"px; height: 12px; padding: 1px 0px 2px 0px");
                 }else*/{
-                    button.setAttribute("style","width: "+cur_length/n+"px; height: 12px; background-color: white; padding: 1px 0px 2px 0px");
+                    button.setAttribute("style","width: "+cur_length/n+"px; height: "+height*2/3+"px; background-color: white; padding: 1px 0px 2px 0px");
                 }
                 div_lsm_runs.appendChild(button);
             }
@@ -1899,9 +1910,9 @@ function outputParameters(Variables, id, l) {
     drawDiagram(Variables, div_tmp);
     div_tmp.setAttribute("style", "height:100px;");
     if(Variables.L==0)
-        div_tmp.innerHTML="<span style='font-size: 12px'><i>The data fits in "+Variables.memory_footprint+" GB of memory (no I/Os).</i></span>";
+        div_tmp.innerHTML="<span style='font-size: 12px'><i>The data fits in "+Variables.memory_footprint/Variables.VM_instance_num+" GB of memory (no I/Os).</i></span>";
     else {
-        div_tmp.setAttribute("class", "tooltip1")
+        div_tmp.setAttribute("class", "tooltip1");
         var span_tmp = document.createElement("span");
         span_tmp.setAttribute("class", "tooltiptext");
         span_tmp.innerHTML = "T=" + Variables.T + "  K=" + Variables.K + "  Z=" + Variables.Z;
@@ -2019,14 +2030,21 @@ function createPopup(Variables){
         result_div.appendChild(text);
     }
 
+
+
     var div_tmp = document.createElement("div");
     drawDiagram(Variables, div_tmp);
     div_tmp.setAttribute("style", "height:100px;");
-    div_tmp.setAttribute("class", "tooltip1")
-    var span_tmp=document.createElement("span");
-    span_tmp.setAttribute("class","tooltiptext");
-    span_tmp.innerHTML="T="+Variables.T+"  K="+Variables.K+"  Z="+Variables.Z;
-    div_tmp.appendChild(span_tmp);
+    if(Variables.L==0)
+        div_tmp.innerHTML="<span style='font-size: 12px'><i>The data fits in "+Variables.memory_footprint/Variables.VM_instance_num+" GB of memory (no I/Os).</i></span>";
+    else {
+        div_tmp.setAttribute("class", "tooltip1");
+        var span_tmp = document.createElement("span");
+        span_tmp.setAttribute("class", "tooltiptext");
+        span_tmp.innerHTML = "T=" + Variables.T + "  K=" + Variables.K + "  Z=" + Variables.Z;
+        div_tmp.appendChild(span_tmp);
+
+    }
     result_div.appendChild(div_tmp);
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"https://volatill.github.io/demosubmitter_cloud/images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"https://volatill.github.io/demosubmitter_cloud//images/dollar.png");
