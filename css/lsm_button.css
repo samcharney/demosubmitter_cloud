@@ -442,32 +442,66 @@
 .tab_l{
     display: inline-block;
     font-family: Helvetica;
-    font-weight: lighter;
+    font-weight: 100;
     font-size: 20px;
     text-align: center;
     padding: 6px;
     width: 50%;
-    height:40px;
-    border: 0px solid #7379DE ;
-    border-radius: 0px;
-    background-color: #F0F0F0;
+    height: 40px;
+    border: 1px solid #D1D7FD ;
+    border-radius: 20px;
+    background-color: #FFFFFF;
     z-index: 100;
+    /*region Description*/
+    cursor: pointer;
+    /*endregion*/
+
     -moz-transition: all .2s linear;
     -webkit-transition: all .2s linear;
     transition: all .2s linear;
 }
 
+.tab_l>div{
+    border: 1px solid #D1D7FD ;
+    background-color: #FFFFFF;
+    -moz-transition: all .4s linear;
+    -webkit-transition: all .4s linear;
+    transition: all .4s linear;
+}
+
 .tab_l:hover{
-    background-color: #E0E0E0;
+    background-color: #E8F0F8;
 }
 
 
 .tab_l.down{
-    color: white ;
-    border-color: #A2B9FD;
+    cursor: default;
+    color: #7F89FF ;
+    border-color: #7F89FF;
     /*transform: scale(1.1);*/
+    background-color: #E3E8FD;
+}
 
-    background-color: #7379DE;
+.tab_l.down>div{
+    border-width: 1px;
+    box-shadow: 0pt 0pt 3pt 2pt #7F89FF;
+    border-color: #7F89FF;
+    /*transform: scale(1.1);*/
+    //background-color: #E3E8FD;
+    -webkit-animation: rotation 3s infinite linear;
+}
+
+@-webkit-keyframes beat {
+
+}
+
+@-webkit-keyframes rotation {
+    0% {
+        -webkit-transform: rotate(0deg) ;
+    }
+    100% {
+        -webkit-transform: rotate(359deg);
+    }
 }
 /*.button:hover {
    border: 2px solid #000000;
@@ -493,3 +527,13 @@
    background-image: -ms-linear-gradient(top, #a51c30 0%, #a51c30 100%);
    color: #000000;
    }*/
+
+.guide{
+    height:40px;
+    width:40px;
+    border: 1px solid #7379DE;
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 20px;
+    color: #7379DE;
+}

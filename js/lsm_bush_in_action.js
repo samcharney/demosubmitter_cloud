@@ -1082,6 +1082,7 @@ function init(){
 		}
 	})
 
+	/*
 	$(window).scroll(function(){
 		$(".navbar").css({opacity:Math.max(0,(500-$(document).scrollTop()+1000))/500});
 		console.log($(".navbar").css("opacity"));
@@ -1089,7 +1090,7 @@ function init(){
 			$(".navbar").css('transform','scale(0)');
 		else
 			$(".navbar").css('transform','scale(1)');
-	});
+	});*/
 
 	navigateDesignSpace();
 	//drawCharts();
@@ -3228,8 +3229,11 @@ function hideCloudProvider(){
 function displayCharts() {
 	document.getElementById("charts").style.display='';
 	document.getElementById("interactive_mode_tab").style.display='';
+	document.getElementById("guide_4").style.display='';
+	document.getElementById("guide_5").style.display='';
 
-	$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-206}, 500);
+
+	$("html,body").animate({scrollTop: $("#interactive_mode_tab").offset().top-100}, 500);
 }
 
 function displayContinuums() {
@@ -3257,7 +3261,8 @@ function switchText() {
 		$("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
 		$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
 		$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
-		$("#interactive-panel").animate({width: '80%',borderWidth:1,borderOpacity:1}, "slow");
+		$("#interactive-panel").animate({width: '1136px',borderWidth:1,borderOpacity:1}, "slow");
+		$("#charts").animate({right:'30px'});
 		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
 		$("#interactive_banner").animate({height: "35px", opacity:"1", borderWidth:1}, "slow");
@@ -3281,7 +3286,8 @@ function switchText() {
 			$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
 		}
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
-		$("#interactive-panel").animate({width: '98%',borderWidth:0,borderOpacity:0}, "slow");
+		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
+		$("#charts").animate({right:'-85px'});
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
 		$("#explore_switch").css('transform','translateY(0px)');
@@ -3311,6 +3317,7 @@ function checkInput2(input){
 }
 
 function switchQuestion() {
+	document.getElementById("question0").style.display="none";
 	document.getElementById("question1").style.display="none";
 	document.getElementById("question2").style.display="none";
     document.getElementById("question3").style.display="none";
@@ -3322,6 +3329,8 @@ function switchQuestion() {
 		input.addEventListener("keydown", function (e) {
 			if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
 				if(checkInput(input)) {
+					document.getElementById("question0").style.display="";
+					document.getElementById("question0").innerHTML="Old input value: "+ parseFloat(document.getElementById("cost").value);
 					document.getElementById("cost").value = parseFloat(document.getElementById("cost").value) + parseFloat(input.value);
 					re_run(e);
 				}
@@ -3386,7 +3395,7 @@ function switchQuestion() {
         });
     }
 	if(document.getElementById("questions").value=="5") {
-		document.getElementById("question4").style.display = "";
+		document.getElementById("question5").style.display = "";
 		var input = document.getElementById("question5_input");
 		input.addEventListener("change", function (e) {
 			if(checkInput2(input)) {
@@ -3395,6 +3404,21 @@ function switchQuestion() {
 				re_run(e);
 			}
 		});
+	}
+	if(document.getElementById("questions").value=="6") {
+		var result_array = global_continuums_array;
+		result_array.sort(function (a, b) {
+			return a[0] - b[0];
+		});
+		var index=0;
+		for(var i=0;i<result_array.length;i++){
+			if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]){
+				index=i;
+			}
+		}
+
+		document.getElementById("cost").value = Math.floor(result_array[index][0]);
+		re_run(event);
 	}
 }
 
@@ -3478,7 +3502,7 @@ function switchStatistics() {
 
 		var query_IO=[result_array[global_index][5].read_cost*result_array[global_index][5].v,result_array[global_index][5].update_cost*result_array[global_index][5].w];
 		var query_type=["Read","Write"];
-		var colors=["#837BFF","#83DEFF"];
+		var colors_2=["#837BFF","#83DEFF"];
 
 
 
@@ -3492,7 +3516,7 @@ function switchStatistics() {
 			div_temp.appendChild(text);
 			var bar = document.createElement("div");
 			bar.setAttribute("class", "color_bar");
-			bar.setAttribute("style", "width:" + 90 * query_IO[i] / (query_IO[1]+query_IO[0]) + "px;background-color:" + colors[i] + "; height:20px");
+			bar.setAttribute("style", "width:" + 90 * query_IO[i] / (query_IO[1]+query_IO[0]) + "px;background-color:" + colors_2[i] + "; height:20px");
 			div_temp.appendChild(bar);
 			var percent = document.createElement("div");
 			percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
@@ -3531,6 +3555,32 @@ function switchStatistics() {
 			div_temp.appendChild(percent);
 			div_result.appendChild(div_temp);
 		}
+	}
+	if(document.getElementById("statistics").value=="4"){
+		var div_result = document.getElementById("statistics_result");
+		var result_array = global_continuums_array;
+		result_array.sort(function (a, b) {
+			return a[0] - b[0];
+		});
+		var index=0;
+		var index_2=0;
+		for(var i=0;i<result_array.length;i++){
+			if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]){
+				index_2=index;
+				index=i;
+			}
+		}
+		var div_temp = document.createElement("div");
+		div_temp.setAttribute("class", "myinput");
+		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto");
+		div_temp.innerHTML = "Best Cost Performance Design:<br>"+"Cost: $"+result_array[index][0]+"<br>Throughput: "+result_array[index][5].throughput.toFixed(0)+"ops<br>"+"Cost Performance:"+(result_array[index][5].throughput/result_array[index][0]).toFixed(1);
+		div_result.appendChild(div_temp);
+
+		var div_temp = document.createElement("div");
+		div_temp.setAttribute("class", "myinput");
+		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto");
+		div_temp.innerHTML = "Second Best Cost Performance Design:<br>"+"Cost: $"+result_array[index_2][0]+"<br>Throughput: "+result_array[index_2][5].throughput.toFixed(0)+"ops<br>"+"Cost Performance:"+(result_array[index_2][5].throughput/result_array[index_2][0]).toFixed(1);
+		div_result.appendChild(div_temp);
 	}
 }
 

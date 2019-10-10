@@ -714,6 +714,7 @@ function countContinuum(combination, cloud_provider) {
                         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
                         Variables.memory_footprint=max_RAM_purchased*mem_sum;
                         Variables.cloud_provider=cloud_provider;
+                        Variables.throughput=mem_sum*IOPS/total_cost;
                     }
                 }
             }
@@ -2166,7 +2167,6 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
             text.innerHTML = value[i][1];
             div_tmp.append(text);
         }
-
         result_div.appendChild(div_tmp);
     }
 }

@@ -352,8 +352,8 @@
                           <div id="cloud-provider-setting" class="collapse multi-collapse">
                               <div class="row">
                                   <div>
-                                      <div class="input-group">
-                                          <select id="cloud-provider" name="" style="width:200px;height: 30px ; margin:0px 80px;text-align: center" class="input-group-addon" onchange="re_run(event, 'input4')">
+                                      <div class="">
+                                          <select id="cloud-provider" name="" style="width:200px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
                                               <option value="Any">Any</option>
                                               <option value="AWS">AWS</option>
                                               <option value="GCP">GCP</option>
@@ -368,6 +368,14 @@
 
 
 
+            </div>
+
+            <div style="position:absolute; left:10px; top: 1740px;height:0px; width:42px; border: 0px solid black">
+                <div class="guide" style="">1<div style="position: relative;left: 40px;top: -25px;width: 150px; font-size: 15px">Set inputs</div></div>
+                <div style="height:80px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
+                <div class="guide" style="">2<div style="position: relative;left: 40px;top: -25px;width: 150px; font-size: 15px">Click the button</div></div>
+                <div id="guide_4" style="height:200px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
+                <div id="guide_5" class="guide" style="display: none">3<div style="position: relative;left: 40px;top: -25px;width: 150px; font-size: 15px; ">Check result</div></div>
             </div>
 
             <br>
@@ -515,15 +523,22 @@
 
 
              </div>
-
-
-
-                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; right: 35px">
-
-                    <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; width: 100%; font-size: 16px; margin-bottom: 10px; display: none">
-                        <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
-                        <div class="tab_l down" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ">Basic Mode</div><div name="interactive_tab" class="tab_l" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%">Interactive Mode</div>
+                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; right:-95px; width: 85%; font-size: 16px; margin-bottom: 10px; display: none">
+                    <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
+                    <div class="tab_l down" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px">
+                        <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
+                            <img style="width:50px" class="img-responsive img-centered" src="images//normal.png">
+                        </div>Basic Mode</div><div name="interactive_tab" class="tab_l" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%;border-left-color: #7F89FF">Interactive Mode
+                    <div style="width:60px; height:60px; position:absolute; bottom: -10px; right:-10px;  border-radius:30px; padding:8px; z-index:10">
+                        <img style="width:44px" class="img-responsive img-centered" src="images//explore.png">
                     </div>
+                </div>
+                </div>
+
+
+                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; right: -80px">
+
+
 
                     <div style="display:inline-block; position:relative; width: 250px; left:400px; top:0px; font-size: 16px; margin-bottom: 10px;display: none">
                         <div id="interactive_mode_text2" style="margin-bottom: 8px;">Interactive Mode: Off</div>
@@ -564,9 +579,10 @@
                                 <option value="2">What if I change my cloud provider</option>
                                 <option value="3">What if I increase my performance</option>
                                 <option value="4">What if I change the proportion of read</option>
-                                <option value="4">What if I change the proportion of write</option>
+                                <option value="5">What if I change the proportion of write</option>
+                                <option value="6">What-if I switch to the best trade-off configurations</option>
                             </select>
-
+                            <div class="myinput" id="question0" style="display: none;width: 98%"></div>
                             <div id="question1" style="display: none">
                                 <div class="myinput" style="width:51px; ">by</div><input class="myinput" type="number" id="question1_input" style="width:100px; background-color: white"/><div class="myinput" style="width:20px; ">$</div>
                             </div>
@@ -593,6 +609,7 @@
                                 <option value="1">Top performance cloud providers</option>
                                 <option value="2">Top 5 cheapest budgets</option>
                                 <option value="3">Break-up of I/O cost for query types</option>
+                                <option value="4">Cost-performance values with the best tradeoff</option>
                             </select>
                             <div id="statistic1" style="display: none">
                                 <div class="myinput" style="width:51px; ">of</div><input class="myinput" type="number" id="statistic1_input" style="width:100px; background-color: white"/><div class="myinput" style="width:20px; ">%</div>
@@ -600,7 +617,7 @@
                             <div id="statistics_result">
                             </div>
                         </div>
-                        <div id="interactive-panel" style="display:inline-block; width: 98%; vertical-align:top; border:0px solid #7379DE; border-radius:0px; height:589px">
+                        <div id="interactive-panel" style="display:inline-block; width: 1392px; vertical-align:top; border:0px solid #7379DE; border-radius:0px; height:589px">
                             <div id="interactive_banner" style="width:100%; height:0px; background-color:#7379DE; color: white; font-size: 20px; text-align: center; padding:3px; opacity: 0">
                                 Interactive Panel
                             </div>

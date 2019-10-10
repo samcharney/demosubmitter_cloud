@@ -622,11 +622,19 @@ function drawContinuums() {
     var name_array=new Array();
     var color_array=new Array();
     var rocks_array=new Array();
+    var throughput_array=new Array();
+    var CP_array=new Array();
+    var gradient_array=new Array();
+    gradient_array.push(undefined);
     for(var i=0;i<best_array.length;i++){
         cost_array.push(best_array[i][0]);
         latency_array.push(best_array[i][1]);
         info_array.push(best_array[i][4]);
         name_array.push(best_array[i][3]);
+        throughput_array.push(best_array[i][5].throughput);
+        CP_array.push(best_array[i][5].throughput/best_array[i][0]);
+        if(i>0)
+            gradient_array.push((best_array[i][5].throughput-best_array[i-1][5].throughput)/(best_array[i][0]-best_array[i-1][0]))
         if(best_array[i][7].latency!=undefined)
             rocks_array.push(best_array[i][7].latency-best_array[i][1])
         else
@@ -639,7 +647,7 @@ function drawContinuums() {
             }
         }
     }
-    console.log(rocks_array)
+    console.log(throughput_array)
     var data_ever=[{
         x: cost_array,
         y: latency_array,
@@ -669,17 +677,42 @@ function drawContinuums() {
         type: 'scatter'},*/
         {
         x: cost_array,
-        y: rocks_array,
-        marker: { size: 5, symbol: 'circle', color: "purple"},
-        name: 'rocksdb latency minus self-design latency',
+        y: CP_array,
+        marker: { size: 5, symbol: 'circle', color: "steelblue"},
+        mode: 'lines+markers',
+        showlegend: false,
+        text: info_array,
+        hovertext: name_array,
+        line: {color: 'lightblue', width: 2},
+        hovertemplate:
+            "<b>%{text}</b><br><br>",
+        type: 'scatter'}];
+
+    var data_gradient=[/*{
+        x: cost_array,
+        y: latency_array,
+        marker: { size: 7, symbol: 'circle', color: "purple"},
+        name: 'self-design',
         mode: 'lines+markers',
         showlegend: true,
         text: info_array,
         hovertext: name_array,
-        line: {color: 'pink', width: 2},
+        line: {color: 'purple', width: 2},
         hovertemplate:
             "<b>%{y}</b><extra></extra>",
-        type: 'scatter'}]
+        type: 'scatter'},*/
+        {
+            x: cost_array,
+            y: gradient_array,
+            marker: { size: 5, symbol: 'circle', color: "orange"},
+            mode: 'lines+markers',
+            showlegend: false,
+            text: info_array,
+            hovertext: name_array,
+            line: {color: 'yellow', width: 2},
+            hovertemplate:
+                "<b>%{text}</b><br><br>",
+            type: 'scatter'}]
 
     var result_array_ad=ContinuumArray;
     result_array_ad.sort(function (a,b) {return a[1]-b[1];});
@@ -1024,11 +1057,18 @@ function drawContinuums() {
     //Plotly.newPlot('tester5', data_ad, layout_ad);
     //Plotly.newPlot('tester5', data2, layout);
     //Plotly.newPlot('tester', data_compare, layout);
+
     //Plotly.newPlot('tester3', data3, layout_ad);
     layout.width=375;
     layout_ad.width=375;
     //layout.title="Sub-space of configurations tailored to your inputs";
     Plotly.newPlot('tester6', data_ever, layout);
+    layout.yaxis.title="Throughput/Cost ";
+    layout.width=750;
+    Plotly.newPlot('tester', data_compare, layout);
+    layout.yaxis.title="Throughput per buck ";
+    Plotly.newPlot('tester3', data_gradient, layout);
+
 
 
 
