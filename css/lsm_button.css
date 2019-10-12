@@ -495,6 +495,15 @@
 
 }
 
+@-webkit-keyframes shinebox {
+    0%, 100%{
+        box-shadow: 0pt 0pt 3pt 2pt white;
+    }
+    50% {
+        box-shadow: 0pt 0pt 3pt 2pt #7F89FF;
+    }
+}
+
 @-webkit-keyframes rotation {
     0% {
         -webkit-transform: rotate(0deg) ;
@@ -503,6 +512,7 @@
         -webkit-transform: rotate(359deg);
     }
 }
+
 /*.button:hover {
    border: 2px solid #000000;
    text-shadow: #000000 0 1px 0;
@@ -536,4 +546,5 @@
     padding: 5px 13px;
     font-size: 20px;
     color: #7379DE;
+    cursor: pointer;
 }

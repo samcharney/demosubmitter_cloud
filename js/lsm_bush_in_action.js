@@ -969,7 +969,7 @@ function initScenario4(){
 function init(){
 
 	// Dataset and Environment
-    document.getElementById("N").value=numberWithCommas(85000000000); //(10M values)
+    document.getElementById("N").value=numberWithCommas(100000000000); //(10M values)
     document.getElementById("E").value=128;
 		//document.getElementById("B").value=4096; //in B
 		document.getElementById("F").value=64;
@@ -988,7 +988,7 @@ function init(){
 	document.getElementById("AWS").style.fontWeight='bold';
 	document.getElementById("AWS").style.fontSize='16px';
 
-	document.getElementById("cost").value = 1000;
+	document.getElementById("cost").value = 1400;
 
 	document.getElementById("query_count").value=10000000000;
 
@@ -1081,6 +1081,12 @@ function init(){
 			displayContinuums();
 		}
 	})
+
+	$("#guide_7").hover(function(){
+		$("#exsys_switch").css("-webkit-animation",'shinebox 1.5s infinite linear');
+	},function(){
+		$("#exsys_switch").css("-webkit-animation",'shinebox 1.5s 1 linear');
+	});
 
 	/*
 	$(window).scroll(function(){
@@ -1669,10 +1675,6 @@ function draw_lsm_graph(prefix) {
 										}else{
 											message += " No memory for fence pointers and bloom filters in the cold level"
 										}
-
-
-
-
 
 												button.setAttribute("data-tooltip", message);
 												button.setAttribute("data-tooltip-position", "left");
@@ -3231,7 +3233,10 @@ function displayCharts() {
 	document.getElementById("interactive_mode_tab").style.display='';
 	document.getElementById("guide_4").style.display='';
 	document.getElementById("guide_5").style.display='';
-
+	document.getElementById("guide_6").style.display='';
+	document.getElementById("guide_7").style.display='';
+	document.getElementById("guide_8").style.display='';
+	document.getElementById("guide_9").style.display='';
 
 	$("html,body").animate({scrollTop: $("#interactive_mode_tab").offset().top-100}, 500);
 }
@@ -3273,6 +3278,7 @@ function switchText() {
         if(document.getElementById("explore_text").innerHTML=="Explore More Designs: On") {
             $("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
         }
+		$("#guide").animate({opacity:"0"}, "slow");
 	}
 	else {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
@@ -3296,6 +3302,7 @@ function switchText() {
 		$("#exsys_switch").animate({opacity:"1"}, "slow");
 
             $("#continuums_chart").animate({height: '0px',opacity:'0'}, "slow");
+		$("#guide").animate({opacity:"1"}, "slow");
 	}
 
 }
@@ -3388,6 +3395,8 @@ function switchQuestion() {
         var input = document.getElementById("question4_input");
         input.addEventListener("change", function (e) {
 			if(checkInput2(input)) {
+				document.getElementById("question0").style.display="";
+				document.getElementById("question0").innerHTML="Old input value: "+ parseFloat(document.getElementById("v").value*100)+"%";
 				document.getElementById("v").value = input.value / 100;
 				document.getElementById("w").value = 1 - input.value / 100;
 				re_run(e);
@@ -3399,6 +3408,8 @@ function switchQuestion() {
 		var input = document.getElementById("question5_input");
 		input.addEventListener("change", function (e) {
 			if(checkInput2(input)) {
+				document.getElementById("question0").style.display="";
+				document.getElementById("question0").innerHTML="Old input value: "+ parseFloat(document.getElementById("w").value*100)+"%";
 				document.getElementById("w").value = input.value / 100;
 				document.getElementById("v").value = 1 - input.value / 100;
 				re_run(e);
@@ -3426,11 +3437,13 @@ function switchStatistics() {
     removeAllChildren(document.getElementById("statistics_result"));
 	document.getElementById("statistic1").style.display="none";
     if(document.getElementById("statistics").value=="1") {
+		var old_length=[0,0,0];
         document.getElementById("statistic1").style.display = "";
         var input = document.getElementById("statistic1_input");
         input.addEventListener("keydown", function (e) {
             if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
 				if(checkInput2(input)) {
+
 					removeAllChildren(document.getElementById("statistics_result"));
 					var result_array = global_continuums_array;
 					result_array.sort(function (a, b) {
@@ -3458,13 +3471,17 @@ function switchStatistics() {
 						div_temp.appendChild(text);
 						var bar = document.createElement("div");
 						bar.setAttribute("class", "color_bar");
-						bar.setAttribute("style", "width:" + width * cloud_provider_num[i] / max_num + "px;background-color:" + colors[i] + "; height:20px");
+						bar.setAttribute("style", "width:" + old_length[i] + "px;background-color:" + colors[i] + "; height:20px");
+						old_length[i]=width * cloud_provider_num[i] / max_num;
 						div_temp.appendChild(bar);
 						var percent = document.createElement("div");
-						percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+						percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;;opacity:0");
 						percent.innerHTML = ((cloud_provider_num[i] / result_array.length) * 100).toFixed(1) + "%";
 						div_temp.appendChild(percent);
 						div_result.appendChild(div_temp);
+
+						$(bar).animate({width:old_length[i]+"px"},{speed:"slow",quene:false});
+						$(percent).animate({opacity:1},"slow");
 					}
 				}
             }
@@ -3473,10 +3490,11 @@ function switchStatistics() {
 
     if(document.getElementById("statistics").value=="2"){
 		var div_result = document.getElementById("statistics_result");
-		var result_array = global_continuums_array;
+		var result_array = (global_continuums_array);
 		result_array.sort(function (a, b) {
 			return a[0] - b[0];
 		});
+		var result_array = getBestDesignEverArray(result_array);
 		for (var i = 0; i < 5; i++) {
 			var div_temp = document.createElement("div");
 			div_temp.setAttribute("class", "myinput");

@@ -601,7 +601,7 @@ function countContinuum(combination, cloud_provider) {
     for (var T = 2; T <= 12; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
-                for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
+                for (var M_B_percent = 0.2; M_B_percent <= 1; M_B_percent += 0.2) {
                     var M_B = M_B_percent * max_RAM_purchased * 1024 * 1024 * 1024;
                     var M = max_RAM_purchased * 1024 * 1024 * 1024;
                     X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z) / T) * 8);
