@@ -540,12 +540,12 @@
    }*/
 
 .guide{
-    height:36px;
-    width:36px;
+    height:28px;
+    width:28px;
     border: 1px solid #7379DE;
     border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 18px;
+    padding: 3px 9px;
+    font-size: 14px;
     color: white;
     background-color: #7379DE;
     cursor: pointer;

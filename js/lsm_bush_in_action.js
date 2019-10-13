@@ -3293,7 +3293,7 @@ function switchText() {
 		}
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
-		$("#charts").animate({right:'-85px'});
+		$("#charts").animate({right:'-120px'});
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
 		$("#explore_switch").css('transform','translateY(0px)');
