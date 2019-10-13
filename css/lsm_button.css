@@ -464,6 +464,7 @@
 .tab_l>div{
     border: 1px solid #D1D7FD ;
     background-color: #FFFFFF;
+    transform: scale(0.64);
     -moz-transition: all .4s linear;
     -webkit-transition: all .4s linear;
     transition: all .4s linear;
@@ -486,7 +487,7 @@
     border-width: 1px;
     box-shadow: 0pt 0pt 3pt 2pt #7F89FF;
     border-color: #7F89FF;
-    /*transform: scale(1.1);*/
+
     //background-color: #E3E8FD;
     -webkit-animation: rotation 3s infinite linear;
 }
@@ -506,10 +507,10 @@
 
 @-webkit-keyframes rotation {
     0% {
-        -webkit-transform: rotate(0deg) ;
+        -webkit-transform: rotate(0deg) scale(0.64);
     }
     100% {
-        -webkit-transform: rotate(359deg);
+        -webkit-transform: rotate(359deg) scale(0.64);
     }
 }
 
@@ -539,12 +540,22 @@
    }*/
 
 .guide{
-    height:40px;
-    width:40px;
+    height:36px;
+    width:36px;
     border: 1px solid #7379DE;
     border-radius: 20px;
-    padding: 5px 13px;
-    font-size: 20px;
-    color: #7379DE;
+    padding: 5px 12px;
+    font-size: 18px;
+    color: white;
+    background-color: #7379DE;
     cursor: pointer;
+}
+
+.guide_text{
+    position: relative;
+    left: 30px;
+    top: -25px;
+    width: 100px;
+    font-size: 14px;
+    color: black
 }
