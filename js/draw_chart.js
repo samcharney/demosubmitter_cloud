@@ -1065,9 +1065,9 @@ function drawContinuums() {
     Plotly.newPlot('tester6', data_ever, layout);
     layout.yaxis.title="Throughput/Cost ";
     layout.width=750;
-    Plotly.newPlot('tester', data_compare, layout);
+    //Plotly.newPlot('tester', data_compare, layout);
     layout.yaxis.title="Throughput per buck ";
-    Plotly.newPlot('tester3', data_gradient, layout);
+    //Plotly.newPlot('tester3', data_gradient, layout);
 
 
 
