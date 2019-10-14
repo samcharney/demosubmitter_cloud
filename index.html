@@ -194,12 +194,25 @@
 
             <!-- <div id="interactiveDemo" class="row" style="">  -->
             <!-- </div>  -->
-            <div class="row" style="text-align: left; margin-bottom: 20px; color: black">
-                 <span style="font-size:16px;border-bottom: 1px solid #C0CCE8;">
+            <div id="guide" style="position:relative; left:0px; top: -4px;height:0px; width:29px; border: 0px solid black">
+                <div style="position: absolute; top: -26px; left:-5px; font-size: 14px; width: 160px"><i>Navigation guide</i></div>
+                <div class="guide" style="">1<div class="guide_text" style="">Set inputs</div></div>
+                <div id="guide_2" style="height:104px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
+                <div class="guide" style="">2<div class="guide_text" style="">Click the<br>button</div></div>
+                <div id="guide_4" style="height:310px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
+                <div id="guide_5" class="guide" style="display: none">3<div class="guide_text" style="">Check result</div></div>
+                <div id="guide_6" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
+                <div id="guide_7" class="guide" style="display: none">4<div class="guide_text" style="transform: translateY(-25px);">Click the radio button to compare with existing storage engines</div></div>
+                <div id="guide_8" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
+                <div id="guide_9" class="guide" style="display: none">5<div class="guide_text" style="transform:  translateY(-25px);">Like to explore more? Switch to Interactive Mode using the tab above</div></div>
+            </div>
+
+            <div class="row" style="text-align: left; margin-bottom: 20px; color: black; position: relative; left: 160px">
+                 <span style="font-size:14px;border-bottom: 1px solid #C0CCE8;">
                      <b>Inputs&#160</b> <i> (The mandatory inputs are indicated by *)</i>
                  </span>
             </div>
-            <div class="row" style="text-align: center;  background-color: #F0F7FF; background-color: white; border-radius: 0px; padding-left: 100px" >
+            <div id="input" class="row" style="text-align: center;  background-color: #F0F7FF; background-color: white; border-radius: 0px; padding-left: 100px" >
                 <div class="col-sm-3" >
                     <div class="row">
                             <div style="display: inline-block">
@@ -209,7 +222,7 @@
                             </span>
                             </div>
                         <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#dataset-setting" role="button" aria-expanded="false">
-                            <div id="dataset-trigger" onclick="">
+                            <div id="dataset-trigger" onclick="adjustGuide()">
                                 <img class="img-responsive img-centered" style="width:25px;" src="./images/arrow.png"/>
                             </div>
                         </div>
@@ -238,7 +251,7 @@
                         <span style="cursor: pointer;font-size:20px" id="workload-text" >workload<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
                     </div>
                         <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#workload-setting" role="button" aria-expanded="false">
-                            <div id="workload-trigger" onclick="">
+                            <div id="workload-trigger" onclick="adjustGuide()">
                                 <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
                             </div>
                         </div>
@@ -324,7 +337,7 @@
                                   <span style="cursor: pointer; font-size:20px" id="cost-text" >budget<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
                               </div>
                               <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#cost-setting" role="button" aria-expanded="false">
-                                  <div id="cost-trigger" onclick="">
+                                  <div id="cost-trigger" onclick="adjustGuide()">
                                       <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
                                   </div>
                               </div>
@@ -345,7 +358,7 @@
                                   <span style="cursor: pointer; font-size:20px" id="cloud-provider-text" >cloud</span>
                               </div>
                           <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#cloud-provider-setting" role="button" aria-expanded="false">
-                              <div id="cloud-provider-trigger" onclick="">
+                              <div id="cloud-provider-trigger" onclick="adjustGuide()">
                                   <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
                               </div>
                           </div>
@@ -370,17 +383,7 @@
 
             </div>
 
-            <div id="guide" style="position:relative; left:-40px; top: -30px;height:0px; width:29px; border: 0px solid black">
-                <div class="guide" style="">1<div class="guide_text" style="">Set inputs</div></div>
-                <div style="height:80px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
-                <div class="guide" style="">2<div class="guide_text" style="">Click the button</div></div>
-                <div id="guide_4" style="height:280px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
-                <div id="guide_5" class="guide" style="display: none">3<div class="guide_text" style="">Check result</div></div>
-                <div id="guide_6" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
-                <div id="guide_7" class="guide" style="display: none">4<div class="guide_text" style="transform: translateY(-40px);">Click on the radio button to compare with existing key-value stores</div></div>
-                <div id="guide_8" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
-                <div id="guide_9" class="guide" style="display: none">5<div class="guide_text" style="transform:  translateY(-40px);">If you'd want to explore more, click switch to Interactive Mode by clicking on the tab above</div></div>
-            </div>
+
 
             <br>
             <br>
@@ -521,13 +524,13 @@
 
                 <div class="row" style="width: 100%; margin-bottom: 60px">
 
-                    <div  class="cloud_button" onclick="displayCharts()" style=" left:580px; cursor:pointer" >
+                    <div  class="cloud_button" onclick="displayCharts()" style=" left:660px; cursor:pointer" >
                         Continue
                     </div>
 
 
              </div>
-                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; right:-95px; width: 85%; font-size: 16px; margin-bottom: 10px; display: none">
+                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; right:-150px; width: 85%; font-size: 16px; margin-bottom: 10px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
                     <div class="tab_l down" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
@@ -540,7 +543,7 @@
                 </div>
 
 
-                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; right: -120px">
+                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; right: -180px">
 
 
 
@@ -617,7 +620,7 @@
                                 <option value="3">Break-up of I/O cost for query types</option>
                                 <option value="4">Cost-performance values with the best tradeoff</option>
                             </select>
-                            <div id="statistic1" style="display: none">
+                            <div id="statistic1" style="display: none">3
                                 <div class="myinput" style="width:51px; ">of</div><input class="myinput" type="number" id="statistic1_input" style="width:100px; background-color: white"/><div class="myinput" style="width:20px; ">%</div>
                             </div>
                             <div id="statistics_result">

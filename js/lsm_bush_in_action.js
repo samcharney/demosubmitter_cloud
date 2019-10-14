@@ -1088,6 +1088,7 @@ function init(){
 		$("#exsys_switch").css("-webkit-animation",'shinebox 1.5s 1 linear');
 	});
 
+
 	/*
 	$(window).scroll(function(){
 		$(".navbar").css({opacity:Math.max(0,(500-$(document).scrollTop()+1000))/500});
@@ -3293,7 +3294,7 @@ function switchText() {
 		}
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
-		$("#charts").animate({right:'-120px'});
+		$("#charts").animate({right:'-180px'});
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
 		$("#explore_switch").css('transform','translateY(0px)');
@@ -3612,4 +3613,9 @@ function displayRocks() {
 		document.getElementById("exsys_text").innerHTML = "Compare with existing systems: Off";
 		$("#WT,#rocks,#exist_title").animate({opacity:"0"}, "slow");
 	}
+}
+
+function adjustGuide() {
+	setTimeout('$("#guide_2").animate({height:$("#input").height()-15+104},"slow")',300);
+	//setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
 }
