@@ -79,6 +79,11 @@
         <!-- /.container-fluid -->
     </nav>
 
+    <div id="loading_canvas" style="background-color: black; width: 0%; height: 0%; position: fixed; z-index: 0; padding-left: 48%; padding-top: 30%; display: none">
+        <div style="color: white; font-size: 18px; font-weight: lighter; font-family: Helvetica">Loading</div>
+        <div class="lds-roller" style="z-index: 20"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    </div>
+
     <header class="viewport">
         <div class="container">
             <div class="row">
@@ -591,7 +596,7 @@
                                 <option value="5">What if I change the proportion of write</option>
                                 <option value="6">What-if I switch to the best trade-off configurations</option>
                             </select>
-                            <div class="myinput" id="question0" style="display: none;width: 98%"></div>
+                            <div class="myinput" id="question0" style="display: none;width: 98%;font-size: 12px;font-style:italic;border-width: 0px;background-color: white;text-align: left"></div>
                             <div id="question1" style="display: none">
                                 <div class="myinput" style="width:51px; ">by</div><input class="myinput" type="number" id="question1_input" style="width:100px; background-color: white"/><div class="myinput" style="width:20px; ">$</div>
                             </div>

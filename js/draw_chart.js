@@ -451,10 +451,7 @@ function initChart(ContinuumArray, x, y, x_axis_title, y_axis_title, mode, cost)
             }
         }
         if(mode==1) {
-            if (best_y == -1 || (best_y - result_array[i][y]) < 0) {
-                best_y = result_array[i][y];
                 result_array_ever.push(result_array[i]);
-            }
         }
         if(i<result_array.length/10) {
             for (var j = 0; j < 3; j++) {

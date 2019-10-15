@@ -239,7 +239,7 @@ function navigateDesignSpace() {
                     long_scan_cost = analyzeLongScanCost(B, s);
                     if (scenario == 'A') // Avg-case
                     {
-                        logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                     } else // Worst-case
                     {
                         //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
@@ -935,7 +935,7 @@ function buildContinuums(cloud_mode){
     })
     var log=result_array;
     for(var i=0;i<10;i++)
-        console.log(log[i]);
+        //console.log(log[i]);
     return result_array;
 }
 
@@ -1729,7 +1729,7 @@ function drawDiagram(Variables, id){
     var result_div=document.getElementById(id)
     if(result_div==null)
         result_div=id;
-    console.log(result_div);
+    //console.log(result_div);
     removeAllChildren(result_div);
     var L=Variables.L;
     var K=Variables.K;
@@ -1845,7 +1845,7 @@ function drawDiagram(Variables, id){
                 // 	}
                 // }
 
-                console.log(cur_length);
+                //console.log(cur_length);
                 /*if(maxRuns >= 7){
                     button.setAttribute("style","width: "+(cur_length- 19.27)/6+"px; height: 12px; padding: 1px 0px 2px 0px");
                 }else*/{
@@ -1916,7 +1916,7 @@ function outputParameters(Variables, id, l) {
         div_tmp.setAttribute("class", "tooltip1");
         var span_tmp = document.createElement("span");
         span_tmp.setAttribute("class", "tooltiptext");
-        span_tmp.innerHTML = "T=" + Variables.T + "  K=" + Variables.K + "  Z=" + Variables.Z;
+        span_tmp.innerHTML = "T=" + Variables.T + "<br>K=" + Variables.K + "<br>Z=" + Variables.Z;
         div_tmp.appendChild(span_tmp);
 
     }

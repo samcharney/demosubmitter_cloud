@@ -994,6 +994,7 @@ function init(){
 
 	//$("#interactive_mode_tab").width(screen.width);
 
+
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
 	})
@@ -1051,6 +1052,10 @@ function init(){
 			p_put=0.5;
 		}
 		//navigateDesignSpace();
+		//$("#loading_canvas").animate({opacity:1}, 'fast').css('z-index',20);
+		//setTimeout('$("#loading_canvas").animate({opacity:0}, \'fast\').css(\'z-index\',0)',5000);
+		//$(document.body).css({'cursor' : 'wait'});
+		//setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
 		var check_boxes=$('.check_mark');
 		check_boxes.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
 			function(e) {
@@ -1102,7 +1107,11 @@ function init(){
 	navigateDesignSpace();
 	//drawCharts();
 	//drawChart2();
-	drawContinuums();
+	//$("#loading_canvas").animate({opacity:1}, 'slow').css('z-index',20);
+	//setTimeout('$("#loading_canvas").animate({opacity:0}, \'slow\').css(\'z-index\',0)',5000);
+	//$(document.body).css({'cursor' : 'wait'});
+	setTimeout('drawContinuums()',200);
+	//setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
 	//document.getElementById("Optimal-FPR").style.fontWeight='bold';
 	//document.getElementById("Optimal-FPR").style.fontSize='16px';
 
@@ -3338,7 +3347,7 @@ function switchQuestion() {
 			if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
 				if(checkInput(input)) {
 					document.getElementById("question0").style.display="";
-					document.getElementById("question0").innerHTML="Old input value: "+ parseFloat(document.getElementById("cost").value);
+					document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("cost").value);
 					document.getElementById("cost").value = parseFloat(document.getElementById("cost").value) + parseFloat(input.value);
 					re_run(e);
 				}
@@ -3397,7 +3406,7 @@ function switchQuestion() {
         input.addEventListener("change", function (e) {
 			if(checkInput2(input)) {
 				document.getElementById("question0").style.display="";
-				document.getElementById("question0").innerHTML="Old input value: "+ parseFloat(document.getElementById("v").value*100)+"%";
+				document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("v").value*100)+"%";
 				document.getElementById("v").value = input.value / 100;
 				document.getElementById("w").value = 1 - input.value / 100;
 				re_run(e);
@@ -3410,7 +3419,7 @@ function switchQuestion() {
 		input.addEventListener("change", function (e) {
 			if(checkInput2(input)) {
 				document.getElementById("question0").style.display="";
-				document.getElementById("question0").innerHTML="Old input value: "+ parseFloat(document.getElementById("w").value*100)+"%";
+				document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("w").value*100)+"%";
 				document.getElementById("w").value = input.value / 100;
 				document.getElementById("v").value = 1 - input.value / 100;
 				re_run(e);
