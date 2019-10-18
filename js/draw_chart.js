@@ -572,6 +572,7 @@ function drawContinuums() {
         legend_array[i].marker.color=colors[i];
         legend_array[i].name=cloud_array[i];
     }
+
    document.getElementById("chart_style").value="1";
 
     var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
@@ -597,7 +598,7 @@ function drawContinuums() {
             }
         }
     }
-    console.log(info_array);
+
     var data=[{
         x: cost_array,
         y: latency_array,

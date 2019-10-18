@@ -992,8 +992,16 @@ function init(){
 
 	document.getElementById("query_count").value=10000000000;
 
-	//$("#interactive_mode_tab").width(screen.width);
+	if($( window ).width()<1400)
+		$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
 
+	$( window ).resize(function() {
+		console.log($( window ).width());
+		if($( window ).width()<1400)
+			$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
+		else
+			$("#demo_body").css('transform','');
+	});
 
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
@@ -1092,6 +1100,8 @@ function init(){
 	},function(){
 		$("#exsys_switch").css("-webkit-animation",'shinebox 1.5s 1 linear');
 	});
+
+	$('input').attr('autocomplete','off');
 
 
 	/*
@@ -3406,9 +3416,9 @@ function switchQuestion() {
         input.addEventListener("change", function (e) {
 			if(checkInput2(input)) {
 				document.getElementById("question0").style.display="";
-				document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("v").value*100)+"%";
-				document.getElementById("v").value = input.value / 100;
-				document.getElementById("w").value = 1 - input.value / 100;
+				document.getElementById("question0").innerHTML="Previous input value: "+ (document.getElementById("v").value*100).toFixed(2)+"%";
+				document.getElementById("v").value = (input.value / 100).toFixed(4);
+				document.getElementById("w").value = (1 - (input.value / 100).toFixed(4));
 				re_run(e);
 			}
         });
@@ -3419,9 +3429,9 @@ function switchQuestion() {
 		input.addEventListener("change", function (e) {
 			if(checkInput2(input)) {
 				document.getElementById("question0").style.display="";
-				document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("w").value*100)+"%";
-				document.getElementById("w").value = input.value / 100;
-				document.getElementById("v").value = 1 - input.value / 100;
+				document.getElementById("question0").innerHTML="Previous input value: "+ (document.getElementById("w").value*100).toFixed(2)+"%";
+				document.getElementById("w").value = (input.value / 100).toFixed(4);
+				document.getElementById("v").value = (1 - (input.value / 100).toFixed(4));
 				re_run(e);
 			}
 		});
@@ -3506,11 +3516,14 @@ function switchStatistics() {
 		});
 		var result_array = getBestDesignEverArray(result_array);
 		for (var i = 0; i < 5; i++) {
+			var row = document.createElement("div");
+			row.setAttribute("style","width:100%");
 			var div_temp = document.createElement("div");
 			div_temp.setAttribute("class", "myinput");
-			div_temp.setAttribute("style", "width:98%;text-align:left");
+			div_temp.setAttribute("style", "width:auto;text-align:left");
 			div_temp.innerHTML = (i+1)+": $"+result_array[i][0] ;
-			div_result.appendChild(div_temp);
+			row.appendChild(div_temp);
+			div_result.appendChild(row);
 		}
 	}
 

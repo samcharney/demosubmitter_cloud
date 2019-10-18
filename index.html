@@ -61,7 +61,7 @@
                         <a href="#page-top"></a>
                     </li>
                     <li class="page-scroll">
-                        <a href="#overview">Overview</a>
+                        <a href="#overview" style="font-family: Helvetica;">Overview</a>
                     </li>
 <!--                     <li class="page-scroll">
                         <a href="#research">Research</a>
@@ -70,7 +70,7 @@
                         <a href="#people">People</a>
                     </li> -->
                      <li class="page-scroll">
-                        <a href="#interactiveDemo">X in Action</a>
+                        <a href="#interactiveDemo" style="font-family: Helvetica;">X in Action</a>
                     </li>
                 </ul>
             </div>
@@ -193,7 +193,7 @@
 
 
     <section id="interactiveDemo">
-        <div class="container page-scroll" style="width:1350px;">
+        <div id="demo_body" class="container page-scroll" style="width:1350px;">
 
             <!-- <a href="#interactiveDemo" id="interactiveDemo"></a>  -->
 
@@ -235,15 +235,15 @@
                     <div id="dataset-setting" class="collapse multi-collapse">
                             <div class="input-group" >
                                 <span class="input-group-addon"><span data-tooltip="Number of Entries in the Index (e.g., 10485760), which automatically changes the Level number" data-tooltip-position="bottom"> # Entries</span></span>
-                                <input id="N" type="text" class="form-control" aria-label="Index Size N (elements)" placeholder="Number of Entries in the Index (e.g., 10485760)" style="text-align:right" onchange="re_run(event, 'dataset_input')"/>
+                                <input id="N" type="text" class="form-control" aria-label="Index Size N (elements)" placeholder="Number of Entries in the Index (e.g., 10485760)" style="text-align:right" onchange="re_run(event, 'dataset_input')" autocomplete="false"/>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon"><span data-tooltip="Key-Value pair size in bytes (e.g., 16)." data-tooltip-position="bottom"> Entry size (bytes)</span></span>
-                                <input id="E" type="number" class="form-control" aria-label="Key-Value pair size (bytes)" placeholder="Key-Value pair size in bytes (e.g., 16)" style="text-align:right" onchange="re_run(event, 'dataset_input')" onwheel="re_run(event, 'dataset_input')"  />
+                                <input id="E" type="number" class="form-control" aria-label="Key-Value pair size (bytes)" placeholder="Key-Value pair size in bytes (e.g., 16)" style="text-align:right" onchange="re_run(event, 'dataset_input')" onwheel="re_run(event, 'dataset_input')"  autocomplete="false"/>
                             </div>
                             <div class="input-group">
                                 <span class="input-group-addon"><span data-tooltip="Key size in bytes (e.g., 8)." data-tooltip-position="bottom"> Key size (bytes)</span></span>
-                                <input id="F" type="text" class="form-control" aria-label="Key size (bytes)" placeholder="Key size in bytes (e.g., 8)" style="text-align:right" onchange="re_run(event, 'dataset_input')"/>
+                                <input id="F" type="text" class="form-control" aria-label="Key size (bytes)" placeholder="Key size in bytes (e.g., 8)" style="text-align:right" onchange="re_run(event, 'dataset_input')" autocomplete="false"/>
                             </div>
                     </div>
                 </div>
@@ -351,7 +351,7 @@
                               <div class="row">
                                       <div class="input-group" style="text-align: center;">
                                           <span class="input-group-addon"><span data-tooltip="The budget" data-tooltip-position="bottom">Budget </span></span>
-                                          <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')"/>
+                                          <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                                       </div>
                               </div>
                           </div>
