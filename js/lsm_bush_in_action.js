@@ -3443,7 +3443,7 @@ function switchQuestion() {
 		});
 		var index=0;
 		for(var i=0;i<result_array.length;i++){
-			if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]){
+			if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]&&result_array[i][5].L!=0){
 				index=i;
 			}
 		}
@@ -3530,42 +3530,48 @@ function switchStatistics() {
 	if(document.getElementById("statistics").value=="3"){
 		removeAllChildren(document.getElementById("statistics_result"));
 		var div_result = document.getElementById("statistics_result");
-		var div_temp = document.createElement("div");
-		div_temp.setAttribute("class", "myinput");
-		div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
-		div_temp.innerHTML = "Current Design:" ;
-		div_result.appendChild(div_temp);
-
-		var result_array = global_continuums_array;
-		result_array.sort(function (a, b) {
-			return a[1] - b[1];
-		});
-
-		var query_IO=[result_array[global_index][5].read_cost*result_array[global_index][5].v,result_array[global_index][5].update_cost*result_array[global_index][5].w];
-		var query_type=["Read","Write"];
-		var colors_2=["#837BFF","#83DEFF"];
-
-
-
-		for (var i = 0; i < 2; i++) {
+		var old_length_2=[[0,0],[0,0]]
+		for (var j=1;j<=2;j++) {
 			var div_temp = document.createElement("div");
-			div_temp.setAttribute("style", "width:98%;text-align:left");
-			div_temp.setAttribute("class", "myinput")
-			var text = document.createElement("div");
-			text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
-			text.innerHTML = query_type[i];
-			div_temp.appendChild(text);
-			var bar = document.createElement("div");
-			bar.setAttribute("class", "color_bar");
-			bar.setAttribute("style", "width:" + 90 * query_IO[i] / (query_IO[1]+query_IO[0]) + "px;background-color:" + colors_2[i] + "; height:20px");
-			div_temp.appendChild(bar);
-			var percent = document.createElement("div");
-			percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
-			percent.innerHTML = ((query_IO[i] / (query_IO[1]+query_IO[0])) * 100).toFixed(1) + "%";
-			div_temp.appendChild(percent);
+			div_temp.setAttribute("class", "myinput");
+			div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
+			div_temp.innerHTML = "Key-value store "+j+":";
 			div_result.appendChild(div_temp);
-		}
 
+			var result_array = global_continuums_array;
+			result_array.sort(function (a, b) {
+				return a[1] - b[1];
+			});
+
+			var query_IO = [result_array[global_index+j-1][5].read_cost * result_array[global_index+j-1][5].v, result_array[global_index+j-1][5].update_cost * result_array[global_index+j-1][5].w];
+			var query_type = ["Read", "Write"];
+			var colors_2 = ["#837BFF", "#83DEFF"];
+
+
+			for (var i = 0; i < 2; i++) {
+				var div_temp = document.createElement("div");
+				div_temp.setAttribute("style", "width:98%;text-align:left");
+				div_temp.setAttribute("class", "myinput")
+				var text = document.createElement("div");
+				text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+				text.innerHTML = query_type[i];
+				div_temp.appendChild(text);
+				var bar = document.createElement("div");
+				bar.setAttribute("class", "color_bar");
+				bar.setAttribute("style", "width:" + old_length_2[j-1][i] + "px;background-color:" + colors_2[i] + "; height:20px");
+				old_length_2[j-1][i]=90 * query_IO[i] / (query_IO[1] + query_IO[0]);
+				div_temp.appendChild(bar);
+				var percent = document.createElement("div");
+				percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+				percent.innerHTML = ((query_IO[i] / (query_IO[1] + query_IO[0])) * 100).toFixed(1) + "%";
+				div_temp.appendChild(percent);
+				div_result.appendChild(div_temp);
+				$(bar).animate({width:old_length_2[j-1][i]+"px"},{speed:"slow",quene:false});
+			}
+
+
+		}
+		/*
 		var div_temp = document.createElement("div");
 		div_temp.setAttribute("class", "myinput");
 		div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
@@ -3596,6 +3602,8 @@ function switchStatistics() {
 			div_temp.appendChild(percent);
 			div_result.appendChild(div_temp);
 		}
+		*/
+		 
 	}
 	if(document.getElementById("statistics").value=="4"){
 		var div_result = document.getElementById("statistics_result");
@@ -3606,22 +3614,24 @@ function switchStatistics() {
 		var index=0;
 		var index_2=0;
 		for(var i=0;i<result_array.length;i++){
-			if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]){
+			if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]&&result_array[i][5].L!=0){
 				index_2=index;
 				index=i;
 			}
 		}
 		var div_temp = document.createElement("div");
 		div_temp.setAttribute("class", "myinput");
-		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto");
-		div_temp.innerHTML = "Best Cost Performance Design:<br>"+"Cost: $"+result_array[index][0]+"<br>Throughput: "+result_array[index][5].throughput.toFixed(0)+"ops<br>"+"Cost Performance:"+(result_array[index][5].throughput/result_array[index][0]).toFixed(1);
+		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto;margin-top:15px");
+		div_temp.innerHTML = "Best Cost Performance Design:<br>"+"Cost: $"+result_array[index][0]+"<br>Throughput: "+result_array[index][5].throughput.toFixed(0)+" querys/s<br>"+"Cost Performance: "+(result_array[index][5].throughput/result_array[index][0]).toFixed(1);
 		div_result.appendChild(div_temp);
 
 		var div_temp = document.createElement("div");
 		div_temp.setAttribute("class", "myinput");
-		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto");
-		div_temp.innerHTML = "Second Best Cost Performance Design:<br>"+"Cost: $"+result_array[index_2][0]+"<br>Throughput: "+result_array[index_2][5].throughput.toFixed(0)+"ops<br>"+"Cost Performance:"+(result_array[index_2][5].throughput/result_array[index_2][0]).toFixed(1);
+		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto;margin-top:15px");
+		div_temp.innerHTML = "Second Best Cost Performance Design:<br>"+"Cost: $"+result_array[index_2][0]+"<br>Throughput: "+result_array[index_2][5].throughput.toFixed(0)+" querys/s<br>"+"Cost Performance: "+(result_array[index_2][5].throughput/result_array[index_2][0]).toFixed(1);
 		div_result.appendChild(div_temp);
+
+
 	}
 }
 
@@ -3638,6 +3648,6 @@ function displayRocks() {
 }
 
 function adjustGuide() {
-	setTimeout('$("#guide_2").animate({height:$("#input").height()-15+104},"slow")',300);
+	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"slow")',300);
 	//setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
 }
