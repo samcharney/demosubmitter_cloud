@@ -3603,7 +3603,7 @@ function switchStatistics() {
 			div_result.appendChild(div_temp);
 		}
 		*/
-		 
+
 	}
 	if(document.getElementById("statistics").value=="4"){
 		var div_result = document.getElementById("statistics_result");
@@ -3648,6 +3648,7 @@ function displayRocks() {
 }
 
 function adjustGuide() {
-	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"slow")',300);
+	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',200);
+	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',400);
 	//setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
 }
