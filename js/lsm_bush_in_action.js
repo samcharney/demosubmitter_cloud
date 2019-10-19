@@ -3631,7 +3631,6 @@ function switchStatistics() {
 		div_temp.innerHTML = "Second Best Cost Performance Design:<br>"+"Cost: $"+result_array[index_2][0]+"<br>Throughput: "+result_array[index_2][5].throughput.toFixed(0)+" querys/s<br>"+"Cost Performance: "+(result_array[index_2][5].throughput/result_array[index_2][0]).toFixed(1);
 		div_result.appendChild(div_temp);
 
-
 	}
 }
 
@@ -3648,7 +3647,8 @@ function displayRocks() {
 }
 
 function adjustGuide() {
-	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',200);
-	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',400);
+	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"fast")',100);
+	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',300);
+	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',500);
 	//setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
 }
