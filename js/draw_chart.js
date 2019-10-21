@@ -576,6 +576,7 @@ function drawContinuums() {
    document.getElementById("chart_style").value="1";
 
     var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
+    var latency=parseFloat(document.getElementById("latency").value);
 
     var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
 
@@ -894,11 +895,19 @@ function drawContinuums() {
             l2=-1;
         }else {
             for (var i = 1; i < best_array.length; i++) {
-                if (best_array[i][0] > cost) {
+                console.log(latency);
+                if (best_array[i][0] >= cost||(best_array[i][1]*24<latency&&$('input[name=radio_3]:checked', '#myForm_3').val()=="performance-conscious")) {
                     //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
                     //drawDiagram(best_array[i][5], 'cost_result_diagram2');
                     index = i - 1;
-                    cost_result_text[0] = ("We found 2 key-value stores for you at $" + cost + ".<br><br>");
+                    if($('input[name=radio_3]:checked', '#myForm_3').val()=="performance-conscious") {
+                        if (best_array[i][1] * 24 < latency)
+                            cost_result_text[0] = ("<i>We found 2 key-value stores for you at $" + cost + " and " + fixTime(latency / 24) + " latency.</i><br><br>");
+                        else
+                            cost_result_text[0] = ("<i>The budget $" + cost + " is too low for " + fixTime(latency / 24) + " latency. However, we found 2 key-value stores for you at $" + cost + ".</i><br><br>");
+                    }else{
+                        cost_result_text[0] = ("<i>We found 2 key-value stores for you at $" + cost + ".</i><br><br>");
+                    }
                     cost_result_text[1] = "<b>Key-value store 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
                     cost_result_text[3] = "<b>Key-value store 2 saves time</b>";
@@ -923,7 +932,7 @@ function drawContinuums() {
                     if ((cost - best_array[i - 1][0]) > (best_array[i][0] - cost))
                         switch_option = true;
                     break;
-                } else if (best_array[i][0] == cost) {
+                }/* else if (best_array[i][0] == cost) {
                     index = i;
                     cost_result_text[0] = ("We found the key-value stores for you at $" + cost + ".<br><br>");
                     //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
@@ -934,7 +943,7 @@ function drawContinuums() {
                     l1 = 1;
                     l2 = -1;
                     break;
-                }
+                }*/
             }
         }
             document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
@@ -1153,6 +1162,60 @@ function drawContinuums() {
 
 }
 
+function analyzeTKZ(){
+    var results=navigateDesignSpace();
+    console.log(results);
+    var points_x=new Array();
+    var points_y=new Array();
+    for(var i=2;i<12;i++){
+        points_y.push(results[i][1][1]);
+        points_x.push(i);
+    }
+    console.log(points_y);
+    var data=[{
+        x:points_x,
+        y:points_y,
+        mode: 'markers',
+        type: 'scatter'
+    }];
+
+    var layout =
+        {
+            xaxis: {
+                title: '',
+                //range: [ best_array[start_point][0], best_array[end_point][0] ],
+                showline: true,
+                zeroline: false
+            },
+            yaxis: {
+                title: '',
+                //range: [ best_array[end_point][1], best_array[start_point][1] ],
+                showline: true,
+                zeroline: false
+            },
+            legend: {
+                "orientation": "h",
+                x: 0.1,
+                y: 1
+            },
+            autosize: true,
+            hovermode: "closest",
+            width: 750,
+            height: 300,
+            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
+            margin: {
+                l: 60,
+                r: 20,
+                b: 50,
+                t: 20,
+                pad: 5
+            }, title: ''
+        };
+
+    Plotly.newPlot('tester3', data, layout);
+
+}
+
 function addTextAndBar(result_div,Variables,w,h){
     removeAllChildren(result_div);
     var div_tmp = document.createElement("div");
@@ -1208,3 +1271,4 @@ function fixTimeArray(array){
     }
     return result;
 }
+

@@ -348,11 +348,26 @@
                               </div>
                           </div>
                           <div id="cost-setting" class="collapse multi-collapse">
+                              <form id="myForm_3" style=" text-align: left; height:60px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px" onchange="re_run(event)">
+                                  <label class="radiobutton"  style=""><input type="radio" name="radio_3" value="cost-conscious" checked="checked"/>cost-conscious
+                                      <span class="check_mark"></span>
+                                  </label>
+
+                                  <label class="radiobutton" style=""><input type="radio" name="radio_3" value="performance-conscious" />performance-conscious
+                                      <span class="check_mark"></span>
+                                  </label>
+                              </form>
                               <div class="row">
                                       <div class="input-group" style="text-align: center;">
                                           <span class="input-group-addon"><span data-tooltip="The budget" data-tooltip-position="bottom">Budget </span></span>
                                           <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                                       </div>
+                              </div>
+                              <div class="row">
+                                  <div class="input-group" style="text-align: center;">
+                                      <span class="input-group-addon"><span data-tooltip="The performance" data-tooltip-position="bottom">Latency (hours)</span></span>
+                                      <input id="latency" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
+                                  </div>
                               </div>
                           </div>
                       </div>
@@ -636,7 +651,9 @@
                                 Interactive Panel
                             </div>
                             <div id="interactive-content">
-                            <div id="cost_result_p1" style="display:inline-block; width: 50%; border-radius: 8px; font-size: 16px; padding-left: 15% ">
+                            <div  style="display:inline-block; width: 50%; border-radius: 8px; font-size: 16px; padding-left: 15% ">
+                                <div id="cost_result_p1" style="display:inline-block; width: 70%;  ">
+                                </div>
                             </div>
 
                                 <div id="exist_title" style="display:inline-block; width: 30%; color:#1C0AA8; border-radius: 8px; font-size: 16px; padding-left: 7%; opacity: 0 ">

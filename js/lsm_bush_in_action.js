@@ -989,6 +989,7 @@ function init(){
 	document.getElementById("AWS").style.fontSize='16px';
 
 	document.getElementById("cost").value = 1400;
+	document.getElementById("latency").value = 5.7;
 
 	document.getElementById("query_count").value=10000000000;
 
@@ -1114,7 +1115,8 @@ function init(){
 			$(".navbar").css('transform','scale(1)');
 	});*/
 
-	navigateDesignSpace();
+	//navigateDesignSpace();
+	//analyzeTKZ();
 	//drawCharts();
 	//drawChart2();
 	//$("#loading_canvas").animate({opacity:1}, 'slow').css('z-index',20);

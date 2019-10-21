@@ -146,17 +146,21 @@ function navigateDesignSpace() {
     var M_FP;
     var FPR_sum;
 
-
+    M_BC=0;
     B=setPricesBasedOnScheme(Variables);
     if(!setMaxRAMNeeded(Variables))
         return;
 
     var best_cost=-1;
 
-    for (var T = 4; T <= 4; T++) {
-        for (var K = 3; K <= T - 1; K++) {
-            for (var Z = 3; Z <= T - 1; Z++) {
-                for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
+    var results=new Array();
+
+    for (var T = 2; T <= 12; T++) {
+        results[T]=new Array();
+        for (var K = 1; K <= T - 1; K++) {
+            results[T][K]=new Array();
+            for (var Z = 1; Z <= T - 1; Z++) {
+                for (var M_B_percent = 0.4; M_B_percent < 1; M_B_percent += 1) {
                     M_BC=0;
                     var M_B = M_B_percent * max_RAM_purchased*1024*1024*1024;
                     var M=max_RAM_purchased*1024*1024*1024;
@@ -267,6 +271,7 @@ function navigateDesignSpace() {
                         Variables.no_result_read_cost=read_cost-1;
                         Variables.total_cost=total_cost;
                     }
+                    results[T][K][Z]=read_cost;
                 }
             }
         }
@@ -379,6 +384,7 @@ function navigateDesignSpace() {
     document.getElementById("Z").value=Variables.Z;
     document.getElementById("T").value=Variables.T;
 
+    return results;
 }
 
 function countThroughput(cost, cloud_provider) {
