@@ -3513,19 +3513,27 @@ function switchStatistics() {
     if(document.getElementById("statistics").value=="2"){
 		var div_result = document.getElementById("statistics_result");
 		var result_array = (global_continuums_array);
+		var old_length_3=[0,0,0,0,0];
 		result_array.sort(function (a, b) {
 			return a[0] - b[0];
 		});
 		var result_array = getBestDesignEverArray(result_array);
 		for (var i = 0; i < 5; i++) {
-			var row = document.createElement("div");
-			row.setAttribute("style","width:100%");
 			var div_temp = document.createElement("div");
 			div_temp.setAttribute("class", "myinput");
-			div_temp.setAttribute("style", "width:auto;text-align:left");
-			div_temp.innerHTML = (i+1)+": $"+result_array[i][0] ;
-			row.appendChild(div_temp);
-			div_result.appendChild(row);
+			div_temp.setAttribute("style", "display:inline-block;width:100%;text-align:left");
+			var text = document.createElement("div");
+			text.setAttribute("style", "display:inline-block;width:70px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+			text.innerHTML = "$"+result_array[i][0] ;
+			div_temp.append(text);
+			var bar = document.createElement("div");
+			bar.setAttribute("class", "color_bar");
+			bar.setAttribute("style", "width:" + old_length_3[i] + "px;background-color:#83"+(9-i)+"BFF; height:20px");
+			old_length_3[i]=120 * result_array[i][0] / result_array[4][0];
+			div_temp.append(bar);
+			div_result.appendChild(div_temp);
+			console.log(old_length_3)
+			$(bar).animate({width:old_length_3[i]+"px"},{speed:"slow"});
 		}
 	}
 
