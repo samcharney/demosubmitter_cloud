@@ -989,7 +989,7 @@ function init(){
 	document.getElementById("AWS").style.fontSize='16px';
 
 	document.getElementById("cost").value = 1400;
-	document.getElementById("latency").value = 5.7;
+	//document.getElementById("latency").value = 5.7;
 
 	document.getElementById("query_count").value=10000000000;
 
@@ -1061,8 +1061,8 @@ function init(){
 			p_put=0.5;
 		}
 		//navigateDesignSpace();
-		//$("#loading_canvas").animate({opacity:1}, 'fast').css('z-index',20);
-		//setTimeout('$("#loading_canvas").animate({opacity:0}, \'fast\').css(\'z-index\',0)',5000);
+		$("#loading_canvas").animate({opacity:1}, 'fast');
+		setTimeout('$("#loading_canvas").animate({opacity:0}, \'fast\').css(\'z-index\',0)',5000);
 		//$(document.body).css({'cursor' : 'wait'});
 		//setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
 		var check_boxes=$('.check_mark');
@@ -1071,6 +1071,15 @@ function init(){
 				drawContinuums();
 			});
 	});
+
+	$('[name=cp_tab]').on('click',function(){
+		if(!$(this).hasClass("down")){
+			$('[name=cp_tab]').removeClass('down');
+			$(this).addClass('down');
+			//displayRocks();
+			setTimeout('drawContinuums();',400);
+		}
+	})
 
 	$('[name=exsys_tab]').on('click',function(){
 		if(!$(this).hasClass("down")){

@@ -864,6 +864,7 @@ function drawContinuums() {
     var end_point;
     var l1,l2;
     var index;
+    var index_2;
     var max_mem;
     var switch_option;
     if(cost<best_array[0][0]) {
@@ -896,22 +897,30 @@ function drawContinuums() {
         }else {
             for (var i = 1; i < best_array.length; i++) {
                 console.log(latency);
-                if (best_array[i][0] >= cost||(best_array[i][1]*24<latency&&$('input[name=radio_3]:checked', '#myForm_3').val()=="performance-conscious")) {
+                if (best_array[i][0] >= cost||(best_array[i][1]*24<latency&&!isNaN(latency))) {
                     //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
                     //drawDiagram(best_array[i][5], 'cost_result_diagram2');
                     index = i - 1;
-                    if($('input[name=radio_3]:checked', '#myForm_3').val()=="performance-conscious") {
+                    index_2 = i;
+                    if(!isNaN(latency)) {
                         if (best_array[i][1] * 24 < latency)
-                            cost_result_text[0] = ("<i>We found 2 key-value stores for you at $" + cost + " and " + fixTime(latency / 24) + " latency.</i><br><br>");
-                        else
-                            cost_result_text[0] = ("<i>The budget $" + cost + " is too low for " + fixTime(latency / 24) + " latency. However, we found 2 key-value stores for you at $" + cost + ".</i><br><br>");
+                            cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + " and " + fixTime(latency / 24) + " latency.</i><br><br>");
+                        else {
+                            for (var j = 1; j < best_array.length; j++) {
+                                if (best_array[j][1]*24 < latency){
+                                    index_2=j;
+                                    break;
+                                }
+                            }
+                            cost_result_text[0] = ("<i>The budget $" + cost + " is too low to achieve " + fixTime(latency / 24) + " latency. However, we found the best performance storage engine templates for you at $" + cost +", and the cheapest performance engine with " +fixTime(latency / 24)+" latency.</i><br><br>");
+                        }
                     }else{
-                        cost_result_text[0] = ("<i>We found 2 key-value stores for you at $" + cost + ".</i><br><br>");
+                        cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + ".</i><br><br>");
                     }
                     cost_result_text[1] = "<b>Key-value store 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
                     cost_result_text[3] = "<b>Key-value store 2 saves time</b>";
-                    cost_result_text[4] = best_array[i][5];
+                    cost_result_text[4] = best_array[index_2][5];
                     start_point = Math.floor(i - best_array.length / 5);
                     if (start_point < 0)
                         start_point = 0;
@@ -952,10 +961,11 @@ function drawContinuums() {
             outputParameters(cost_result_text[2],"cost_result_p3", l1);
 
             if(l2!=-1) {
-                if(switch_option==true){
-                    document.getElementById("cost_result_p4").innerHTML= "<b>Key-value store 2 saves money</b>";
+                //if(switch_option==true){
+                if($("#cp_tab_p").hasClass("down")){
+                    document.getElementById("cost_result_p4").innerHTML= "<b>Store engine 2 saves money</b>";
                     outputParameters(cost_result_text[2],"cost_result_p5", l1);
-                    document.getElementById("cost_result_p2").innerHTML = "<b>Key-value store 1 saves time</b>";
+                    document.getElementById("cost_result_p2").innerHTML = "<b>Storage engine 1 saves time</b>";
                     outputParameters(cost_result_text[4], "cost_result_p3", l2);
                 }else {
                     document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
@@ -1023,7 +1033,6 @@ function drawContinuums() {
             hovermode: "closest",
             width: 750,
             height: 300,
-            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {
                 l: 60,
                 r: 20,
@@ -1052,7 +1061,6 @@ function drawContinuums() {
             hovermode: "closest",
             width: 750,
             height: 500,
-            //title:'Pareto frontiers for State-of-the-art and Monkey Tuning'
             margin: {
                 l: 60,
                 r: 20,
@@ -1062,7 +1070,7 @@ function drawContinuums() {
             }, title: ''
         };
     //Plotly.newPlot('tester5', data_ad, layout_ad);
-    //Plotly.newPlot('tester5', data2, layout);
+    //Plotly.newPlot('tester', data2, layout);
     //Plotly.newPlot('tester', data_compare, layout);
 
     //Plotly.newPlot('tester3', data3, layout_ad);

@@ -78,12 +78,12 @@
         </div>
         <!-- /.container-fluid -->
     </nav>
-
+<!--
     <div id="loading_canvas" style="background-color: black; width: 0%; height: 0%; position: fixed; z-index: 0; padding-left: 48%; padding-top: 30%; display: none">
         <div style="color: white; font-size: 18px; font-weight: lighter; font-family: Helvetica">Loading</div>
         <div class="lds-roller" style="z-index: 20"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
-
+-->
     <header class="viewport">
         <div class="container">
             <div class="row">
@@ -249,7 +249,7 @@
                 </div>
 
 
-                <div class="col-sm-3" style="width: 28%">
+                <div class="col-sm-3" style="width: 28%;position: relative; left: -4%">
                     <div class="row">
                     <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
@@ -293,6 +293,10 @@
                             </label>
                         </form>
 
+                        <div id="loading_canvas" style=" width: 40px; height: 40px; position: absolute; top: 80px; left:270px;transform:scale(0.6); opacity: 0">
+                            <div class="lds-roller" style=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                        </div>
+
 
                         <div class="input-group">
                             <span class="input-group-addon"><span data-tooltip="Proportion of Write" data-tooltip-position="bottom"> Proportion of Write </span></span>
@@ -332,10 +336,15 @@
                             <input id="s" type="number" class="form-control" aria-label="Proportion" placeholder=" s (e.g., 2048)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')"/>
                         </div>
                     </div>
+                    <div  id="cost_performance_switch" style="position:absolute; width: 400px; left:300px; top:-40px;font-size: 16px; margin-bottom: 10px;padding:8px; border-radius: 8px">
+                        <div style="position:relative;left: 0px">
+                            <div class="tab down" id="cp_tab_c" name="cp_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width: 150px;">Cost conscious</div><div id="cp_tab_p" name="cp_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width: 180px">Performance conscious</div>
+                        </div>
+                    </div>
                       </div>
 
 
-                      <div class="col-sm-3" >
+                <div class="col-sm-3" style="width: 20%; position: relative; left: -10%" >
                           <div class="row">
                               <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
@@ -348,7 +357,7 @@
                               </div>
                           </div>
                           <div id="cost-setting" class="collapse multi-collapse">
-                              <form id="myForm_3" style=" text-align: left; height:60px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px" onchange="re_run(event)">
+                             <!-- <form id="myForm_3" style=" text-align: left; height:60px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px" onchange="re_run(event)">
                                   <label class="radiobutton"  style=""><input type="radio" name="radio_3" value="cost-conscious" checked="checked"/>cost-conscious
                                       <span class="check_mark"></span>
                                   </label>
@@ -356,23 +365,46 @@
                                   <label class="radiobutton" style=""><input type="radio" name="radio_3" value="performance-conscious" />performance-conscious
                                       <span class="check_mark"></span>
                                   </label>
-                              </form>
+                              </form>-->
                               <div class="row">
                                       <div class="input-group" style="text-align: center;">
                                           <span class="input-group-addon"><span data-tooltip="The budget" data-tooltip-position="bottom">Budget </span></span>
                                           <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                                       </div>
                               </div>
-                              <div class="row">
-                                  <div class="input-group" style="text-align: center;">
-                                      <span class="input-group-addon"><span data-tooltip="The performance" data-tooltip-position="bottom">Latency (hours)</span></span>
-                                      <input id="latency" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
-                                  </div>
-                              </div>
+
                           </div>
+
                       </div>
 
-                      <div class="col-sm-3"  style="width: 22%">
+                <div class="col-sm-3" style="width: 16%; position: relative; left: -10%" >
+                    <div class="row">
+                        <div style="display: inline-block">
+                            <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
+                            <span style="cursor: pointer; font-size:20px" id="performance-text" >performance<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
+                        </div>
+                        <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#performance-setting" role="button" aria-expanded="false">
+                            <div id="performance-trigger" onclick="adjustGuide()">
+                                <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="performance-setting" class="collapse multi-collapse">
+
+
+                        <div class="row">
+                            <div class="input-group" style="text-align: center;">
+                                <span class="input-group-addon"><span data-tooltip="The performance" data-tooltip-position="bottom">Latency (hours)</span></span>
+                                <input id="latency" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                      <div class="col-sm-3"  style="width: 10%; position: relative; left: -4%">
                               <div style="display: inline-block">
                                   <!--<img class="img-responsive img-centered" style="width:105px" src="./images/cloud.png"/>-->
                                   <span style="cursor: pointer; font-size:20px" id="cloud-provider-text" >cloud</span>
@@ -386,7 +418,7 @@
                               <div class="row">
                                   <div>
                                       <div class="">
-                                          <select id="cloud-provider" name="" style="width:200px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
+                                          <select id="cloud-provider" name="" style="position: relative; left: -80px;width:200px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
                                               <option value="Any">Any</option>
                                               <option value="AWS">AWS</option>
                                               <option value="GCP">GCP</option>
