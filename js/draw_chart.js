@@ -14,6 +14,7 @@ var cloud_array=[
 
 var global_index;
 
+
 function Chart(){
     var data;
     var layout;
@@ -860,17 +861,17 @@ function drawContinuums() {
 
     console.log(best_array);
     var cost_result_text=new Array();
-    var start_point;
-    var end_point;
+    var chart_start_index;
+    var chart_end_index;
     var l1,l2;
-    var index;
-    var index_2;
+    var design_1_index;
+    var design_2_index;
     var max_mem;
     var switch_option;
     if(cost<best_array[0][0]) {
         cost_result_text[0] = "Sorry, you have insufficient budget. The minimum budget to run the workload is $"+best_array[0][0]+".<br>";
-        start_point=0;
-        end_point=Math.ceil(best_array/5);
+        chart_start_index=0;
+        chart_end_index=Math.ceil(best_array/5);
         removeAllChildren(document.getElementById("cost_result_p2"));
         removeAllChildren(document.getElementById("cost_result_p3"));
         removeAllChildren(document.getElementById("cost_result_p4"));
@@ -884,14 +885,14 @@ function drawContinuums() {
     else{
 
         if(best_array[best_array.length-1][0]<cost) {
-            index=best_array.length-2;
+            design_1_index=best_array.length-2;
             cost_result_text[0]=("We found 1 key-value stores for you at "+cost+".<br><br>");
             console.log(cost_result_text[0],cost);
             //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
             cost_result_text[1]="<b>Our Option:</b>"
             cost_result_text[2] = best_array[best_array.length - 1][5];
-            start_point=Math.floor(best_array.length*4/5);
-            end_point=best_array.length-1;
+            chart_start_index=Math.floor(best_array.length*4/5);
+            chart_end_index=best_array.length-1;
             l1=1;
             l2=-1;
         }else {
@@ -900,19 +901,19 @@ function drawContinuums() {
                 if (best_array[i][0] >= cost||(best_array[i][1]*24<latency&&!isNaN(latency))) {
                     //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
                     //drawDiagram(best_array[i][5], 'cost_result_diagram2');
-                    index = i - 1;
-                    index_2 = i;
+                    design_1_index = i - 1;
+                    design_2_index = i;
                     if(!isNaN(latency)) {
                         if (best_array[i][1] * 24 < latency)
-                            cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + " and " + fixTime(latency / 24) + " latency.</i><br><br>");
+                            cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + " with latency less than " + fixTime(latency / 24) + ".</i><br><br>");
                         else {
                             for (var j = 1; j < best_array.length; j++) {
                                 if (best_array[j][1]*24 < latency){
-                                    index_2=j;
+                                    design_2_index=j;
                                     break;
                                 }
                             }
-                            cost_result_text[0] = ("<i>The budget $" + cost + " is too low to achieve " + fixTime(latency / 24) + " latency. However, we found the best performance storage engine templates for you at $" + cost +", and the cheapest performance engine with " +fixTime(latency / 24)+" latency.</i><br><br>");
+                            cost_result_text[0] = ("<i>The budget $" + cost + " is too low to achieve " + fixTime(latency / 24) + " latency. However, we found the following two storage engines for you.</i><br><br>");
                         }
                     }else{
                         cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + ".</i><br><br>");
@@ -920,13 +921,13 @@ function drawContinuums() {
                     cost_result_text[1] = "<b>Key-value store 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
                     cost_result_text[3] = "<b>Key-value store 2 saves time</b>";
-                    cost_result_text[4] = best_array[index_2][5];
-                    start_point = Math.floor(i - best_array.length / 5);
-                    if (start_point < 0)
-                        start_point = 0;
-                    end_point = Math.ceil(i + best_array.length / 5);
-                    if (end_point > best_array.length - 1)
-                        end_point = best_array.length - 1;
+                    cost_result_text[4] = best_array[design_2_index][5];
+                    chart_start_index = Math.floor(i - best_array.length / 5);
+                    if (chart_start_index < 0)
+                        chart_start_index = 0;
+                    chart_end_index = Math.ceil(i + best_array.length / 5);
+                    if (chart_end_index > best_array.length - 1)
+                        chart_end_index = best_array.length - 1;
 
                     if (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num > cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num) {
                         //max_mem=cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num;
@@ -942,13 +943,13 @@ function drawContinuums() {
                         switch_option = true;
                     break;
                 }/* else if (best_array[i][0] == cost) {
-                    index = i;
+                    design_1_index = i;
                     cost_result_text[0] = ("We found the key-value stores for you at $" + cost + ".<br><br>");
                     //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
                     cost_result_text[1] = "<b>Our Option:</b>"
                     cost_result_text[2] = best_array[i][5];
-                    start_point = Math.floor(best_array.length * 4 / 5);
-                    end_point = best_array.length - 1;
+                    chart_start_index = Math.floor(best_array.length * 4 / 5);
+                    chart_end_index = best_array.length - 1;
                     l1 = 1;
                     l2 = -1;
                     break;
@@ -962,7 +963,7 @@ function drawContinuums() {
 
             if(l2!=-1) {
                 //if(switch_option==true){
-                if($("#cp_tab_p").hasClass("down")){
+                if(document.getElementById('performance_conscious_checkbox').checked){
                     document.getElementById("cost_result_p4").innerHTML= "<b>Store engine 2 saves money</b>";
                     outputParameters(cost_result_text[2],"cost_result_p5", l1);
                     document.getElementById("cost_result_p2").innerHTML = "<b>Storage engine 1 saves time</b>";
@@ -979,33 +980,33 @@ function drawContinuums() {
             if( cost_result_text[0] != "Cost is too little"){
 
                 //document.getElementById("cost_result_p6").setAttribute("style","position:relative;top:0px");
-                if(best_array[index][7]!=-1) {
+                if(best_array[design_1_index][7]!=-1) {
                     document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB</b>";
-                    if((cost-best_array[index][7].cost)>(best_array[index+1][7].cost-cost)) {
-                        outputParameters(best_array[index+1][7], "cost_result_p7", l2);
-                        outputNote(best_array[index][7], "cost_result_p7");
+                    if((cost-best_array[design_1_index][7].cost)>(best_array[design_1_index+1][7].cost-cost)) {
+                        outputParameters(best_array[design_1_index+1][7], "cost_result_p7", l2);
+                        outputNote(best_array[design_1_index][7], "cost_result_p7");
                     }else{
-                        outputParameters(best_array[index][7], "cost_result_p7", l1);
-                        outputNote(best_array[index+1][7], "cost_result_p7");
+                        outputParameters(best_array[design_1_index][7], "cost_result_p7", l1);
+                        outputNote(best_array[design_1_index+1][7], "cost_result_p7");
                     }
                 }else{
                     document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory</b>";
                     removeAllChildren(document.getElementById("cost_result_p7"));
                 }
                 document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger</b>";
-                //console.log(best_array[index][8])
-                if((cost-best_array[index][8].cost)>(best_array[index+1][8].cost-cost)) {
-                    outputParameters(best_array[index+1][8], "cost_result_p9", l2);
-                    outputNote(best_array[index][8], "cost_result_p9");
+                //console.log(best_array[design_1_index][8])
+                if((cost-best_array[design_1_index][8].cost)>(best_array[design_1_index+1][8].cost-cost)) {
+                    outputParameters(best_array[design_1_index+1][8], "cost_result_p9", l2);
+                    outputNote(best_array[design_1_index][8], "cost_result_p9");
                 }else{
-                    outputParameters(best_array[index][8], "cost_result_p9", l1);
-                    outputNote(best_array[index+1][8], "cost_result_p9");
+                    outputParameters(best_array[design_1_index][8], "cost_result_p9", l1);
+                    outputNote(best_array[design_1_index+1][8], "cost_result_p9");
                 }
             }
     }
-    global_index=index;
-    console.log(best_array,start_point,end_point);
-    var chart_array=cutArray(best_array,start_point,end_point);
+    global_index=design_1_index;
+    console.log(best_array,chart_start_index,chart_end_index);
+    var chart_array=cutArray(best_array,chart_start_index,chart_end_index);
 
 
 
@@ -1014,13 +1015,13 @@ function drawContinuums() {
         {
             xaxis: {
                 title: 'Cost ($/month)',
-                //range: [ best_array[start_point][0], best_array[end_point][0] ],
+                //range: [ best_array[chart_start_index][0], best_array[chart_end_index][0] ],
                 showline: true,
                 zeroline: false
             },
             yaxis: {
                 title: 'Latency (day)',
-                //range: [ best_array[end_point][1], best_array[start_point][1] ],
+                //range: [ best_array[chart_end_index][1], best_array[chart_start_index][1] ],
                 showline: true,
                 zeroline: false
             },

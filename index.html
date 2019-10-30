@@ -218,7 +218,7 @@
                  </span>
             </div>
             <div id="input" class="row" style="text-align: center;  background-color: #F0F7FF; background-color: white; border-radius: 0px; padding-left: 100px" >
-                <div class="col-sm-3" >
+                <div class="col-sm-3" style="width: 20%;">
                     <div class="row">
                             <div style="display: inline-block">
                             <!--<img class="img-responsive img-centered" style="width:105px" src="./images/data.png"/>-->
@@ -249,7 +249,7 @@
                 </div>
 
 
-                <div class="col-sm-3" style="width: 28%;position: relative; left: -4%">
+                <div class="col-sm-3" style="width: 26%;position: relative; left: -2%">
                     <div class="row">
                     <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
@@ -336,15 +336,17 @@
                             <input id="s" type="number" class="form-control" aria-label="Proportion" placeholder=" s (e.g., 2048)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')"/>
                         </div>
                     </div>
+                    <!--
                     <div  id="cost_performance_switch" style="position:absolute; width: 400px; left:300px; top:-40px;font-size: 16px; margin-bottom: 10px;padding:8px; border-radius: 8px">
                         <div style="position:relative;left: 0px">
                             <div class="tab down" id="cp_tab_c" name="cp_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width: 150px;">Cost conscious</div><div id="cp_tab_p" name="cp_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width: 180px">Performance conscious</div>
                         </div>
                     </div>
+                    -->
                       </div>
 
 
-                <div class="col-sm-3" style="width: 20%; position: relative; left: -10%" >
+                <div class="col-sm-3" style="width: 20%; position: relative; left: -5%" >
                           <div class="row">
                               <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
@@ -357,15 +359,11 @@
                               </div>
                           </div>
                           <div id="cost-setting" class="collapse multi-collapse">
-                             <!-- <form id="myForm_3" style=" text-align: left; height:60px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px" onchange="re_run(event)">
-                                  <label class="radiobutton"  style=""><input type="radio" name="radio_3" value="cost-conscious" checked="checked"/>cost-conscious
+                             <form  style=" text-align: left; height:40px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 0px 6px" >
+                                  <label class="radiobutton"  style=""><input id="cost_conscious_checkbox" type="radio" name="radio_3" value="cost-conscious" checked="checked"/>cost-conscious
                                       <span class="check_mark"></span>
                                   </label>
-
-                                  <label class="radiobutton" style=""><input type="radio" name="radio_3" value="performance-conscious" />performance-conscious
-                                      <span class="check_mark"></span>
-                                  </label>
-                              </form>-->
+                              </form>
                               <div class="row">
                                       <div class="input-group" style="text-align: center;">
                                           <span class="input-group-addon"><span data-tooltip="The budget" data-tooltip-position="bottom">Budget </span></span>
@@ -377,11 +375,11 @@
 
                       </div>
 
-                <div class="col-sm-3" style="width: 16%; position: relative; left: -10%" >
+                <div class="col-sm-3" style="width: 16%; position: relative; left: -5%" >
                     <div class="row">
                         <div style="display: inline-block">
                             <!--<img class="img-responsive img-centered" style="width:105px" src="./images/dollar.png"/>-->
-                            <span style="cursor: pointer; font-size:20px" id="performance-text" >performance<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
+                            <span style="cursor: pointer; font-size:20px" id="performance-text" >performance</span>
                         </div>
                         <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#performance-setting" role="button" aria-expanded="false">
                             <div id="performance-trigger" onclick="adjustGuide()">
@@ -391,11 +389,15 @@
                     </div>
                     <div id="performance-setting" class="collapse multi-collapse">
 
-
+                        <form  style=" text-align: left; height:40px; width:200px;position: relative; left:-20px;padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 0px 6px" ">
+                            <label class="radiobutton" style=""><input id="performance_conscious_checkbox" type="radio" name="radio_3" value="performance-conscious" />performance-conscious
+                                <span class="check_mark"></span>
+                            </label>
+                        </form>
                         <div class="row">
                             <div class="input-group" style="text-align: center;">
                                 <span class="input-group-addon"><span data-tooltip="The performance" data-tooltip-position="bottom">Latency (hours)</span></span>
-                                <input id="latency" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
+                                <input id="latency" class="form-control" aria-label="Latency" placeholder="Latency" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                             </div>
                         </div>
                     </div>
@@ -404,7 +406,7 @@
 
 
 
-                      <div class="col-sm-3"  style="width: 10%; position: relative; left: -4%">
+                      <div class="col-sm-3"  style="width: 10%; position: relative; left: 0%">
                               <div style="display: inline-block">
                                   <!--<img class="img-responsive img-centered" style="width:105px" src="./images/cloud.png"/>-->
                                   <span style="cursor: pointer; font-size:20px" id="cloud-provider-text" >cloud</span>
@@ -418,7 +420,7 @@
                               <div class="row">
                                   <div>
                                       <div class="">
-                                          <select id="cloud-provider" name="" style="position: relative; left: -80px;width:200px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
+                                          <select id="cloud-provider" name="" style="position: relative; left: -120px;width:200px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
                                               <option value="Any">Any</option>
                                               <option value="AWS">AWS</option>
                                               <option value="GCP">GCP</option>
@@ -621,11 +623,9 @@
                         </div>
                     </div>
 
-                    <div  id="exsys_switch" style="display:inline-block; position:relative; width: 276px; left:730px; top:0px;font-size: 16px; margin-bottom: 10px;padding:8px; border-radius: 8px">
+                    <div  id="exsys_switch" style="display:none; position:relative; width: 276px; left:730px; top:0px;font-size: 16px; margin-bottom: 10px;padding:8px; border-radius: 8px">
                         <div id="exsys_text" style="margin-bottom: 8px;position: relative;left: 0px">Compare with existing systems: Off</div>
-                        <div style="position:relative;left: 70px">
-                        <div class="tab down" name="exsys_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px">Off</div><div name="exsys_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px">On</div>
-                        </div>
+
                     </div>
 
                     <div class="row">
@@ -688,8 +688,11 @@
                                 </div>
                             </div>
 
-                                <div id="exist_title" style="display:inline-block; width: 30%; color:#1C0AA8; border-radius: 8px; font-size: 16px; padding-left: 7%; opacity: 0 ">
+                                <div id="exist_title" style="display:inline-block; width: 30%; color:#1C0AA8; border-radius: 8px; font-size: 16px; padding-left: 7%; opacity: 1 ">
                                     <span>Existing Systems</span><br><br>
+                                    <div style="position:relative;left: 150px;top: -50px;">
+                                        <div class="tab down" name="exsys_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px">Off</div><div name="exsys_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px">On</div>
+                                    </div>
                                 </div>
 
                             <div style="width:255px; display:inline-block;vertical-align:top;margin-left:80px;">
@@ -739,7 +742,7 @@
                             </div>
                                <div id="split_1" style="position:absolute; display:inline-block; width: 1px; height:0px; background-color:#7379DE; top:-50px; opacity: 0"></div>
                             <div style="width: 405px; display: inline-block " >
-                                <div id="explore_switch" style=" display:inline-block; position:relative; width: 250px; height:50px; left:150px; margin:15px; font-size: 16px; opacity: 0; ">
+                                <div id="explore_switch" style=" display:inline-block; position:relative; width: 250px; height:50px; left: 110px; margin:15px; font-size: 16px; opacity: 0; ">
                                     <!--<div id="explore_text" style="margin-bottom: 8px;">Explore More Designs: Off</div>
                                     <div class="switchbar_before" style="position: relative; left: 60px" >
                                         <div  id="switchbar_2" class="switchbar"  style="position: absolute; " >

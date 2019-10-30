@@ -993,6 +993,8 @@ function init(){
 
 	document.getElementById("query_count").value=10000000000;
 
+	initializeCompressionLibraries();
+
 	if($( window ).width()<1400)
 		$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
 
@@ -1071,7 +1073,7 @@ function init(){
 				drawContinuums();
 			});
 	});
-
+/*
 	$('[name=cp_tab]').on('click',function(){
 		if(!$(this).hasClass("down")){
 			$('[name=cp_tab]').removeClass('down');
@@ -1080,7 +1082,7 @@ function init(){
 			setTimeout('drawContinuums();',400);
 		}
 	})
-
+*/
 	$('[name=exsys_tab]').on('click',function(){
 		if(!$(this).hasClass("down")){
 			$('[name=exsys_tab]').removeClass('down');
@@ -1113,6 +1115,19 @@ function init(){
 
 	$('input').attr('autocomplete','off');
 
+	$("#cost_conscious_checkbox").change(function() {
+		if(this.checked) {
+			$("#performance_conscious_checkbox").prop( "checked", false );
+			setTimeout('drawContinuums()',300);
+		}
+	});
+
+	$("#performance_conscious_checkbox").change(function() {
+		if(this.checked) {
+			$("#cost_conscious_checkbox").prop( "checked", false );
+			setTimeout('drawContinuums()',300);
+		}
+	});
 
 	/*
 	$(window).scroll(function(){
@@ -3277,7 +3292,10 @@ function displayContinuums() {
 
 		document.getElementById("continuums_chart").style.display = 'inline-block';
 		$("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
-		$("#split_1").animate({height: "633px"}, "slow");
+		if(!using_compression)
+			$("#split_1").animate({height: "633px"}, "slow");
+		else
+			$("#split_1").animate({height: "686px"}, "slow");
 	}
 	else {
 		$("#continuums_chart").animate({height: '0px',opacity: '0'}, "slow");
@@ -3292,6 +3310,10 @@ function displayContinuums() {
 }
 
 function switchText() {
+	if(using_compression){
+		$("#interactive-panel").height(640);
+		$("#questions_block").height(638);
+	}
 	if(document.getElementById("interactive_mode_text").innerHTML=="Interactive Mode: Off") {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
 		$("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
@@ -3641,13 +3663,13 @@ function switchStatistics() {
 		var div_temp = document.createElement("div");
 		div_temp.setAttribute("class", "myinput");
 		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto;margin-top:15px");
-		div_temp.innerHTML = "Best Cost Performance Design:<br>"+"Cost: $"+result_array[index][0]+"<br>Throughput: "+result_array[index][5].throughput.toFixed(0)+" querys/s<br>"+"Cost Performance: "+(result_array[index][5].throughput/result_array[index][0]).toFixed(1);
+		div_temp.innerHTML = "Best Cost Performance Design:<br>"+"Cost: $"+result_array[index][0]+"<br>Throughput: "+result_array[index][5].throughput.toFixed(0)+" queries/s<br>"+"Cost Performance: "+(result_array[index][5].throughput/result_array[index][0]).toFixed(1);
 		div_result.appendChild(div_temp);
 
 		var div_temp = document.createElement("div");
 		div_temp.setAttribute("class", "myinput");
 		div_temp.setAttribute("style", "width:98%;text-align:left;height:auto;margin-top:15px");
-		div_temp.innerHTML = "Second Best Cost Performance Design:<br>"+"Cost: $"+result_array[index_2][0]+"<br>Throughput: "+result_array[index_2][5].throughput.toFixed(0)+" querys/s<br>"+"Cost Performance: "+(result_array[index_2][5].throughput/result_array[index_2][0]).toFixed(1);
+		div_temp.innerHTML = "Second Best Cost Performance Design:<br>"+"Cost: $"+result_array[index_2][0]+"<br>Throughput: "+result_array[index_2][5].throughput.toFixed(0)+" queries/s<br>"+"Cost Performance: "+(result_array[index_2][5].throughput/result_array[index_2][0]).toFixed(1);
 		div_result.appendChild(div_temp);
 
 	}
@@ -3657,11 +3679,11 @@ function displayRocks() {
 	//$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
 	if(document.getElementById("exsys_text").innerHTML=="Compare with existing systems: Off") {
 		document.getElementById("exsys_text").innerHTML = "Compare with existing systems: On";
-		$("#WT,#rocks,#exist_title").animate({opacity:"1"}, "slow");
+		$("#WT,#rocks").animate({opacity:"1"}, "slow");
 	}
 	else {
 		document.getElementById("exsys_text").innerHTML = "Compare with existing systems: Off";
-		$("#WT,#rocks,#exist_title").animate({opacity:"0"}, "slow");
+		$("#WT,#rocks").animate({opacity:"0"}, "slow");
 	}
 }
 

@@ -33,6 +33,10 @@ var M_BC;
 
 var global_continuums_array;
 
+var compression_libraries;
+var using_compression=false;
+
+
 function Variables()
 {
     var N;
@@ -84,6 +88,8 @@ function Variables()
     var VM_instance_num;
     var Vcpu_num;
 
+    var compression_name;
+
 }
 
 function VM_library()
@@ -93,6 +99,13 @@ function VM_library()
     var name_of_instance;
     var mem_of_instance; // GB
     var rate_of_instance; // hourly price
+}
+
+function Compression_library(){
+    var compression_name;
+    var get_overhead;
+    var put_overhead;
+    var space_reduction_ratio;
 }
 
 function parseInputVariables()
@@ -118,6 +131,32 @@ function parseInputVariables()
 
 
     return parsedBoxes;
+}
+
+function initializeCompressionLibraries()
+{
+    compression_libraries=new Array();
+    for(var i=0;i<3;i++)
+        compression_libraries.push(new Compression_library());
+    /**************************************************** NO COMPRESSION  ****************************************************/
+    compression_libraries[0].compression_name = "NONE";
+    compression_libraries[0].get_overhead = 1;
+    compression_libraries[0].put_overhead = 1;
+    compression_libraries[0].space_reduction_ratio = 0.0;
+
+    /**************************************************** SNAPPY  ****************************************************/
+    compression_libraries[1].compression_name = "SNAPPY";
+    compression_libraries[1].get_overhead = 0.53;
+    compression_libraries[1].put_overhead = 8.21;
+    compression_libraries[1].space_reduction_ratio = 0.68;
+
+    /**************************************************** ZLIB  ****************************************************/
+    compression_libraries[2].compression_name = "ZLIB";
+    compression_libraries[2].get_overhead = 25.45;
+    compression_libraries[2].put_overhead = 31.26;
+    compression_libraries[2].space_reduction_ratio = 0.83;
+
+    console.log(compression_libraries);
 }
 
 function navigateDesignSpace() {
@@ -547,7 +586,7 @@ function countThroughput(cost, cloud_provider) {
     return Variables;
 }
 
-function countContinuum(combination, cloud_provider) {
+function countContinuum(combination, cloud_provider, compression_style=0) {
     var Variables = parseInputVariables();
     var N = Variables.N;
     var E = Variables.E;
@@ -567,6 +606,12 @@ function countContinuum(combination, cloud_provider) {
     var VM_libraries=initializeVMLibraries();
     Variables.cost=cost;
 
+    if(using_compression==true){
+        E=(1-compression_libraries[compression_style].space_reduction_ratio)*E;
+        F=(1-compression_libraries[compression_style].space_reduction_ratio)*F;
+        Variables.E=E;
+        Variables.F=F;
+    }
     var X;
     var Y;
     var L;
@@ -601,6 +646,7 @@ function countContinuum(combination, cloud_provider) {
             Variables.Vcpu_num=VM_libraries[cloud_provider].num_of_vcpu[i];
         }
     }
+
 
     N=Variables.N/mem_sum;
     M_BC=0;
@@ -699,6 +745,10 @@ function countContinuum(combination, cloud_provider) {
                     //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                     var total_cost = (w * update_cost + v * read_cost) / (v + w);
                     var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+                    if(using_compression){
+                        total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w);
+                    }
+
                     log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
                     if (best_latency < 0 || total_latency < best_latency) {
                         best_latency = total_latency;
@@ -721,6 +771,7 @@ function countContinuum(combination, cloud_provider) {
                         Variables.memory_footprint=max_RAM_purchased*mem_sum;
                         Variables.cloud_provider=cloud_provider;
                         Variables.throughput=mem_sum*IOPS/total_cost;
+                        Variables.compression_name=compression_libraries[compression_style].compression_name;
                     }
                 }
             }
@@ -732,7 +783,7 @@ function countContinuum(combination, cloud_provider) {
     return Variables;
 }
 
-function countContinuumForExistingDesign(combination, cloud_provider, existing_system) {
+function countContinuumForExistingDesign(combination, cloud_provider, existing_system, compression_style=0) {
     var Variables = parseInputVariables();
     var N = Variables.N;
     var E = Variables.E;
@@ -899,6 +950,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
         Variables.memory_footprint=max_RAM_purchased*mem_sum;
         Variables.cloud_provider=cloud_provider;
+        Variables.compression_name=compression_libraries[compression_style].compression_name;
     }
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
@@ -909,15 +961,43 @@ function buildContinuums(cloud_mode){
     var result_array=new Array();
 
     var VM_libraries=initializeVMLibraries();
+    var Variables=0;
+    var rocks_Variables;
+    var WT_Variables;
     if(cloud_mode==0||cloud_mode==NaN) {
         for (var cloud_provider = 0; cloud_provider < 3; cloud_provider++) {
             var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
             for (var i = 0; i < VMCombinations.length; i++) {
+                Variables=0;
                 var VMCombination = VMCombinations[i];
-                var Variables = countContinuum(VMCombination, cloud_provider);
-                var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
-                var WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
+                if(using_compression==false) {
+                     Variables = countContinuum(VMCombination, cloud_provider);
+                     rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
+                     WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
+                }else{
+                    for(var n=0;n<3;n++){
+                        if(Variables==0) {
+                            Variables = countContinuum(VMCombination, cloud_provider, n);
+                            rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", 0);
+                            WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", 0);
+                        }else{
+                            var temp;
+                            temp=countContinuum(VMCombination, cloud_provider, n);
+                            if(temp.latency<Variables.latency)
+                                Variables=temp;
+                            /*
+                            temp=countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", n);
+                            if(temp.latency<rocks_Variables.latency)
+                                rocks_Variables=temp;
+                            temp=countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", n);
+                            if(temp.latency<WT_Variables.latency)
+                                WT_Variables=temp;*/
+                        }
+                    }
+                }
                 var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+"<br>Cost="+Variables.cost);
+                if(using_compression)
+                    info+="<br>Compression: "+Variables.compression_name;
                 var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables,WT_Variables];
                 result_array.push(result);
             }
@@ -1883,34 +1963,19 @@ function outputParameters(Variables, id, l) {
     drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
 
     if(result_div.id=="cost_result_p3") {
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:8px; text-align:right");
-        text.innerHTML = "Processor";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:150px;text-align:right ");
-        text.innerHTML = "On-disk";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:226px; text-align:right");
-        text.innerHTML = "Cloud";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:280px; text-align:right");
-        text.innerHTML = "Cost";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:330px; text-align:right");
-        text.innerHTML = "Latency";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:382px; text-align:right");
-        text.innerHTML = "Throughput";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:427px; text-align:right");
-        text.innerHTML = "Download";
-        result_div.appendChild(text);
+        outputText(result_div,"Processor",8);
+        outputText(result_div,"On-disk",150);
+        outputText(result_div,"Cloud",226);
+        outputText(result_div,"Cost",280);
+        outputText(result_div,"Latency",330);
+        outputText(result_div,"Throughput",382);
+
+        if(using_compression==false) {
+            outputText(result_div,"Download",427);
+        }else{
+            outputText(result_div,"Compression",427);
+            outputText(result_div,"Download",476);
+        }
     }
 
     var div_tmp = document.createElement("div");
@@ -1936,24 +2001,41 @@ function outputParameters(Variables, id, l) {
         outputParameter(result_div, fixTime(Variables.latency), "./images/performance.png");
         outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " querys/s", "./images/throughput.png");
     }
+    if(using_compression){
+        outputParameter(result_div, Variables.compression_name, "./images/compression.png")
+    }
    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
    // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
    // outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
+    console.log(Variables);
     generateDownload(Variables, result_div, id);
+}
+
+function outputText(result_div,text,top){
+    var div_text = document.createElement("div");
+    div_text.setAttribute("style", "position:absolute; font-size:16px; left: -90px; top:"+top+"px; text-align:right");
+    div_text.innerHTML = text;
+    result_div.appendChild(div_text);
 }
 
 function outputNote(Variables, id){
     var result_div = document.getElementById(id);
     var text = document.createElement("div");
-    text.setAttribute("style", "width:90%; position:absolute; top:462px; font-size:12px");
+    if(!using_compression)
+        text.setAttribute("style", "width:90%; position:absolute; top:462px; font-size:12px");
+    else
+        text.setAttribute("style", "width:90%; position:absolute; top:511px; font-size:12px");
     text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the input takes $"+Variables.cost+".</i>"
     result_div.appendChild(text);
     var div_tmp = document.createElement("div");
     var popup_id=id+"_popup"
     div_tmp.setAttribute("class","download_icon");
     div_tmp.setAttribute("id",popup_id);
-    div_tmp.setAttribute("style","position:absolute; top:457px; left:120px")
+    if(!using_compression)
+        div_tmp.setAttribute("style","position:absolute; top:457px; left:120px")
+    else
+        div_tmp.setAttribute("style","position:absolute; top:506px; left:120px")
     div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/popup.png\"/>"
     result_div.appendChild(div_tmp);
     $("#"+popup_id).click(function(){
@@ -2148,10 +2230,8 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
         memory_sum+=parseFloat(value[i][0]);
 
     if(result_div.id=="cost_result_p3") {
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:75px; ");
-        text.innerHTML = "In-memory";
-        result_div.appendChild(text);
+        outputText(result_div,"In-memory",75);
+
     }
 
     for(var i=0;i<length;i++){
@@ -2193,7 +2273,10 @@ function generateDownload(Variables, result_div, id) {
     div_tmp.setAttribute("id",download_id);
     div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/download.png\"/>"
     result_div.appendChild(div_tmp);
-    var download_content=("Cloud provider:"+ cloud_array[Variables.cloud_provider] +"\nCost="+Variables.cost+", Latency=" + fixTime(Variables.latency) +  "\nT=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L +"\nMemory="+ Variables.memory_footprint/Variables.VM_instance_num+ " GB\nBuffer=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB\nBloom filter=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB\nFence Pointer=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB\nVM instance: " + Variables.VM_info);
+    var download_content=("Cloud provider: "+ cloud_array[Variables.cloud_provider] +"\nCost="+Variables.cost+", Latency=" + fixTime(Variables.latency) +  "\nT=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L +"\nMemory="+ Variables.memory_footprint/Variables.VM_instance_num+ " GB\nBuffer=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB\nBloom filter=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB\nFence Pointer=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB\nVM instance: " + Variables.VM_info);
+    if(using_compression){
+        download_content+="\nCompression: "+Variables.compression_name;
+    }
     $("#"+download_id).click(function(){
         createAndDownloadFile(("design_"+Variables.cost+".txt"),download_content);
     });
