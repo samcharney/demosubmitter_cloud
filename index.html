@@ -26,6 +26,7 @@
 
     <!-- Font Awesome -->
     <script src="https://use.fontawesome.com/3227f266ec.js"></script>
+    <script src="https://kit.fontawesome.com/324daa80f2.js" crossorigin="anonymous"></script>
 
     <!-- Custom Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
@@ -94,7 +95,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="intro-text">
-                        <span class="name">Cosine: A Cloud-Cost Optimized NoSQL Storage Engine</span>
+                        <span class="name">Cosine: A <span class="theme-color">C</span>loud-Cost <span class="theme-color">O</span>ptimized NoSQL <span class="theme-color">S</span>torage Eng<span class="theme-color">ine</span></span>
                     </div>
                 </div>
             </div>
@@ -118,9 +119,43 @@
                 </div>
             </div>
 
-            <div class="row" style="height: 500px">
+            <div class="row">
+                <div class="col-sm-3 text-center">
 
+                    <i class="fas fa-balance-scale-left fa-5x" aria-hidden="true"></i>
+                    <p class="text-center">Tradeoff</p>
+                </div>
+                <div class="col-sm-9">
+                    <p>We present a key-value storage engine, Cosine, that guarantees an optimal balance in both cloud-cost and performance for any workload. Cosine creates a massive search space comprising of the entire data structure design and hardware-space of (LSM-tree/B-tree) key-value stores over diverse cloud pricing policies for the top three cloud providers – AWS, GCP, and Azure. This creates a trilateral tradeoff of design, cost, and performance.</p>
+                </div>
             </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-sm-3 text-center">
+
+                    <i class="fa fa-tachometer fa-5x" aria-hidden="true"></i>
+                    <p class="text-center">Performance</p>
+                </div>
+                <div class="col-sm-9">
+                    <p>We present distribution-aware cost models that precisely estimate the CPU and I/O costs of each possible data structure design, which in turn, helps in comparing pairs of designs. Given a budget and desired performance, Cosine prunes the massive dimensionality of the search space by using the cost models to rank designs and collapse the design dimensions into a Pareto frontier that creates a continuum of holistically optimal configurations (for a budget) of data structure design, hardware, and cloud pricing policies. We demonstrate that using the continuum, Cosine can search through the massive space of designs in seconds and it can automatically generate (through templates) storage engine instances that outperform state-of-the-art key-value storage engines (RocksDB and WiredTiger) by picking the appropriate configurations that optimizes cloud-cost and performance.</p>
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-sm-3 text-center">
+
+                    <i class="fab fa-react fa-5x" aria-hidden="true"></i>
+                    <p class="text-center">Interactive</p>
+                </div>
+                <div class="col-sm-9">
+                    <p>Finally, Cosine enables decision makers in applications to quickly answer rich what-if questions e.g., what would be the impact on cloud cost if we introduce a particular new feature, or what would be the impact on performance if we decide to cut the cloud costs by 3%, or what-if we switch to storage-engine X or cloud provider Y?</p>
+                </div>
+            </div>
+
 
         </div>
     </section>
@@ -205,7 +240,7 @@
                 <div id="guide_2" style="height:57px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
                 <div class="guide" style="">2<div class="guide_text" style="">Click the button<br>to continue</div></div>
                 <div id="guide_4" style="height:310px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
-                <div id="guide_5" class="guide" style="display: none">3<div class="guide_text" style="">Check result</div></div>
+                <div id="guide_5" class="guide" style="display: none">3<div class="guide_text" style="">Check suggested storage engine templates</div></div>
                 <div id="guide_6" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
                 <div id="guide_7" class="guide" style="display: none">4<div class="guide_text" style="transform: translateY(-25px);">Turn on the radio button to compare with existing storage engines</div></div>
                 <div id="guide_8" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>

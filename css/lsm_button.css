@@ -664,3 +664,7 @@
         transform: rotate(360deg);
     }
 }
+
+.theme-color{
+    color: #7F89FF;
+}
