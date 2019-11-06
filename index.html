@@ -103,7 +103,7 @@
     </header>
 
     <section class="alternate"  id="overview">
-        <div class="container">
+        <div class="container" style="font-family: Helvetica; font-weight: normal; font-size: 22px">
             <!--             <div class="row">
                             <div class="col-lg-12 text-center">
                                 <h2>Overview</h2>
@@ -113,46 +113,52 @@
                         </div> -->
 
             <div class="row">
-                <div class="col-md-12">
-                    <h1 class="fancy-title text-center">Overview</em></h1>
+                <div class="col-sm-12" style="text-align: center; font-size: 32px;width: 100%">
+                    <span class="text-center" style="">Overview</span>
 
                 </div>
             </div>
-
+            <br>
             <div class="row">
+                <!--
                 <div class="col-sm-3 text-center">
 
                     <i class="fas fa-balance-scale-left fa-5x" aria-hidden="true"></i>
                     <p class="text-center">Tradeoff</p>
                 </div>
-                <div class="col-sm-9">
-                    <p>We present a key-value storage engine, Cosine, that guarantees an optimal balance in both cloud-cost and performance for any workload. Cosine creates a massive search space comprising of the entire data structure design and hardware-space of (LSM-tree/B-tree) key-value stores over diverse cloud pricing policies for the top three cloud providers – AWS, GCP, and Azure. This creates a trilateral tradeoff of design, cost, and performance.</p>
+                -->
+                <div class="col-sm-12" >
+                    We present a key-value storage engine, Cosine, that guarantees an optimal balance in both cloud-cost and performance for any workload. Cosine creates a massive search space comprising of the entire data structure design and hardware-space of (LSM-tree/B-tree) key-value stores over diverse cloud pricing policies for the top three cloud providers – AWS, GCP, and Azure. This creates a trilateral tradeoff of design, cost, and performance.
                 </div>
             </div>
 
             <br>
 
             <div class="row">
+                <!--
                 <div class="col-sm-3 text-center">
 
                     <i class="fa fa-tachometer fa-5x" aria-hidden="true"></i>
                     <p class="text-center">Performance</p>
                 </div>
-                <div class="col-sm-9">
-                    <p>We present distribution-aware cost models that precisely estimate the CPU and I/O costs of each possible data structure design, which in turn, helps in comparing pairs of designs. Given a budget and desired performance, Cosine prunes the massive dimensionality of the search space by using the cost models to rank designs and collapse the design dimensions into a Pareto frontier that creates a continuum of holistically optimal configurations (for a budget) of data structure design, hardware, and cloud pricing policies. We demonstrate that using the continuum, Cosine can search through the massive space of designs in seconds and it can automatically generate (through templates) storage engine instances that outperform state-of-the-art key-value storage engines (RocksDB and WiredTiger) by picking the appropriate configurations that optimizes cloud-cost and performance.</p>
+                -->
+                <div class="col-sm-12">
+                    We present distribution-aware cost models that precisely estimate the CPU and I/O costs of each possible data structure design, which in turn, helps in comparing pairs of designs. Given a budget and desired performance, Cosine prunes the massive dimensionality of the search space by using the cost models to rank designs and collapse the design dimensions into a Pareto frontier that creates a continuum of holistically optimal configurations (for a budget) of data structure design, hardware, and cloud pricing policies. We demonstrate that using the continuum, Cosine can search through the massive space of designs in seconds and it can automatically generate (through templates) storage engine instances that outperform state-of-the-art key-value storage engines (RocksDB and WiredTiger) by picking the appropriate configurations that optimizes cloud-cost and performance.
                 </div>
             </div>
 
             <br>
 
             <div class="row">
+                <!--
                 <div class="col-sm-3 text-center">
 
                     <i class="fab fa-react fa-5x" aria-hidden="true"></i>
                     <p class="text-center">Interactive</p>
                 </div>
-                <div class="col-sm-9">
-                    <p>Finally, Cosine enables decision makers in applications to quickly answer rich what-if questions e.g., what would be the impact on cloud cost if we introduce a particular new feature, or what would be the impact on performance if we decide to cut the cloud costs by 3%, or what-if we switch to storage-engine X or cloud provider Y?</p>
+                -->
+                <div class="col-sm-12">
+                    Finally, Cosine enables decision makers in applications to quickly answer rich what-if questions e.g., what would be the impact on cloud cost if we introduce a particular new feature, or what would be the impact on performance if we decide to cut the cloud costs by 3%, or what-if we switch to storage-engine X or cloud provider Y?
                 </div>
             </div>
 
@@ -658,7 +664,7 @@
                         </div>
                     </div>
 
-                    <div  id="exsys_switch" style="display:none; position:relative; width: 276px; left:730px; top:0px;font-size: 16px; margin-bottom: 10px;padding:8px; border-radius: 8px">
+                    <div  style="display:none; position:relative; width: 276px; left:730px; top:0px;font-size: 16px; margin-bottom: 10px;padding:8px; border-radius: 8px">
                         <div id="exsys_text" style="margin-bottom: 8px;position: relative;left: 0px">Compare with existing systems: Off</div>
 
                     </div>
@@ -723,7 +729,7 @@
                                 </div>
                             </div>
 
-                                <div id="exist_title" style="display:inline-block; width: 30%; color:#1C0AA8; border-radius: 8px; font-size: 16px; padding-left: 7%; opacity: 1 ">
+                                <div id="exsys_switch" style="display:inline-block; width: 30%; color:#1C0AA8; border-radius: 8px; font-size: 16px; padding-left: 7%; opacity: 1 ">
                                     <span>Existing Systems</span><br><br>
                                     <div style="position:relative;left: 150px;top: -50px;">
                                         <div class="tab down" name="exsys_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px">Off</div><div name="exsys_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px">On</div>
