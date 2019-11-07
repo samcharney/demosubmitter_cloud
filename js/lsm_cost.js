@@ -872,7 +872,8 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
             return -1;
         }
         // WT uses 50% of memory to cache
-        M_BC = M_B/2.0;
+        //M_BC = M_B/2.0;
+        M_BC=0;
         M_B = M_B - M_BC;
         //scenario == 'A'? getNoOfLevelsAvgCase(&L, M_B, T, data) : getNoOfLevels(&L, M_B, T, data);
     }
