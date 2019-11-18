@@ -34,7 +34,7 @@ var M_BC;
 var global_continuums_array;
 
 var compression_libraries;
-var using_compression=false;
+var using_compression=true;
 
 
 function Variables()
@@ -979,8 +979,8 @@ function buildContinuums(cloud_mode){
                     for(var n=0;n<3;n++){
                         if(Variables==0) {
                             Variables = countContinuum(VMCombination, cloud_provider, n);
-                            rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", 0);
-                            WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", 0);
+                            rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", 1);
+                            WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", 1);
                         }else{
                             var temp;
                             temp=countContinuum(VMCombination, cloud_provider, n);

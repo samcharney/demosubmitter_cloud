@@ -970,7 +970,7 @@ function init(){
 
 	// Dataset and Environment
     document.getElementById("N").value=numberWithCommas(100000000000); //(10M values)
-    document.getElementById("E").value=128;
+    document.getElementById("E").value=1280;
 		//document.getElementById("B").value=4096; //in B
 		document.getElementById("F").value=64;
 
@@ -3517,18 +3517,18 @@ function switchStatistics() {
 					for (var i = 0; i < 3; i++) {
 						var div_temp = document.createElement("div");
 						div_temp.setAttribute("style", "width:98%;text-align:left");
-						div_temp.setAttribute("class", "myinput")
+						div_temp.setAttribute("class", "myinput2")
 						var text = document.createElement("div");
-						text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+						text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 3px;");
 						text.innerHTML = cloud_array[i];
 						div_temp.appendChild(text);
 						var bar = document.createElement("div");
 						bar.setAttribute("class", "color_bar");
-						bar.setAttribute("style", "width:" + old_length[i] + "px;background-color:" + colors[i] + "; height:20px");
+						bar.setAttribute("style", "width:" + old_length[i] + "px;background-color:#83"+(9-i)+"BFF; height:15px; margin-top:3px");
 						old_length[i]=width * cloud_provider_num[i] / max_num;
 						div_temp.appendChild(bar);
 						var percent = document.createElement("div");
-						percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;;opacity:0");
+						percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 0px;;opacity:0");
 						percent.innerHTML = ((cloud_provider_num[i] / result_array.length) * 100).toFixed(1) + "%";
 						div_temp.appendChild(percent);
 						div_result.appendChild(div_temp);
@@ -3551,15 +3551,15 @@ function switchStatistics() {
 		var result_array = getBestDesignEverArray(result_array);
 		for (var i = 0; i < 5; i++) {
 			var div_temp = document.createElement("div");
-			div_temp.setAttribute("class", "myinput");
+			div_temp.setAttribute("class", "myinput2");
 			div_temp.setAttribute("style", "display:inline-block;width:100%;text-align:left");
 			var text = document.createElement("div");
-			text.setAttribute("style", "display:inline-block;width:70px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+			text.setAttribute("style", "display:inline-block;width:70px;font-size:12px;text-align:left;vertical-align: top;padding: 1px;");
 			text.innerHTML = "$"+result_array[i][0] ;
 			div_temp.append(text);
 			var bar = document.createElement("div");
 			bar.setAttribute("class", "color_bar");
-			bar.setAttribute("style", "width:" + old_length_3[i] + "px;background-color:#83"+(9-i)+"BFF; height:20px");
+			bar.setAttribute("style", "width:" + old_length_3[i] + "px;background-color:#83"+(9-i)+"BFF; height:15px; margin-top:2px");
 			old_length_3[i]=120 * result_array[i][0] / result_array[4][0];
 			div_temp.append(bar);
 			div_result.appendChild(div_temp);
@@ -3574,7 +3574,7 @@ function switchStatistics() {
 		var old_length_2=[[0,0],[0,0]]
 		for (var j=1;j<=2;j++) {
 			var div_temp = document.createElement("div");
-			div_temp.setAttribute("class", "myinput");
+			div_temp.setAttribute("class", "myinput2");
 			div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
 			div_temp.innerHTML = "Key-value store "+j+":";
 			div_result.appendChild(div_temp);
@@ -3592,14 +3592,14 @@ function switchStatistics() {
 			for (var i = 0; i < 2; i++) {
 				var div_temp = document.createElement("div");
 				div_temp.setAttribute("style", "width:98%;text-align:left");
-				div_temp.setAttribute("class", "myinput")
+				div_temp.setAttribute("class", "myinput2")
 				var text = document.createElement("div");
 				text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
 				text.innerHTML = query_type[i];
 				div_temp.appendChild(text);
 				var bar = document.createElement("div");
 				bar.setAttribute("class", "color_bar");
-				bar.setAttribute("style", "width:" + old_length_2[j-1][i] + "px;background-color:" + colors_2[i] + "; height:20px");
+				bar.setAttribute("style", "width:" + old_length_2[j-1][i] + "px;background-color:" + colors_2[i] + "; height:15px");
 				old_length_2[j-1][i]=90 * query_IO[i] / (query_IO[1] + query_IO[0]);
 				div_temp.appendChild(bar);
 				var percent = document.createElement("div");

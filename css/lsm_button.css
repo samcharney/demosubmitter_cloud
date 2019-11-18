@@ -327,6 +327,22 @@
     outline-color: #C7E0E8;
 }
 
+.myinput2{
+    height:24px;
+    border-radius: 0px;
+    font-size: 12px;
+    padding: 2px;
+    margin: 0px;
+    border: 1px solid #dce4ec;
+    background-color:#ecf0f1;
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+    horiz-align: left;
+    margin-top: 1%;
+    margin-left: 1%;
+}
+
 
 
 .myselect:not([multiple]) {

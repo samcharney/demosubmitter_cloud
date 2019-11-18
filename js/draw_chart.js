@@ -886,7 +886,7 @@ function drawContinuums() {
 
         if(best_array[best_array.length-1][0]<cost) {
             design_1_index=best_array.length-2;
-            cost_result_text[0]=("We found 1 key-value stores for you at "+cost+".<br><br>");
+            cost_result_text[0]=("We found 1 storage engine template for you at "+cost+".<br><br>");
             console.log(cost_result_text[0],cost);
             //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
             cost_result_text[1]="<b>Our Option:</b>"
@@ -918,9 +918,9 @@ function drawContinuums() {
                     }else{
                         cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + ".</i><br><br>");
                     }
-                    cost_result_text[1] = "<b>Key-value store 1 saves money</b>"
+                    cost_result_text[1] = "<b>Cosine design 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
-                    cost_result_text[3] = "<b>Key-value store 2 saves time</b>";
+                    cost_result_text[3] = "<b>Cosine design 2 saves time</b>";
                     cost_result_text[4] = best_array[design_2_index][5];
                     chart_start_index = Math.floor(i - best_array.length / 5);
                     if (chart_start_index < 0)
@@ -1032,7 +1032,7 @@ function drawContinuums() {
             },
             autosize: true,
             hovermode: "closest",
-            width: 750,
+            width: 400,
             height: 300,
             margin: {
                 l: 60,
@@ -1071,7 +1071,7 @@ function drawContinuums() {
             }, title: ''
         };
     //Plotly.newPlot('tester5', data_ad, layout_ad);
-    //Plotly.newPlot('tester', data2, layout);
+    //Plotly.newPlot('tester', data_ever, layout);
     //Plotly.newPlot('tester', data_compare, layout);
 
     //Plotly.newPlot('tester3', data3, layout_ad);
