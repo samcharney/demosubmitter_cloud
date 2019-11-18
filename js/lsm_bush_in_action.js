@@ -3693,3 +3693,7 @@ function adjustGuide() {
 	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',500);
 	//setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
 }
+
+function hideNavigation(){
+	$("#question_navigation").animate({opacity:"0"}, "slow");
+}

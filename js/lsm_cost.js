@@ -34,7 +34,7 @@ var M_BC;
 var global_continuums_array;
 
 var compression_libraries;
-var using_compression=true;
+var using_compression=false;
 
 
 function Variables()
