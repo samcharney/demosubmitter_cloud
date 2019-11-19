@@ -3696,4 +3696,5 @@ function adjustGuide() {
 
 function hideNavigation(){
 	$("#question_navigation").animate({opacity:"0"}, "slow");
+	setTimeout('$("#question_navigation").css(\'display\',\'none\')',1000);
 }

@@ -34,7 +34,7 @@ var M_BC;
 var global_continuums_array;
 
 var compression_libraries;
-var using_compression=false;
+var using_compression=true;
 
 
 function Variables()
@@ -70,6 +70,7 @@ function Variables()
     var M_BF;
     var M_FP;
     var FPR_sum;
+    var FPR;
 
     var update_cost;
     var read_cost;
@@ -712,6 +713,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                     var short_scan_cost;
                     var long_scan_cost;
 
+
                     if (write_percentage != 0) {
                         if(scenario=='A'){
                             update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
@@ -734,6 +736,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
                     }
                     long_scan_cost = analyzeLongScanCost(B, s);
+                    no_result_read_cost=analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum)-1;
                     if (scenario == 'A') // Avg-case
                     {
                         //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
@@ -743,10 +746,10 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
                     }
                     //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
-                    var total_cost = (w * update_cost + v * read_cost) / (v + w);
+                    var total_cost = (w * update_cost + v * read_cost + r * no_result_read_cost) / (v + w + r);
                     var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
                     if(using_compression){
-                        total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w);
+                        total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100) + r * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w + r);
                     }
 
                     log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
@@ -764,7 +767,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         Variables.update_cost = update_cost;
                         Variables.short_scan_cost = short_scan_cost;
                         Variables.long_scan_cost = long_scan_cost;
-                        Variables.no_result_read_cost = read_cost - 1;
+                        Variables.no_result_read_cost = no_result_read_cost;
                         Variables.total_cost = total_cost;
                         Variables.latency = total_latency;
                         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
@@ -772,6 +775,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         Variables.cloud_provider=cloud_provider;
                         Variables.throughput=mem_sum*IOPS/total_cost;
                         Variables.compression_name=compression_libraries[compression_style].compression_name;
+                        Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
                     }
                 }
             }
@@ -781,6 +785,25 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
     return Variables;
+}
+
+function getFPR( T, K, Z, L, Y, M, M_B, M_F, M_BF, data) {
+    var FPR_sum = Math.exp((-M_BF*8/data)*Math.pow((Math.log(2)/Math.log(2.7182)), 2) * Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
+    var FPR=new Array();
+    for(var i = 1;i<=L-Y-1;i++)
+    {
+        FPR[i] = (FPR_sum)*(T-1)/(T*K*Math.pow(T, L-Y-i));
+    }
+    for(var i = L-Y;i<=L;i++)
+    {
+        if (i == L-Y) {
+            FPR[i] = (FPR_sum)*(T-1)/(T*Z);
+        }
+        else {
+            FPR[i] = 1;
+        }
+    }
+    return FPR;
 }
 
 function countContinuumForExistingDesign(combination, cloud_provider, existing_system, compression_style=0) {
@@ -812,6 +835,13 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     var M_BF;
     var M_FP;
     var FPR_sum;
+
+    if(using_compression==true){
+        E=(1-compression_libraries[compression_style].space_reduction_ratio)*E;
+        F=(1-compression_libraries[compression_style].space_reduction_ratio)*F;
+        Variables.E=E;
+        Variables.F=F;
+    }
 
     var Storage_Value=getStorageCost(Variables, cloud_provider);
     B=Storage_Value[0];
@@ -919,6 +949,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     if (short_scan_percentage != 0) {
         short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
     }
+    no_result_read_cost=analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum)-1;
     long_scan_cost = analyzeLongScanCost(B, s);
     if (scenario == 'A') // Avg-case
     {
@@ -928,8 +959,11 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
         //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
     }
-    var total_cost = (w * update_cost + v * read_cost) / (v + w);
+    var total_cost = (w * update_cost + v * read_cost + r * no_result_read_cost) / (v + w + r);
     var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+    if(using_compression){
+        total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100) + r * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w + r);
+    }
 
     if (best_latency < 0 || total_latency < best_latency) {
         best_latency = total_latency;
@@ -945,13 +979,14 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         Variables.update_cost = update_cost;
         Variables.short_scan_cost = short_scan_cost;
         Variables.long_scan_cost = long_scan_cost;
-        Variables.no_result_read_cost = read_cost - 1;
+        Variables.no_result_read_cost = no_result_read_cost;
         Variables.total_cost = total_cost;
         Variables.latency = total_latency;
         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
         Variables.memory_footprint=max_RAM_purchased*mem_sum;
         Variables.cloud_provider=cloud_provider;
         Variables.compression_name=compression_libraries[compression_style].compression_name;
+        Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
     }
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
@@ -1964,18 +1999,24 @@ function outputParameters(Variables, id, l) {
     drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
 
     if(result_div.id=="cost_result_p3") {
-        outputText(result_div,"Processor",8);
-        outputText(result_div,"On-disk",150);
-        outputText(result_div,"Cloud",226);
-        outputText(result_div,"Cost",280);
-        outputText(result_div,"Latency",330);
-        outputText(result_div,"Throughput",382);
 
         if(using_compression==false) {
-            outputText(result_div,"Download",427);
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Cloud",226);
+            outputText(result_div,"Cost",280);
+            outputText(result_div,"Latency",330);
+            outputText(result_div,"Throughput",382);
+            outputText(result_div,"Explanation",424);
         }else{
-            outputText(result_div,"Compression",427);
-            outputText(result_div,"Download",476);
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Compression",226);
+            outputText(result_div,"Cloud",280);
+            outputText(result_div,"Cost",330);
+            outputText(result_div,"Latency",382);
+            outputText(result_div,"Throughput",427);
+            outputText(result_div,"Explanation",473);
         }
     }
 
@@ -1993,6 +2034,9 @@ function outputParameters(Variables, id, l) {
 
     }
     result_div.appendChild(div_tmp);
+    if(using_compression){
+        outputParameter(result_div, Variables.compression_name, "./images/compression.png")
+    }
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"./images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
     if(Variables.L==0){
@@ -2002,9 +2046,7 @@ function outputParameters(Variables, id, l) {
         outputParameter(result_div, fixTime(Variables.latency), "./images/performance.png");
         outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " querys/s", "./images/throughput.png");
     }
-    if(using_compression){
-        outputParameter(result_div, Variables.compression_name, "./images/compression.png")
-    }
+
    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
    // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
@@ -2090,37 +2132,26 @@ function createPopup(Variables){
     drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
 
     if(result_div.id=="cost_result_p3") {
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:8px; text-align:right");
-        text.innerHTML = "Processor";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:150px;text-align:right ");
-        text.innerHTML = "On-disk";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:226px; text-align:right");
-        text.innerHTML = "Cloud";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:280px; text-align:right");
-        text.innerHTML = "Cost";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:330px; text-align:right");
-        text.innerHTML = "Latency";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:382px; text-align:right");
-        text.innerHTML = "Throughput";
-        result_div.appendChild(text);
-        var text = document.createElement("div");
-        text.setAttribute("style", "position:absolute; font-size:16px; left: -80px; top:427px; text-align:right");
-        text.innerHTML = "Download";
-        result_div.appendChild(text);
+
+        if(using_compression==false) {
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Cloud",226);
+            outputText(result_div,"Cost",280);
+            outputText(result_div,"Latency",330);
+            outputText(result_div,"Throughput",382);
+            outputText(result_div,"Explanation",427);
+        }else{
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Cloud",226);
+            outputText(result_div,"Compression",280);
+            outputText(result_div,"Cost",330);
+            outputText(result_div,"Latency",382);
+            outputText(result_div,"Throughput",427);
+            outputText(result_div,"Explanation",476);
+        }
     }
-
-
 
     var div_tmp = document.createElement("div");
     drawDiagram(Variables, div_tmp);
@@ -2131,15 +2162,92 @@ function createPopup(Variables){
         div_tmp.setAttribute("class", "tooltip1");
         var span_tmp = document.createElement("span");
         span_tmp.setAttribute("class", "tooltiptext");
-        span_tmp.innerHTML = "T=" + Variables.T + "  K=" + Variables.K + "  Z=" + Variables.Z;
+        span_tmp.innerHTML = "T=" + Variables.T + "<br>K=" + Variables.K + "<br>Z=" + Variables.Z;
         div_tmp.appendChild(span_tmp);
 
     }
     result_div.appendChild(div_tmp);
     outputParameter(result_div,cloud_array[Variables.cloud_provider],"https://volatill.github.io/demosubmitter_cloud/images/cloud.png");
     outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"https://volatill.github.io/demosubmitter_cloud//images/dollar.png");
-    outputParameter(result_div,fixTime(Variables.latency),"https://volatill.github.io/demosubmitter_cloud//images/performance.png");
-    outputParameter(result_div,parseInt(Variables.query_count/(Variables.latency*24*60*60))+" querys/s","https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
+    if(Variables.L==0){
+        outputParameter(result_div,"No Latency","https://volatill.github.io/demosubmitter_cloud//images/performance.png");
+        outputParameter(result_div,"","https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
+    }else {
+        outputParameter(result_div, fixTime(Variables.latency), "https://volatill.github.io/demosubmitter_cloud//images/performance.png");
+        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " querys/s", "https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
+    }
+    if(using_compression){
+        outputParameter(result_div, Variables.compression_name, "https://volatill.github.io/demosubmitter_cloud//images/compression.png")
+    }
+    removeAllChildren(popup.document.body);
+    popup.document.body.appendChild(result_div);
+}
+
+function createExplanationPopup(Variables){
+    var popup = open("", "Popup", "width=600,height=800");
+    popup.document.head.innerHTML=" <meta charset=\"utf-8\">\n" +
+
+        "    <title>X</title>\n" +
+        "\n" +
+        "    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+        "\n" +
+        "    <!-- Custom CSS -->\n" +
+        "        <link href=\"https://volatill.github.io/demosubmitter_cloud/css/lsm_button.css\" rel=\"stylesheet\">\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/tooltip.css\" rel=\"stylesheet\">\n" +
+
+        "\n" +
+        "    <!-- Font Awesome -->\n" +
+        "    <script src=\"https://use.fontawesome.com/3227f266ec.js\"></script>\n" +
+        "\n" +
+        "    <!-- Custom Fonts -->\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker|Reenie+Beanie|Rock+Salt|Indie+Flower' rel='stylesheet' type='text/css'>\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Raleway|Source+Sans+Pro\" rel=\"stylesheet\">\n" +
+        "      <!--[if lt IE 9]>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js\"></script>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js\"></script>\n" +
+        "    <![endif]-->"
+    var result_div = popup.document.createElement("div");
+    result_div.setAttribute("id","popup");
+    result_div.setAttribute("class","col-lg-1 col-md-1 col-sm-1")
+    result_div.setAttribute("style","width: 600px;   font-size: 18px; padding-top:10px;");
+
+    var w=Variables.w;
+    var v=Variables.v;
+    var r=Variables.r;
+    var FPR=Variables.FPR;
+    var sum=w+v+r;
+    var a_or_an;
+    if(Variables.cloud_provider==1)
+        a_or_an="a";
+    else
+        a_or_an="an";
+
+    var bits_per_entry_text=" ";
+    var fpr_text=" ";
+    for(var i=1;i<=Variables.L;i++){
+        if(i!=Variables.L){
+            fpr_text+=(FPR[i]*100).toFixed(2)+"%, ";
+            bits_per_entry_text+=((-1)*Math.log(FPR[i])/(Math.pow(Math.log(2),2))).toFixed(2)+", ";
+        }else{
+            fpr_text+="and "+(FPR[i]*100).toFixed(2)+"%, respectively. ";
+            bits_per_entry_text+="and "+((-1)*Math.log(FPR[i])/(Math.pow(Math.log(2),2))).toFixed(2)+" bits/entry, respectively, offering FPR of ";
+        }
+    }
+
+    if(document.getElementById('performance_conscious_checkbox').checked){
+
+    }else{
+        var text_div = document.createElement("div");
+        text_div.innerHTML+="This key-value storage configuration is tailored to execute a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+Variables.N+" entries each of size "+Variables.E+" bytes. For a workload sample of "+Variables.query_count+" queries, this configuration takes "+fixTime(Variables.latency)+". The cost you need to pay for this configuration is $"+Variables.cost+" per month which is within your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month. We understand that you are a cost-conscious user.<br><br>";
+        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instances of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" levels that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" runs for the first "+(Variables.L-Variables.Y-1)+" levels and "+Variables.Z+" runs for the next "+(Variables.Y+1)+" levels. Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
+    }
+
+    result_div.append(text_div);
+
+
     removeAllChildren(popup.document.body);
     popup.document.body.appendChild(result_div);
 }
@@ -2272,14 +2380,15 @@ function generateDownload(Variables, result_div, id) {
     var download_id=id+"_download"
     div_tmp.setAttribute("class","download_icon");
     div_tmp.setAttribute("id",download_id);
-    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/download.png\"/>"
+    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/explain.png\"/>"
     result_div.appendChild(div_tmp);
     var download_content=("Cloud provider: "+ cloud_array[Variables.cloud_provider] +"\nCost="+Variables.cost+", Latency=" + fixTime(Variables.latency) +  "\nT=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L +"\nMemory="+ Variables.memory_footprint/Variables.VM_instance_num+ " GB\nBuffer=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB\nBloom filter=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB\nFence Pointer=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB\nVM instance: " + Variables.VM_info);
     if(using_compression){
         download_content+="\nCompression: "+Variables.compression_name;
     }
     $("#"+download_id).click(function(){
-        createAndDownloadFile(("design_"+Variables.cost+".txt"),download_content);
+        //createAndDownloadFile(("design_"+Variables.cost+".txt"),download_content);
+        createExplanationPopup(Variables);
     });
 }
 

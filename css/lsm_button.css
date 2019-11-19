@@ -596,6 +596,18 @@
     //-webkit-animation: blin 0.2s infinite linear;
 }
 
+.guide_text_wider{
+    position: relative;
+    left: 30px;
+    top: -21px;
+    width: 170px;
+    font-size: 13px;
+    opacity: 0.45;
+    color: black;
+    font-style: italic;
+//-webkit-animation: blin 0.2s infinite linear;
+}
+
 .lds-roller {
     display: inline-block;
     position: relative;
