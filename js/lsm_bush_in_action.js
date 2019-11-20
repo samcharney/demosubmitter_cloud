@@ -970,7 +970,7 @@ function init(){
 
 	// Dataset and Environment
     document.getElementById("N").value=numberWithCommas(100000000000); //(10M values)
-    document.getElementById("E").value=1280;
+    document.getElementById("E").value=1024;
 		//document.getElementById("B").value=4096; //in B
 		document.getElementById("F").value=64;
 
