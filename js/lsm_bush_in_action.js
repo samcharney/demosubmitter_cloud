@@ -1108,9 +1108,9 @@ function init(){
 	})
 
 	$("#guide_7").hover(function(){
-		$("#exsys_switch").css("-webkit-animation",'shinebox 1.5s infinite linear');
+		$("#exsys_tab").css("-webkit-animation",'shinebox 1.5s infinite linear');
 	},function(){
-		$("#exsys_switch").css("-webkit-animation",'shinebox 1.5s 1 linear');
+		$("#exsys_tab").css("-webkit-animation",'shinebox 1.5s 1 linear');
 	});
 
 	$('input').attr('autocomplete','off');

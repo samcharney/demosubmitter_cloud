@@ -2217,6 +2217,17 @@ function createExplanationPopup(Variables){
     var w=Variables.w;
     var v=Variables.v;
     var r=Variables.r;
+    //transform the format of N
+    var N=Variables.N;
+    if(N>=10000){
+        var power=0;
+        while(N>=10){
+            N/=10;
+            power++;
+        }
+        N=N.toFixed(2)+"E+"+power;
+    }
+
     var FPR=Variables.FPR;
     var sum=w+v+r;
     var a_or_an;
@@ -2229,8 +2240,13 @@ function createExplanationPopup(Variables){
     var fpr_text=" ";
     for(var i=1;i<=Variables.L;i++){
         if(i!=Variables.L){
-            fpr_text+=(FPR[i]*100).toFixed(2)+"%, ";
-            bits_per_entry_text+=((-1)*Math.log(FPR[i])/(Math.pow(Math.log(2),2))).toFixed(2)+", ";
+            if(Variables.L!=2) {
+                fpr_text += (FPR[i] * 100).toFixed(2) + "%, ";
+                bits_per_entry_text += ((-1) * Math.log(FPR[i]) / (Math.pow(Math.log(2), 2))).toFixed(2) + ", ";
+            }else{
+                fpr_text += (FPR[i] * 100).toFixed(2) + "% ";
+                bits_per_entry_text += ((-1) * Math.log(FPR[i]) / (Math.pow(Math.log(2), 2))).toFixed(2) + " ";
+            }
         }else{
             fpr_text+="and "+(FPR[i]*100).toFixed(2)+"%, respectively. ";
             bits_per_entry_text+="and "+((-1)*Math.log(FPR[i])/(Math.pow(Math.log(2),2))).toFixed(2)+" bits/entry, respectively, offering FPR of ";
@@ -2239,13 +2255,13 @@ function createExplanationPopup(Variables){
 
     if(document.getElementById('performance_conscious_checkbox').checked){
         var text_div = document.createElement("div");
-        text_div.innerHTML+="This key-value storage configuration is tailored to execute a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+Variables.N+" entries each of size "+parseInt(document.getElementById("E").value.replace(/\D/g,''),10)+" bytes. For a workload sample of "+Variables.query_count+" queries, this configuration takes "+fixTime(Variables.latency)+". The cost you need to pay for this configuration is $"+Variables.cost+" per month which is slightly more than your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month. We understand that you are a cost-conscious user.<br><br>";
-        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instances of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" levels that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" runs for the first "+(Variables.L-Variables.Y-1)+" levels and "+Variables.Z+" runs for the next "+(Variables.Y+1)+" levels. Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
+        text_div.innerHTML+="This key-value storage configuration is tailored to execute a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+N+" entries each of size "+parseInt(document.getElementById("E").value.replace(/\D/g,''),10)+" bytes. For a workload sample of "+Variables.query_count+" queries, this configuration takes "+fixTime(Variables.latency)+". The cost you need to pay for this configuration is $"+Variables.cost+" per month which is slightly more than your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month. We understand that you are a cost-conscious user!<br><br>";
+        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instances of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" runs for the first "+(Variables.L-Variables.Y-1)+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" runs for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
 
     }else{
         var text_div = document.createElement("div");
-        text_div.innerHTML+="This key-value storage configuration is tailored to execute a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+Variables.N+" entries each of size "+parseInt(document.getElementById("E").value.replace(/\D/g,''),10)+" bytes. For a workload sample of "+Variables.query_count+" queries, this configuration takes "+fixTime(Variables.latency)+". The cost you need to pay for this configuration is $"+Variables.cost+" per month which is within your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month. We understand that you are a cost-conscious user.<br><br>";
-        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instances of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" levels that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" runs for the first "+(Variables.L-Variables.Y-1)+" levels and "+Variables.Z+" runs for the next "+(Variables.Y+1)+" levels. Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
+        text_div.innerHTML+="This key-value storage configuration is tailored to execute a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+N+" entries each of size "+parseInt(document.getElementById("E").value.replace(/\D/g,''),10)+" bytes. For a workload sample of "+Variables.query_count+" queries, this configuration takes "+fixTime(Variables.latency)+". The cost you need to pay for this configuration is $"+Variables.cost+" per month which is within your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month. We understand that you are a cost-conscious user!<br><br>";
+        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instances of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" runs for the first "+(Variables.L-Variables.Y-1)+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" runs for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
     }
 
     result_div.append(text_div);
