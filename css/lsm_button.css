@@ -598,10 +598,10 @@
 
 .guide_text_wider{
     position: relative;
-    left: 30px;
+    left: 26px;
     top: -21px;
-    width: 170px;
-    font-size: 13px;
+    width: 300px;
+    font-size: 18px;
     opacity: 0.45;
     color: black;
     font-style: italic;

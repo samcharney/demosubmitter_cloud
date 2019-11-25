@@ -2188,6 +2188,8 @@ function createExplanationPopup(Variables){
     popup.document.head.innerHTML=" <meta charset=\"utf-8\">\n" +
 
         "    <title>X</title>\n" +
+        "    <script src=\"https://volatill.github.io/demosubmitter_cloud/js/jquery.js\"></script>\n" +
+        "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js\"></script>\n"+
         "\n" +
         "    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->\n" +
         "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
@@ -2198,7 +2200,6 @@ function createExplanationPopup(Variables){
 
         "\n" +
         "    <!-- Font Awesome -->\n" +
-        "    <script src=\"https://use.fontawesome.com/3227f266ec.js\"></script>\n" +
         "\n" +
         "    <!-- Custom Fonts -->\n" +
         "    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">\n" +
@@ -2256,19 +2257,41 @@ function createExplanationPopup(Variables){
     if(document.getElementById('performance_conscious_checkbox').checked){
         var text_div = document.createElement("div");
         text_div.innerHTML+="This key-value storage configuration is tailored to execute a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+N+" entries each of size "+parseInt(document.getElementById("E").value.replace(/\D/g,''),10)+" bytes. For a workload sample of "+Variables.query_count+" queries, this configuration takes "+fixTime(Variables.latency)+". The cost you need to pay for this configuration is $"+Variables.cost+" per month which is slightly more than your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month. We understand that you are a cost-conscious user!<br><br>";
-        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instances of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" runs for the first "+(Variables.L-Variables.Y-1)+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" runs for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
+        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instance"+((Variables.VM_instance_num>1)?"s":"")+" of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" run"+((Variables.K>1)?"s":"")+" for the first "+(Variables.L-Variables.Y-1)+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" run"+((Variables.Z>1)?"s":"")+" for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
 
     }else{
         var text_div = document.createElement("div");
         text_div.innerHTML+="This key-value storage configuration is tailored to execute a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+N+" entries each of size "+parseInt(document.getElementById("E").value.replace(/\D/g,''),10)+" bytes. For a workload sample of "+Variables.query_count+" queries, this configuration takes "+fixTime(Variables.latency)+". The cost you need to pay for this configuration is $"+Variables.cost+" per month which is within your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month. We understand that you are a cost-conscious user!<br><br>";
-        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instances of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" runs for the first "+(Variables.L-Variables.Y-1)+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" runs for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
+        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instance"+((Variables.VM_instance_num>1)?"s":"")+" of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint+" GB of memory for your workload. Regarding the in-memory allocation, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" that exponentially grow by a size ratio of "+Variables.T+". Within each layer, there will be a maximum of "+Variables.K+" run"+((Variables.K>1)?"s":"")+" for the first "+(Variables.L-Variables.Y-1)+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" run"+((Variables.Z>1)?"s":"")+" for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
     }
 
     result_div.append(text_div);
 
+    var text_div_download=document.createElement("div");
+    text_div_download.innerHTML="<br>Download:<br>";
+    result_div.append(text_div_download);
 
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("class","download_icon");
+    div_tmp.setAttribute("onclick","createAndDownloadFile()");
+    var download_id="download";
+    div_tmp.setAttribute("id",download_id);
+    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"https://volatill.github.io/demosubmitter_cloud/images/download.png\"/>"
+    result_div.appendChild(div_tmp);
+    var src=document.createElement("script");
+    src.setAttribute("type","text/javascript");
+    src.innerHTML="function createAndDownloadFile() {\n" +
+        "    var aTag = document.createElement('a');\n" +
+        "    var blob = new Blob(['"+text_div.innerText+"']);\n" +
+        "    aTag.download = 'explanation';\n" +
+        "    aTag.href = URL.createObjectURL(blob);\n" +
+        "    aTag.click();\n" +
+        "    URL.revokeObjectURL(blob);\n" +
+        "}"
+
+    result_div.append(src);
     removeAllChildren(popup.document.body);
-    popup.document.body.appendChild(result_div);
+    popup.document.body.append(result_div);
 }
 
 function outputParameter(result_div,value,text){
