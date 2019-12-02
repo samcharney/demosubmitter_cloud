@@ -1146,7 +1146,7 @@ function init(){
 	//$("#loading_canvas").animate({opacity:1}, 'slow').css('z-index',20);
 	//setTimeout('$("#loading_canvas").animate({opacity:0}, \'slow\').css(\'z-index\',0)',5000);
 	//$(document.body).css({'cursor' : 'wait'});
-	setTimeout('drawContinuums()',200);
+	//setTimeout('drawContinuums()',200);
 	//setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
 	//document.getElementById("Optimal-FPR").style.fontWeight='bold';
 	//document.getElementById("Optimal-FPR").style.fontSize='16px';
@@ -3274,7 +3274,14 @@ function hideCloudProvider(){
 	document.getElementById("cloud-provider-setting").style.display='none';
 }
 
-function displayCharts() {
+function LoadCharts() {
+	$("#loading_canvas_2").css('opacity','1');
+	setTimeout('drawContinuums()',200);
+	setTimeout('displayCharts()',300);
+}
+
+function displayCharts(){
+	if_display=1;
 	document.getElementById("charts").style.display='';
 	document.getElementById("interactive_mode_tab").style.display='';
 	document.getElementById("guide_4").style.display='';
@@ -3283,8 +3290,9 @@ function displayCharts() {
 	document.getElementById("guide_7").style.display='';
 	document.getElementById("guide_8").style.display='';
 	document.getElementById("guide_9").style.display='';
-
+	$("#loading_canvas_2").css('opacity','0');
 	$("html,body").animate({scrollTop: $("#interactive_mode_tab").offset().top-100}, 500);
+
 }
 
 function displayContinuums() {
