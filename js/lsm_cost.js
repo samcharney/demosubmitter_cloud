@@ -791,6 +791,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
 function getFPR( T, K, Z, L, Y, M, M_B, M_F, M_BF, data) {
     var FPR_sum = Math.exp((-M_BF*8/data)*Math.pow((Math.log(2)/Math.log(2.7182)), 2) * Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
     var FPR=new Array();
+    //FPR[0]=FPR_sum;
     for(var i = 1;i<=L-Y-1;i++)
     {
         FPR[i] = (FPR_sum)*(T-1)/(T*K*Math.pow(T, L-Y-i));
@@ -799,6 +800,8 @@ function getFPR( T, K, Z, L, Y, M, M_B, M_F, M_BF, data) {
     {
         if (i == L-Y) {
             FPR[i] = (FPR_sum)*(T-1)/(T*Z);
+            if(FPR[i]>1)
+                FPR[i]=1;
         }
         else {
             FPR[i] = 1;
