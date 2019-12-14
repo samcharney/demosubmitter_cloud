@@ -96,7 +96,7 @@ function re_run(e, input_type) {
     //$("#loading_canvas").animate({opacity:0.8}, 'fast').css('z-index',20);
     if(if_display) {
 
-        navigateDesignSpace();
+        //navigateDesignSpace();
         //analyzeTKZ();
         //drawCharts();
         //drawChart2();

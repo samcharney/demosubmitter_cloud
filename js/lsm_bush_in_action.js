@@ -3328,7 +3328,8 @@ function switchText() {
 		$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
 		$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
 		$("#interactive-panel").animate({width: '1136px',borderWidth:1,borderOpacity:1}, "slow");
-		$("#charts").animate({right:'30px'});
+		$("#charts").animate({right:'-30px'});
+		$("#charts").css('transform','scale(0.9) translateY(-40px)');
 		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
 		$("#interactive_banner").animate({height: "35px", opacity:"1", borderWidth:1}, "slow");
@@ -3340,6 +3341,7 @@ function switchText() {
             $("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
         }
 		$("#guide").animate({opacity:"0"}, "slow");
+
 	}
 	else {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
@@ -3355,6 +3357,7 @@ function switchText() {
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
 		$("#charts").animate({right:'-180px'});
+		$("#charts").css('transform','scale(1) translateY(0px)');
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
 		$("#explore_switch").css('transform','translateY(0px)');

@@ -1292,6 +1292,7 @@ function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E)
     for(var h=1;h<=L-Y-1;h++)
     {
         term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+        //term2 = term2 * Module._poow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);}
     }
     for(var h=L-Y;h<i;h++)
     {

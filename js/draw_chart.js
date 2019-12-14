@@ -576,6 +576,7 @@ function drawContinuums() {
 
    document.getElementById("chart_style").value="1";
 
+
     var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
     var latency=parseFloat(document.getElementById("latency").value);
 
