@@ -277,6 +277,37 @@
 
 }
 
+.tooltip1 .tooltiptext_mode {
+    visibility: hidden;
+    opacity: 0;
+    width: 310px;
+    height: 0px;
+    background-color: black;
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    top:102%;
+    left: calc(25% - 165px);
+    z-index: 15;
+
+    -webkit-transition-duration: 0.6s;
+    -moz-transition-duration: 0.6s;
+    transition-duration: 0.6s;
+}
+
+.tooltip1:hover .tooltiptext_mode {
+    bottom: 0px;
+    opacity: 0.7;
+    visibility: visible;
+    height: 59px;
+    width: 310px;
+}
+
 .tooltip1 .tooltiptext {
     visibility: hidden;
     opacity: 0;

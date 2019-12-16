@@ -631,13 +631,14 @@
              </div>
                 <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; right:-150px; width: 85%; font-size: 16px; margin-bottom: 64px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
-                    <div class="tab_l down" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px">
+                    <div class="tab_l down tooltip1" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
                             <img style="width:50px" class="img-responsive img-centered" src="images//normal.png">
-                        </div>Basic Mode</div><div name="interactive_tab" class="tab_l" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%;border-left-color: #7F89FF">Interactive Mode
+                        </div>Basic Mode<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span></div><div name="interactive_tab" class="tab_l tooltip1" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%;border-left-color: #7F89FF">Interactive Mode
                     <div style="width:60px; height:60px; position:absolute; bottom: -10px; right:-10px;  border-radius:30px; padding:8px; z-index:10">
                         <img style="width:44px" class="img-responsive img-centered" src="images//hand.png">
                     </div>
+                    <span class="tooltiptext_mode" style="width: 400px; left: calc(75% - 200px)">The interactive mode enables users to ask diverse what-if questions and check resulting configurations on the fly. It also supports analysis of statistics over the entire search space of the input workload.</span>
                 </div>
                 </div>
 
