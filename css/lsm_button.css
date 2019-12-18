@@ -280,7 +280,7 @@
 .tooltip1 .tooltiptext_mode {
     visibility: hidden;
     opacity: 0;
-    width: 310px;
+    width: 330px;
     height: 59px;
     background-color: white;
     font-size: 12px;
@@ -293,7 +293,7 @@
     /* Position the tooltip */
     position: absolute;
     top:102%;
-    left: calc(25% - 165px);
+    left: calc(25% - 175px);
     z-index: 15;
 
     -webkit-transition-duration: 0.6s;
@@ -306,7 +306,7 @@
     opacity: 0.45;
     visibility: visible;
     height: 59px;
-    width: 310px;
+    width: 330px;
 }
 
 .tooltip1 .tooltiptext {
