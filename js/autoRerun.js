@@ -55,8 +55,7 @@ function update_lsm_tree(id, lsm_tree_type, lsm_tree_L, lsm_tree_T, lsm_tree_mbu
 
 
 
-function re_run(e, input_type) {
-
+function re_run(e, if_regenerate=true) {
 
 
 
@@ -101,7 +100,7 @@ function re_run(e, input_type) {
         //drawCharts();
         //drawChart2();
         //$(document.body).css({'cursor' : 'wait'});
-        drawContinuums();
+        drawContinuums(if_regenerate);
     }
    // setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
    // setTimeout('$("#loading_canvas").animate({opacity:0}, \'normal\').css(\'z-index\',0)',5000);

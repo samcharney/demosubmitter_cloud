@@ -555,7 +555,7 @@ function initChart(ContinuumArray, x, y, x_axis_title, y_axis_title, mode, cost)
     return chart;
 }
 
-function drawContinuums() {
+function drawContinuums(if_regenerate=true) {
 
     var provider_num_array=[0,0,0];
     var provider_num_array_ad=[0,0,0];
@@ -582,7 +582,12 @@ function drawContinuums() {
 
     var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
 
-    var ContinuumArray=buildContinuums(cloud_provider);
+    if(if_regenerate)
+        var ContinuumArray=buildContinuums(cloud_provider);
+    else {
+        var ContinuumArray = global_continuums_array;
+        console.log("not generate");
+    }
     global_continuums_array=ContinuumArray;
 
     var best_array=ContinuumArray;

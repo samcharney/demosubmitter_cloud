@@ -3403,7 +3403,7 @@ function switchQuestion() {
 					document.getElementById("question0").style.display="";
 					document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("cost").value);
 					document.getElementById("cost").value = parseFloat(document.getElementById("cost").value) + parseFloat(input.value);
-					re_run(e);
+					re_run(e,false);
 				}
 			}
 		});
@@ -3444,7 +3444,8 @@ function switchQuestion() {
 					for (var i = index + 1; i < result_array.length; i++) {
 						if (result_array[i][1] < result_array[index][1] * (1 - input.value / 100)) {
 							document.getElementById("cost").value = Math.ceil(result_array[i][0]);
-							re_run(e);
+							console.log("rerun");
+							re_run(e,false);
 							break;
 						}
 						if (i == result_array.length - 1)
