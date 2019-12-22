@@ -1169,6 +1169,13 @@ function drawContinuums() {
         //$("#diagram6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
     });
 
+    console.log(cri_count);
+    console.log(cri_cache);
+    console.log(cri_cache.size);
+    console.log(cri_miss_count);
+    console.log(dri_count);
+    console.log(dri_miss_count);
+    console.log(log);
 
 }
 
@@ -1223,6 +1230,8 @@ function analyzeTKZ(){
         };
 
     Plotly.newPlot('tester3', data, layout);
+
+
 
 }
 

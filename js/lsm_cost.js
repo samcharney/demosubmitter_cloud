@@ -37,6 +37,14 @@ var if_display = 0;
 var compression_libraries;
 var using_compression=true;
 
+var cri_count=0;
+var cri_miss_count=0;
+var dri_count=0;
+var dri_miss_count=0;
+var cri_cache;
+var dri_cache;
+var log=new Array();
+
 
 function Variables()
 {
@@ -536,7 +544,7 @@ function countThroughput(cost, cloud_provider) {
                         if (read_percentage != 0) {
                             if (scenario == 'A') // Avg-case
                             {
-                                read_cost = analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
+                                read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E));
                             } else // Worst-case
                             {
                                 read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
@@ -725,7 +733,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                     if (read_percentage != 0) {
                         if (scenario == 'A') // Avg-case
                         {
-                            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
+                            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E), compression_style);
                         } else // Worst-case
                         {
                             read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
@@ -753,7 +761,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100) + r * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w + r);
                     }
 
-                    log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
+                    //log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
                     if (best_latency < 0 || total_latency < best_latency) {
                         best_latency = total_latency;
                         Variables.K = K;
@@ -942,7 +950,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     if (read_percentage != 0) {
         if (scenario == 'A') // Avg-case
         {
-            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
+            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E,Math.ceil(M_B),Math.ceil(E), compression_style);
         } else // Worst-case
         {
             read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
@@ -1004,6 +1012,14 @@ function buildContinuums(cloud_mode){
     var Variables=0;
     var rocks_Variables;
     var WT_Variables;
+    cri_cache=new Array();
+    for(var i=0;i<3;i++){
+        cri_cache.push(new Array());
+    }
+    dri_cache=new Array();
+    for(var i=0;i<3;i++){
+        dri_cache.push(new Array());
+    }
     if(cloud_mode==0||cloud_mode==NaN) {
         for (var cloud_provider = 0; cloud_provider < 3; cloud_provider++) {
             var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
@@ -1178,25 +1194,26 @@ function analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO) {
     return update_cost;
 }
 
-function analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E)
+function analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style)
 {
+
     // uniform
     var avg_read_cost;
     if (workload_type == 0) {
-    avg_read_cost = aggregateAvgCase(0, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E);
+    avg_read_cost = aggregateAvgCase(0, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style);
         return avg_read_cost;
     }
 
     // skew
     if (workload_type == 1) {
-        var skew_part =  aggregateAvgCase(1, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E);
-        var non_skew_part =  aggregateAvgCase(2, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E);
+        var skew_part =  aggregateAvgCase(1, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style);
+        var non_skew_part =  aggregateAvgCase(2, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style);
     avg_read_cost = skew_part * p_get + non_skew_part * (1 - p_get);
     }
     return avg_read_cost;
 }
 
-function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E) {
+function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style) {
     var term1 = 0.0, term2 = 0.0, term3= 0.0;
     var term2_2 = 0.0, term3_2 =0.0;
     var c, q;
@@ -1211,11 +1228,12 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
     {
         p_i = (FPR_sum)*(T-1)/(T*K*Math.pow(T, L-Y-i));
         term2_2 = 0.0;
-        for(var r = 1;r<=K;r++)
-        {
-            term2_2 = term2_2 + getC_ri(type, r, i, M_B, T, K, Z, L, Y, E)/q;
+        if(p_i>0) {
+            for (var r = 1; r <= K; r++) {
+                term2_2 = term2_2 + getC_ri(type, r, i, M_B, T, K, Z, L, Y, E, int_M_B, int_E, compression_style) / q;
+            }
+            term2 = term2 + (p_i * term2_2);
         }
-        term2 = term2 + (p_i * term2_2);
     }
     for(var i = L-Y;i<=L;i++)
     {
@@ -1226,12 +1244,13 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
             p_i = 1;
         }
         term3_2 = 0.0;
-        for(var r = 1;r<=Z;r++)
-        {
-            term3_2 = term3_2 + getD_ri(type, r, i, M_B, T, K, Z, L, Y ,E)/q;
-            // printf("%f\n", getD_ri(type, r, i, M_B, T, K, Z, L, Y)/q);
+        if(p_i>0) {
+            for (var r = 1; r <= Z; r++) {
+                term3_2 = term3_2 + getD_ri(type, r, i, M_B, T, K, Z, L, Y, E, int_M_B, int_E, compression_style) / q;
+                // printf("%f\n", getD_ri(type, r, i, M_B, T, K, Z, L, Y)/q);
+            }
+            term3 = term3 + (p_i * term3_2);
         }
-        term3 = term3 + (p_i * term3_2);
     }
     //console.log(c,q);
     //console.log(T,K,Z,term1,term2,term3);
@@ -1259,55 +1278,215 @@ function getcq(type, T, K, Z, L, Y, M_B, E)
     return [c,q];
 }
 
-function getC_ri(type, r,  i, M_B, T, K, Z, L, Y, E)
+function getC_ri(type, r,  i, M_B, T, K, Z, L, Y, E, int_M_B, int_E, compression_style)
 {
-    var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+    //console.log(type, r,  i, M_B, T, K, Z, L, Y, E);
+    var a=(type*1+r*5+i*40+int_M_B+T*400+K*6000+Z*90000+L*230000+Y*710000+int_E*190007+K*r+i*T*4000)%699999;
+    //console.log(a);
+    var cache=cri_cache[compression_style][a];
+    //console.log(cache);
 
-    term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
-    var term2 = 1.0;
-    for(var h=1;h<i;h++)
-    {
-        term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+    if(cache===undefined) {
+        cri_count += 1;
+        var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+
+        term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
+        var term2 = 1.0;
+        for (var h = 1; h < i; h++) {
+            term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+        }
+        var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+        var term4 = 1;
+        for (var h = i + 1; h <= L - Y - 1; h++) {
+            term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+        }
+        for (var h = L - Y; h <= L; h++) {
+            term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+        }
+        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), K - r);
+        term4 = 1 - term4;
+        cri_cache[compression_style][a]={};
+        cri_cache[compression_style][a].result=term1 * term2 * term3 * term4;
+        cri_cache[compression_style][a].parameter=[type, r,  i, int_M_B, T, K, Z, L, Y];;
+        return term1 * term2 * term3 * term4;
+    }else{
+        var flag=true;
+        var array=[type, r,  i, int_M_B, T, K, Z, L, Y];
+        for(var j=0; j<array.length; j++){
+            if(array[j]!=cache.parameter[j]){
+                flag=false;
+                //console.log(array[i],cache.parameter[i]);
+                log.push([array,cache.parameter])
+                break;
+            }
+        }
+        if(flag) {
+            return cache.result;
+        }
+        else {
+            cri_miss_count+=1;
+            var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+
+            term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
+            var term2 = 1.0;
+            for (var h = 1; h < i; h++) {
+                term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+            }
+            var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+            var term4 = 1;
+            for (var h = i + 1; h <= L - Y - 1; h++) {
+                term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+            }
+            for (var h = L - Y; h <= L; h++) {
+                term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+            }
+            term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), K - r);
+            term4 = 1 - term4;
+            cri_cache[compression_style][a]={};
+            cri_cache[compression_style][a].result=term1 * term2 * term3 * term4;
+            cri_cache[compression_style][a].parameter=[type, r,  i, int_M_B, T, K, Z, L, Y];
+            return term1 * term2 * term3 * term4;
+        }
     }
-    var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
-    var term4 = 1;
-    for(var h = i+1;h<=L-Y-1;h++)
-    {
-        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
-    }
-    for(var h = L-Y;h<=L;h++)
-    {
-        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
-    }
-    term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), K-r);
-    term4 = 1 - term4;
-    return term1*term2*term3*term4;
 }
 
-function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E)
+function compare_array(a,b){
+    for(var j=0; j<a.length; j++){
+        if(a[j]>b[j]){
+            return 1;
+        }
+        if(b[j]>a[j]){
+            return -1;
+        }
+    }
+    return 0;
+}
+
+function bsearch_array(array,low,high,target)
 {
-    var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
-    term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
-    var term2 = 1.0;
-    for(var h=1;h<=L-Y-1;h++)
+    if(high<=0)return [0,0];
+    while(low <= high)
     {
-        term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
-        //term2 = term2 * Module._poow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);}
+        var mid = Math.floor((low + high)/2);
+        var flag=compare_array(array[mid].parameter ,target);
+        if (flag==1){
+            high = mid - 1;
+        }else if (flag==-1){
+            low = mid + 1;
+        }else{
+            return [1,mid];
+        }
     }
-    for(var h=L-Y;h<i;h++)
-    {
-        term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+    return [0,low];
+}
+
+function getC_ri_1(type, r,  i, M_B, T, K, Z, L, Y, E, int_M_B, int_E)
+{
+    //console.log(type, r,  i, M_B, T, K, Z, L, Y, E);
+    var array=[type, r,  i, int_M_B, T, K, Z, L, Y, int_E];
+    var flag_index= bsearch_array(cri_cache,0,cri_cache.length-1,array);
+    //console.log(a);
+    //console.log(cache);
+
+    if(flag_index[0]==0) {
+        cri_count += 1;
+        var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+
+        term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
+        var term2 = 1.0;
+        for (var h = 1; h < i; h++) {
+            term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+        }
+        var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+        var term4 = 1;
+        for (var h = i + 1; h <= L - Y - 1; h++) {
+            term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+        }
+        for (var h = L - Y; h <= L; h++) {
+            term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+        }
+        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), K - r);
+        term4 = 1 - term4;
+        var new_data={};
+        new_data.result=term1 * term2 * term3 * term4;
+        new_data.parameter=[type, r,  i, int_M_B, T, K, Z, L, Y, int_E];
+        if(cri_cache.length==0)
+            cri_cache[0]=new_data;
+        else {
+            for (var j = cri_cache.length-1; j >= flag_index[1]; j--) {
+                cri_cache[j + 1] = cri_cache[j];
+            }
+            cri_cache[flag_index[1]] = new_data;
+        }
+        return term1 * term2 * term3 * term4;
+    }else{
+        return flag_index[1].result;
     }
-    var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
-    var term4 = 1.0;
-    for(var h = i+1;h<=L;h++)
-    {
-        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+}
+
+function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E, int_M_B, int_E, compression_style)
+{
+    var a=(type*1+r*5+i*40+int_M_B+T*400+K*6000+Z*90000+L*230000+Y*710000+int_E*190007+K*r+i*T*4000+(int_E%(L*Y*19+T))*50000)%999999;
+    //console.log(a);
+    //console.log(type, r, i, M_B, T, K, Z, L, Y, E, int_M_B, int_E, compression_style);
+    var cache=dri_cache[compression_style][a];
+    if(cache===undefined) {
+        dri_count += 1;
+        var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+        term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
+        var term2 = 1.0;
+        for (var h = 1; h <= L - Y - 1; h++) {
+            term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+            //term2 = term2 * Module._poow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);}
+        }
+        for (var h = L - Y; h < i; h++) {
+            term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+        }
+        var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+        var term4 = 1.0;
+        for (var h = i + 1; h <= L; h++) {
+            term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+        }
+        term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z - r);
+        term4 = 1 - term4;
+        //console.log(term1,term2,term3,term4);
+        dri_cache[compression_style][a]={};
+        dri_cache[compression_style][a].result=term1 * term2 * term3 * term4;
+        dri_cache[compression_style][a].parameter=type+r+i+T+K+Z+L+Y;
+        return term1 * term2 * term3 * term4;
+    }else{
+            var flag=true;
+            var array=type+r+i+T+K+Z+L+Y;
+            if(array!=cache.parameter)
+                flag=false
+            if(flag) {
+                return cache.result;
+            }else{
+                dri_miss_count += 1;
+                var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+                term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
+                var term2 = 1.0;
+                for (var h = 1; h <= L - Y - 1; h++) {
+                    term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+                    //term2 = term2 * Module._poow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);}
+                }
+                for (var h = L - Y; h < i; h++) {
+                    term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+                }
+                var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+                var term4 = 1.0;
+                for (var h = i + 1; h <= L; h++) {
+                    term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+                }
+                term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z - r);
+                term4 = 1 - term4;
+                //console.log(term1,term2,term3,term4);
+                dri_cache[compression_style][a]={};
+                dri_cache[compression_style][a].result=term1 * term2 * term3 * term4;
+                dri_cache[compression_style][a].parameter=type+r+i+T+K+Z+L+Y;
+                return term1 * term2 * term3 * term4;
+            }
     }
-    term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z-r);
-    term4 = 1 - term4;
-    //console.log(term1,term2,term3,term4);
-    return term1*term2*term3*term4;
 }
 
 function getAlpha_0( type, M_B, E)
@@ -1784,8 +1963,8 @@ function getAllVMCombinations(cloud_provider,VM_libraries)
 {
     var no_of_instances=VM_libraries[cloud_provider].no_of_instances;
     var VMCombinations=new Array();
-    for(var i = 1; i <= machines; i++){
-        for(var j = 0; j < no_of_instances; j++){
+    for(var j = 0; j < no_of_instances; j++){
+        for(var i = 1; i <= machines; i++){
             var VMCombination=new Array();
             for(var k = 0; k < no_of_instances; k++){
                 if(k==j)
@@ -1796,7 +1975,6 @@ function getAllVMCombinations(cloud_provider,VM_libraries)
             VMCombinations.push(VMCombination);
         }
     }
-
     //console.log(VMCombinations);
     return VMCombinations;
 }
