@@ -586,6 +586,7 @@ function drawContinuums(if_regenerate=true) {
         var ContinuumArray=buildContinuums(cloud_provider);
     else {
         var ContinuumArray = global_continuums_array;
+        ContinuumArray.sort(function (a,b) {return a[0]-b[0];});
         console.log("not generate");
     }
     global_continuums_array=ContinuumArray;
