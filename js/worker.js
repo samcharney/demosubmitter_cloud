@@ -1,17 +1,15 @@
 
+console.log(cri_miss_count);
+
+var input;
 var query_count = 10000000;
 var read_percentage = 50;
 var write_percentage = 100 - read_percentage;
 var short_scan_percentage = 0;
-var long_scan_percentage = 0;
-var no_of_windows = 1;
-var change_percent = 30;
 var s = 64;
 var head ;
-var workload_exec_time = 0;
 var total_budget;
 var max_RAM_purchased; // in GB
-var no_of_RAM_blocks;
 var U = 10000000000;
 // static double U = 300000000;
 var p_put = 0.0001; // fraction of the time that you call get on elements in U_1
@@ -124,27 +122,7 @@ function Compression_library(){
 function parseInputVariables()
 {
 
-    var parsedBoxes = new Variables();
-
-    //Dataset and Environment
-    parsedBoxes.N = parseInt(document.getElementById("N").value.replace(/\D/g,''),10);
-    parsedBoxes.E = parseInt(document.getElementById("E").value.replace(/\D/g,''),10);
-    parsedBoxes.F = parseFloat(document.getElementById("F").value);
-    parsedBoxes.B = 4096;
-    parsedBoxes.cost = parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
-
-    //Workload
-    parsedBoxes.s = parseInt(document.getElementById("s").value.replace(/\D/g,''), 10);
-    parsedBoxes.w = parseFloat(document.getElementById("w").value);
-    parsedBoxes.r = parseFloat(document.getElementById("r").value);
-    parsedBoxes.v = parseFloat(document.getElementById("v").value);
-    parsedBoxes.qL = parseFloat(document.getElementById("qL").value);
-    parsedBoxes.qS = parseFloat(document.getElementById("qS").value);
-
-    parsedBoxes.query_count = parseInt(document.getElementById("query_count").value.replace(/\D/g,''), 10);
-
-
-    return parsedBoxes;
+    return Object.assign({},input);
 }
 
 
@@ -603,7 +581,6 @@ function countThroughput(cost, cloud_provider) {
 
 function countContinuum(combination, cloud_provider, compression_style=0) {
     var Variables = parseInputVariables();
-    console.log(global_input);
     var N = Variables.N;
     var E = Variables.E;
     var F = Variables.F;
@@ -623,8 +600,6 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
     //Variables.cost=cost;
 
     if(using_compression==true){
-        console.log(E);
-        console.log(compression_libraries);
         E=(1-compression_libraries[compression_style].space_reduction_ratio)*E;
         F=(1-compression_libraries[compression_style].space_reduction_ratio)*F;
         Variables.E=E;
@@ -1036,13 +1011,12 @@ function buildContinuums(cloud_mode){
             for (var i = 0; i < VMCombinations.length; i++) {
                 Variables=0;
                 progress=(cloud_provider+i/VMCombinations.length)/3;
-                global_progress=progress;
-
+                postMessage((progress*100).toFixed(1)+"%");
                 var VMCombination = VMCombinations[i];
                 if(using_compression==false) {
-                     Variables = countContinuum(VMCombination, cloud_provider);
-                     rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
-                     WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
+                    Variables = countContinuum(VMCombination, cloud_provider);
+                    rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
+                    WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
                 }else{
                     for(var n=0;n<3;n++){
                         if(Variables==0) {
@@ -1091,7 +1065,7 @@ function buildContinuums(cloud_mode){
     var log=result_array;
     for(var i=0;i<10;i++)
         //console.log(log[i]);
-    return result_array;
+        return result_array;
 }
 
 function fixTime(time){
@@ -1213,7 +1187,7 @@ function analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
     // uniform
     var avg_read_cost;
     if (workload_type == 0) {
-    avg_read_cost = aggregateAvgCase(0, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style);
+        avg_read_cost = aggregateAvgCase(0, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style);
         return avg_read_cost;
     }
 
@@ -1221,7 +1195,7 @@ function analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
     if (workload_type == 1) {
         var skew_part =  aggregateAvgCase(1, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style);
         var non_skew_part =  aggregateAvgCase(2, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data, E, int_M_B, int_E, compression_style);
-    avg_read_cost = skew_part * p_get + non_skew_part * (1 - p_get);
+        avg_read_cost = skew_part * p_get + non_skew_part * (1 - p_get);
     }
     return avg_read_cost;
 }
@@ -1268,7 +1242,7 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
     //console.log(c,q);
     //console.log(T,K,Z,term1,term2,term3);
     //if((term1 + term2 + term3)==0)
-        //console.log(T,K,Z,term1,term2,term3,cq);
+    //console.log(T,K,Z,term1,term2,term3,cq);
     return term1 + term2 + term3;
 }
 
@@ -1287,7 +1261,7 @@ function getcq(type, T, K, Z, L, Y, M_B, E)
     }
     c = (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E)) * (1 - (q))*(1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
     q = 1 - (q)*(1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
-   // console.log( getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
+    // console.log( getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E));
     return [c,q];
 }
 
@@ -1468,37 +1442,37 @@ function getD_ri( type, r, i, M_B, T, K, Z, L, Y, E, int_M_B, int_E, compression
         dri_cache[compression_style][a].parameter=type+r+i+T+K+Z+L+Y;
         return term1 * term2 * term3 * term4;
     }else{
-            var flag=true;
-            var array=type+r+i+T+K+Z+L+Y;
-            if(array!=cache.parameter)
-                flag=false
-            if(flag) {
-                return cache.result;
-            }else{
-                dri_miss_count += 1;
-                var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
-                term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
-                var term2 = 1.0;
-                for (var h = 1; h <= L - Y - 1; h++) {
-                    term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
-                    //term2 = term2 * Module._poow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);}
-                }
-                for (var h = L - Y; h < i; h++) {
-                    term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
-                }
-                var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
-                var term4 = 1.0;
-                for (var h = i + 1; h <= L; h++) {
-                    term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
-                }
-                term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z - r);
-                term4 = 1 - term4;
-                //console.log(term1,term2,term3,term4);
-                dri_cache[compression_style][a]={};
-                dri_cache[compression_style][a].result=term1 * term2 * term3 * term4;
-                dri_cache[compression_style][a].parameter=type+r+i+T+K+Z+L+Y;
-                return term1 * term2 * term3 * term4;
+        var flag=true;
+        var array=type+r+i+T+K+Z+L+Y;
+        if(array!=cache.parameter)
+            flag=false
+        if(flag) {
+            return cache.result;
+        }else{
+            dri_miss_count += 1;
+            var term1 = 1 - getAlpha_i(type, M_B, T, K, Z, L, Y, 0, E);
+            term1 *= (1 - getAlpha_i(type, M_B, T, K, Z, L, Y, -1, E));
+            var term2 = 1.0;
+            for (var h = 1; h <= L - Y - 1; h++) {
+                term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);
+                //term2 = term2 * Module._poow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), K);}
             }
+            for (var h = L - Y; h < i; h++) {
+                term2 = term2 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+            }
+            var term3 = Math.pow((1.0 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), r);
+            var term4 = 1.0;
+            for (var h = i + 1; h <= L; h++) {
+                term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, h, E)), Z);
+            }
+            term4 = term4 * Math.pow((1 - getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)), Z - r);
+            term4 = 1 - term4;
+            //console.log(term1,term2,term3,term4);
+            dri_cache[compression_style][a]={};
+            dri_cache[compression_style][a].result=term1 * term2 * term3 * term4;
+            dri_cache[compression_style][a].parameter=type+r+i+T+K+Z+L+Y;
+            return term1 * term2 * term3 * term4;
+        }
     }
 }
 
@@ -1847,7 +1821,7 @@ function initializeVMLibraries()
 {
     var VM_libraries = new Array();
     for(var i=0;i<3;i++)
-    VM_libraries.push(new VM_library());
+        VM_libraries.push(new VM_library());
 
     /* ********************************** initialize VMs of AWS *********************************  */
 
@@ -1968,7 +1942,7 @@ function initializeVMLibraries()
     VM_libraries[2].num_of_vcpu[6] = 64;
 
     //printVMLibraries();
-   // console.log(VM_libraries)
+    // console.log(VM_libraries)
     return VM_libraries;
 }
 
@@ -2243,10 +2217,10 @@ function outputParameters(Variables, id, l) {
         outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " querys/s", "./images/throughput.png");
     }
 
-   // outputParameter(result_div,Variables.T,"Growth Factor (T)");
-   // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
-   // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
-   // outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
+    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
+    // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
+    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
+    // outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
     console.log(Variables);
     generateDownload(Variables, result_div, id);
 }
@@ -2642,3 +2616,18 @@ function generateDownload(Variables, result_div, id) {
     });
 }
 
+onmessage = function(e) {
+    console.log(e);
+    input=e.data.input;
+    initializeCompressionLibraries();
+    U = e.data.U;
+    p_put = e.data.p_put;
+    U_1 = e.data.U_1;
+    U_2 = e.data.U_2;
+    p_get = e.data.p_get;
+    workload_type=e.data.workload_type;
+    var result=buildContinuums(e.data.cloud_provider);
+    console.log('Message received from main script');
+    console.log(result);
+    postMessage(result);
+}

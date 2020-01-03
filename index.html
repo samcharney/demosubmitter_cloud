@@ -320,17 +320,17 @@
 
                         <form id="myForm_2" style="text-align: left; height: 0px; opacity: 0; padding:0px; background-color:#FFFFFF; border:0px solid  #D3EBFF;border-radius:4px; margin:0px">
                             <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="1" /> a) 80% reads are skewed <br />
-                                <span id="check_1" class="check_mark"></span>
+                                <span id="check_1" name="skew_check_mark" class="check_mark"></span>
                                 <div id="check_mark_1" style="position: absolute;background-color: #7F89FF;width: 0px;height: 0px;top: 9px;left: 9px; opacity: 0; border-radius: 50%;z-index: 15"></div>
                             </label>
                             <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="2" /> b) 80% writes are skewed <br />
-                                <span class="check_mark"></span>
+                                <span name="skew_check_mark" class="check_mark"></span>
                             </label>
                             <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="3" /> c) both read and writes are skewed by 20% <br />
-                                <span class="check_mark"></span>
+                                <span name="skew_check_mark" class="check_mark"></span>
                             </label>
                             <label class="radiobutton"  style="margin:0px 0px 0px 10px; display: block"><input type="radio" name="radio_2" value="4" /> d) both read and writes are skewed by 50% <br />
-                                <span class="check_mark"></span>
+                                <span name="skew_check_mark" class="check_mark"></span>
                             </label>
                         </form>
 
@@ -623,9 +623,12 @@
                         Continue
                     </div>
 
-                    <div id="loading_canvas_2" style=" width: 40px; height: 40px; position: relative; top: 10px; left:720px; transform:scale(0.8); opacity: 0">
+                    <div id="loading_canvas_2" style=" width: 40px; height: 40px; position: relative; top: 10px; left:720px; transform:scale(0.9); opacity: 0">
                         <div class="lds-roller" style=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                        <div id="loading_percentage" style="width: 64px; height: 20px;font-size: 15px;position: relative;bottom:24px; text-align: center">0%</div>
                     </div>
+
+
 
 
              </div>

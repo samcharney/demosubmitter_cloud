@@ -100,7 +100,7 @@ function re_run(e, if_regenerate=true) {
         //drawCharts();
         //drawChart2();
         //$(document.body).css({'cursor' : 'wait'});
-        drawContinuums(if_regenerate);
+        drawContinuumsMultithread(if_regenerate);
     }
    // setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
    // setTimeout('$("#loading_canvas").animate({opacity:0}, \'normal\').css(\'z-index\',0)',5000);

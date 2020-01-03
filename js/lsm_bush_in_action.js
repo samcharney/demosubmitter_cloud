@@ -1026,6 +1026,8 @@ function init(){
 	})
 
 	var e=event;
+
+	var redraw=true;
 	$('#myForm_1 input').on('change', function() {
 		if($('input[name=radio_1]:checked', '#myForm_1').val()=="skew")
 			$("#myForm_2").animate({height: '168px',opacity:'1',margin:'7px 6px 6px 6px',padding:'5px',borderWidth:'0px'}, "slow");
@@ -1042,6 +1044,7 @@ function init(){
 	});
 
 	$('#myForm_2 input').on('change', function() {
+		redraw=true;
 		workload_type = 1;
 		U_1 = 10000;
 		U_2=100000000;
@@ -1063,14 +1066,19 @@ function init(){
 			p_put=0.5;
 		}
 		//navigateDesignSpace();
-		$("#loading_canvas").animate({opacity:1}, 'fast');
-		setTimeout('$("#loading_canvas").animate({opacity:0}, \'fast\').css(\'z-index\',0)',5000);
+		//$("#loading_canvas").animate({opacity:1}, 'fast');
+		//setTimeout('$("#loading_canvas").animate({opacity:0}, \'fast\').css(\'z-index\',0)',5000);
 		//$(document.body).css({'cursor' : 'wait'});
 		//setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
-		var check_boxes=$('.check_mark');
+		var check_boxes=$('span[name="skew_check_mark"]');
 		check_boxes.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
 			function(e) {
-				drawContinuums();
+				if(redraw) {
+					if(if_display) {
+						drawContinuumsMultithread();
+						redraw = false;
+					}
+				}
 			});
 	});
 /*
@@ -1118,14 +1126,14 @@ function init(){
 	$("#cost_conscious_checkbox").change(function() {
 		if(this.checked) {
 			$("#performance_conscious_checkbox").prop( "checked", false );
-			setTimeout('drawContinuums()',300);
+			setTimeout('drawContinuumsMultithread()',300);
 		}
 	});
 
 	$("#performance_conscious_checkbox").change(function() {
 		if(this.checked) {
 			$("#cost_conscious_checkbox").prop( "checked", false );
-			setTimeout('drawContinuums()',300);
+			setTimeout('drawContinuumsMultithread()',300);
 		}
 	});
 
@@ -3275,24 +3283,26 @@ function hideCloudProvider(){
 }
 
 function LoadCharts() {
-	$("#loading_canvas_2").css('opacity','1');
-	setTimeout('drawContinuums()',200);
-	setTimeout('displayCharts()',300);
+
+	if_display=1;
+	drawContinuumsMultithread();
+	//setTimeout('drawContinuumsMultithread()',200);
+
 }
 
 function displayCharts(){
-	if_display=1;
-	document.getElementById("charts").style.display='';
-	document.getElementById("interactive_mode_tab").style.display='';
-	document.getElementById("guide_4").style.display='';
-	document.getElementById("guide_5").style.display='';
-	document.getElementById("guide_6").style.display='';
-	document.getElementById("guide_7").style.display='';
-	document.getElementById("guide_8").style.display='';
-	document.getElementById("guide_9").style.display='';
-	$("#loading_canvas_2").css('opacity','0');
-	$("html,body").animate({scrollTop: $("#interactive_mode_tab").offset().top-100}, 500);
-
+	if(if_display) {
+		document.getElementById("charts").style.display = '';
+		document.getElementById("interactive_mode_tab").style.display = '';
+		document.getElementById("guide_4").style.display = '';
+		document.getElementById("guide_5").style.display = '';
+		document.getElementById("guide_6").style.display = '';
+		document.getElementById("guide_7").style.display = '';
+		document.getElementById("guide_8").style.display = '';
+		document.getElementById("guide_9").style.display = '';
+		$("html,body").animate({scrollTop: $("#interactive_mode_tab").offset().top - 100}, 500);
+	}
+	$("#loading_canvas_2").css('opacity', '0');
 }
 
 function displayContinuums() {
