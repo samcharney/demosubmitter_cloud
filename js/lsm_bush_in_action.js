@@ -969,17 +969,17 @@ function initScenario4(){
 function init(){
 
 	// Dataset and Environment
-    document.getElementById("N").value=numberWithCommas(100000000000); //(10M values)
-    document.getElementById("E").value=1024;
+    document.getElementById("N").value=numberWithCommas(20000000000); //(10M values)
+    document.getElementById("E").value=2048;
 		//document.getElementById("B").value=4096; //in B
 		document.getElementById("F").value=64;
 
 	// Workload
 	document.getElementById("s").value = 8192;
 	document.getElementById("qS").value = 0;
-	document.getElementById("w").value = 0.8;
+	document.getElementById("w").value = 0.1;
 	document.getElementById("r").value = 0.0;
-	document.getElementById("v").value = 0.2;
+	document.getElementById("v").value = 0.9;
 	document.getElementById("qL").value = 0.0;
 	//document.getElementById("X").value = numberWithCommas(0);
 
@@ -988,12 +988,14 @@ function init(){
 	document.getElementById("AWS").style.fontWeight='bold';
 	document.getElementById("AWS").style.fontSize='16px';
 
-	document.getElementById("cost").value = 1400;
+	document.getElementById("cost").value = 3400;
 	//document.getElementById("latency").value = 5.7;
 
 	document.getElementById("query_count").value=10000000000;
 
 	initializeCompressionLibraries();
+
+	initializeSLACheckboxes();
 
 	if($( window ).width()<1400)
 		$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
@@ -1039,7 +1041,7 @@ function init(){
 			p_get = 0.7;
 			p_put=0.0001;
 			//navigateDesignSpace();
-			drawContinuums();
+			drawContinuumsMultithread();
 		}
 	});
 
@@ -1081,6 +1083,8 @@ function init(){
 				}
 			});
 	});
+
+
 /*
 	$('[name=cp_tab]').on('click',function(){
 		if(!$(this).hasClass("down")){
@@ -3719,4 +3723,55 @@ function adjustGuide() {
 function hideNavigation(){
 	$("#question_navigation").animate({opacity:"0"}, "slow");
 	setTimeout('$("#question_navigation").css(\'display\',\'none\')',1000);
+}
+
+function initializeSLACheckboxes() {
+	$('[name=SLA_radio_0]').prop("checked", enable_SLA);
+	$('[name=SLA_radio_1]').prop("checked", enable_DB_migration);
+	$('[name=SLA_radio_2]').prop("checked", enable_dev_ops);
+	$('[name=SLA_radio_3]').prop("checked", enable_backup);
+
+	$('[name=SLA_radio_0]').on('click', function() {
+		if(enable_SLA==true) {
+			enable_SLA = false;
+			$(this).prop("checked", false);
+		}else{
+			enable_SLA = true;
+			$(this).prop("checked", true);
+		}
+		drawContinuumsMultithread();
+	});
+
+	$('[name=SLA_radio_1]').on('click', function() {
+		if(enable_DB_migration==true) {
+			enable_DB_migration = false;
+			$(this).prop("checked", false);
+		}else{
+			enable_DB_migration = true;
+			$(this).prop("checked", true);
+		}
+		drawContinuumsMultithread();
+	});
+
+	$('[name=SLA_radio_2]').on('click', function() {
+		if(enable_dev_ops==true) {
+			enable_dev_ops = false;
+			$(this).prop("checked", false);
+		}else{
+			enable_dev_ops = true;
+			$(this).prop("checked", true);
+		}
+		drawContinuumsMultithread();
+	});
+
+	$('[name=SLA_radio_2]').on('click', function() {
+		if(enable_backup==true) {
+			enable_backup = false;
+			$(this).prop("checked", false);
+		}else{
+			enable_backup = true;
+			$(this).prop("checked", true);
+		}
+		drawContinuumsMultithread();
+	});
 }

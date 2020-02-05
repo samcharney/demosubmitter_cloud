@@ -37,6 +37,12 @@ var if_display = 0;
 var compression_libraries;
 var using_compression=true;
 
+var SLA_factors;
+var enable_SLA=true;
+var enable_DB_migration = true;
+var enable_dev_ops = true;
+var enable_backup = true;
+
 var cri_count=0;
 var cri_miss_count=0;
 var dri_count=0;
@@ -44,6 +50,8 @@ var dri_miss_count=0;
 var cri_cache;
 var dri_cache;
 var log=new Array();
+
+
 
 
 
@@ -88,6 +96,7 @@ function Variables()
     var short_scan_cost;
     var long_scan_cost;
     var total_cost;
+    var SLA_cost;
 
     var query_count;
 
@@ -117,6 +126,12 @@ function Compression_library(){
     var get_overhead;
     var put_overhead;
     var space_reduction_ratio;
+}
+
+function SLA_factor() {
+    var DB_migration_cost;
+    var dev_ops;
+    var backup;
 }
 
 function parseInputVariables()
@@ -152,432 +167,60 @@ function initializeCompressionLibraries()
     console.log(compression_libraries);
 }
 
-function navigateDesignSpace() {
-    var Variables = parseInputVariables();
-    Variables.cost=50000;
-    var N = Variables.N/10;
-    var E = Variables.E;
-    var F = Variables.F;
-    var B = Math.floor(Variables.B/E);
-    var s = Variables.s;
+function initializeSLAFactors()
+{
 
-    var w = Variables.w;
-    var r = Variables.r;
-    var v = Variables.v;
-    var qL = Variables.qL;
-    var qS = Variables.qS;
-    var scenario = 'A';//Variables.scenario;
+    SLA_factors=new Array();
+    for(var i=0;i<3;i++)
+        SLA_factors.push(new SLA_factor());
 
-    var X;
-    var Y;
-    var L;
-    var M_F_HI;
-    var M_F; // = ((B*E + (M - M_F)) > 0 ? B*E + (M - M_F) : (B*E)); // byte
-    var M_F_LO; // = (M_B*(F)*T)/((B)*(E));
-    var M_BF;
-    var M_FP;
-    var FPR_sum;
+    // 0 for AWS, 1 for GCP, 2 for Azure
+    /******************** DB Migration Cost ********************/
 
-    M_BC=0;
-    B=setPricesBasedOnScheme(Variables);
-    if(!setMaxRAMNeeded(Variables))
-        return;
+    SLA_factors[0].DB_migration_cost = 0.115; // $/GB
+    SLA_factors[1].DB_migration_cost = 0.17; // $/GB
+    SLA_factors[2].DB_migration_cost = 0.17; // $/GB
 
-    var best_cost=-1;
+    SLA_factors[0].dev_ops = 0.02; // $/instance
+    SLA_factors[2].dev_ops = 6; // $6/month in the basic plan (https://azure.microsoft.com/en-us/pricing/details/devops/azure-devops-services/)
 
-    var results=new Array();
+    // dev_ops_GCP will be fixed based on the VM type
+    SLA_factors[1].dev_ops=new Array();
 
-    for (var T = 2; T <= 12; T++) {
-        results[T]=new Array();
-        for (var K = 1; K <= T - 1; K++) {
-            results[T][K]=new Array();
-            for (var Z = 1; Z <= T - 1; Z++) {
-                for (var M_B_percent = 0.4; M_B_percent < 1; M_B_percent += 1) {
-                    M_BC=0;
-                    var M_B = M_B_percent * max_RAM_purchased*1024*1024*1024;
-                    var M=max_RAM_purchased*1024*1024*1024;
-                    X = (Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z)  / T) * 8);
-                    M_F_HI = N * ((X / 8) / T + F / B);
-                    if ((N / B) < (M_B * T / (B * E))) {
-                        M_F_LO = (N / B) * F;
-                    } else {
-                        M_F_LO = (M_B * F * T) / (B * E);
-                    }
-                    M_F = M - M_B;
-                    if (M_F < M_F_LO)
-                        M_F = M_F_LO;
-                    var universe_max = workload_type == 0 ? U : U_1 + U_2;
-                    if (workload_type == 1) {
-                        universe_max = U_1 + (1 - p_put) * (N);
-                    }
-                    var size = universe_max < N ? universe_max : N;
-                    var multiplier_from_buffer = size*(E) / (M_B);
-                    // handle case where data fits in buffer
-                    if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
-                    L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
-
-                    if (M_F >= M_F_HI) {
-                        Y = 0;
-                        M_FP = N * F / B;
-                    } else if (M_F > M_F_LO && M_F < M_F_HI) {
-                        Y = L - 1;
-                        M_FP = M_F_LO;
-                        for (var i = L - 2; i >= 1; i--) {
-                            var h = L - i;
-                            var temp_M_FP = M_F_LO;
-                            for (var j = 2; j <= h; j++) {
-                                temp_M_FP = temp_M_FP + (temp_M_FP * T);
-                            }
-                            if (temp_M_FP <= M_F) {
-                                Y = i;
-                                M_FP = temp_M_FP;
-                            }
-                        }
-                    } else {
-                        Y = L - 1;
-                        M_FP = M_F_LO;
-                    }
-                    M_BF = 0;
-                    var margin = 2;
-                    if (M_F - M_FP > 0)
-                        M_BF = M_F - M_FP - margin;
-                    else
-                        M_BF = 0.0;
+    SLA_factors[1].dev_ops[0]=0.1184;
+    SLA_factors[1].dev_ops[1]=0.2368;
+    SLA_factors[1].dev_ops[2]=0.4736;
+    SLA_factors[1].dev_ops[3]=0.9472;
+    SLA_factors[1].dev_ops[4]=1.8944;
+    SLA_factors[1].dev_ops[5]=3.7888;
+    SLA_factors[1].dev_ops[6]=5.6832;
 
 
-                    var update_cost;
-                    var read_cost;
-                    var no_result_read_cost;
-                    var short_scan_cost;
-                    var long_scan_cost;
+    SLA_factors[0].backup = 0.05; // $0.05 per GB-Month
+    SLA_factors[1].backup = 0.17; // $0.170 per GB/month for SSD storage capacity
+    SLA_factors[2].backup = 0.0448; // $0.0448 per GB
 
-                    if (write_percentage != 0) {
-                        if(scenario=='A'){
-                            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
-                        }else {
-                            update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
-                        }
-                    }
-                    if (read_percentage != 0) {
-                        if (scenario == 'A') // Avg-case
-                        {
-                            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E);
-                        } else // Worst-case
-                        {
-                            read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
-                            //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
-                        }
-
-                    }
-                    if (short_scan_percentage != 0) {
-                        short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
-                    }
-                    long_scan_cost = analyzeLongScanCost(B, s);
-                    if (scenario == 'A') // Avg-case
-                    {
-                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
-                    } else // Worst-case
-                    {
-                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
-                        //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
-                        //console.log(Math.pow(K, 1/T));
-                    }
-                    var total_cost=(w*update_cost+v*read_cost)/(v+w);
-                    //console.log(total_cost);
-                    if(best_cost<0||best_cost>total_cost){
-                        //Math.exp(((-M_BF*8)/N)*Math.pow(Math.log(2),2)*Math.pow(T, Y)) * Math.pow(Z, (T-1)/T) * Math.pow(K, 1/T) * Math.pow(T, (T/(T-1)))/(T-1);
-                        //console.log( Math.pow(Z, (T-1)/T)+"-"+Math.pow(K, 1/T)+"-"+Math.pow(T, (T/(T-1)))/(T-1));
-                        //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
-                        best_cost=total_cost;
-                        Variables.K=K;
-                        Variables.T=T;
-                        Variables.L=L;
-                        Variables.Z=Z;
-                        Variables.Buffer=M_B;
-                        Variables.M_BF=M_BF;
-                        Variables.M_FP=M_FP;
-                        Variables.read_cost=read_cost;
-                        Variables.update_cost=update_cost;
-                        Variables.short_scan_cost=short_scan_cost;
-                        Variables.long_scan_cost=long_scan_cost;
-                        Variables.no_result_read_cost=read_cost-1;
-                        Variables.total_cost=total_cost;
-                    }
-                    results[T][K][Z]=read_cost;
-                }
-            }
-        }
-    }
-
-    var cost_array = [
-        Variables.update_cost,
-        Variables.long_scan_cost,
-        Variables.read_cost,
-        Variables.no_result_read_cost,
-        max_RAM_purchased*1024*1024*1024,
-        0
-    ]
-
-    var id_array = [
-        "write",
-        "long_range_lookup",
-        "existing_point_lookup",
-        "zero_result_lookup",
-        "memory",
-        "storage"
-    ]
-    var text_array = [
-        "Update",
-        "Range Lookup",
-        "Existing Point Lookup",
-        "Zero-result Point Lookup",
-        //"Space Amplification"
-        "Memory",
-        "Storage"
-    ];
-
-    for(j=0;j <= 4;j++){
-        var div_tmp = document.getElementById(id_array[j]);
-        removeAllChildren(div_tmp);
-        div_tmp.setAttribute("style","text-align: center")
-        var p_tmp=document.createElement("p");
-        var span_tmp=document.createElement("span");
-
-        var cost = parseFloat(cost_array[j]);
-        var threshold_flag=false;
-        var message;
-        var msg_cost = cost;
-        if(cost*1000%1 != 0){
-            msg_cost=cost.toExponential(5);
-        }
-        if(cost > 2000){
-            cost = cost.toExponential(2);
-        }else if(cost <= 1e-9){
-            if(cost != 0){
-                threshold_flag=true;
-            }
-            cost = 0.0;
-        }else if(typeof cost == 'number'  && cost*1000 < 1){
-            cost = myFloor(cost, 1).toExponential(1)
-        }else if(cost*1000%1 != 0){
-            cost = (Math.round(cost*1000)/1000).toFixed(3)
-        }
-
-
-        if(j < 4){
-            message = text_array[j] + " at this level has " + msg_cost + " I/O cost(s)."
-            cost += " I/O";
-        }else{
-            message = text_array[j] + " of this data structure is " + formatBytes(msg_cost,1) + ".";
-            cost = formatBytes(msg_cost/8,1);
-        }
-
-        if(threshold_flag){
-            message += "Because the value here is too small (less than 1e-9), it is noted as 0 in breakdown table. "
-        }
-
-        span_tmp.setAttribute("data-tooltip",message);
-        span_tmp.setAttribute("data-tooltip-position","bottom")
-        if(j != 4){
-            p_tmp.setAttribute("style","text-align: center;font-size:18px")
-        }else{
-            p_tmp.setAttribute("style","text-align: center;font-weight:bold;font-size:18px");
-        }
-
-        p_tmp.textContent=cost
-        span_tmp.appendChild(p_tmp);
-        div_tmp.appendChild(span_tmp);
-    }
-
-    var omega=1e-6;
-    var throughput = 1/Variables.total_cost/omega;
-    if(throughput > Math.pow(10, 8)){
-        message=throughput.toExponential(2) + " ops/s";
-        message2="Under the specified workload, the throughout is " + throughput.toExponential(6) + " ops/second"
-    }else{
-        message= throughput.toFixed(1) + " ops/s";
-        message2="Under the specified workload, the throughout is " + throughput.toFixed(6) + " ops/second"
-    }
-    var div_throughput = document.getElementById("throughput");
-    removeAllChildren(div_throughput);
-    var span_tmp=document.createElement("span");
-    var p_tmp = document.createElement("p");
-    p_tmp.textContent = message;
-    span_tmp.setAttribute("data-tooltip",message2);
-    span_tmp.setAttribute("data-tooltip-position","bottom")
-    p_tmp.setAttribute("style","text-align: center;font-weight:bold;font-size:18px")
-    span_tmp.appendChild(p_tmp);
-    div_throughput.appendChild(span_tmp);
-
-    document.getElementById("mbuffer").value=(Variables.Buffer/1024/1024).toFixed(2); //in MB
-    document.getElementById("memory_budget").value=(Variables.M_BF/Variables.N).toFixed(2); //0 bits per element
-    document.getElementById("L").value=Variables.L;
-    document.getElementById("K").value=Variables.K;
-    document.getElementById("Z").value=Variables.Z;
-    document.getElementById("T").value=Variables.T;
-
-    return results;
+    /******************** Other Factors ********************/
 }
 
-function countThroughput(cost, cloud_provider) {
-    var Variables = parseInputVariables();
-    var N = Variables.N;
-    var E = Variables.E;
-    var F = Variables.F;
-    var B = Math.floor(Variables.B/E);
-    var s = Variables.s;
-
-    var w = Variables.w;
-    var r = Variables.r;
-    var v = Variables.v;
-    var qL = Variables.qL;
-    var qS = Variables.qS;
-    var scenario = 'W';//Variables.scenario;
-
-    var query_count=Variables.query_count;
-
-    var VM_libraries=initializeVMLibraries();
-    Variables.cost=cost;
-
-    var X;
-    var Y;
-    var L;
-    var M_F_HI;
-    var M_F; // = ((B*E + (M - M_F)) > 0 ? B*E + (M - M_F) : (B*E)); // byte
-    var M_F_LO; // = (M_B*(F)*T)/((B)*(E));
-    var M_BF;
-    var M_FP;
-    var FPR_sum;
-
-    B=setPricesBasedOnScheme(Variables, cloud_provider);
-    if(!setMaxRAMNeeded(Variables))
-        return 0;
-
-    var best_cost=-1;
-    var best_latency=-1;
-
-    for (var VM_index = 0; VM_index < VM_libraries[cloud_provider].no_of_instances; VM_index++) {
-        mem_sum=Math.floor(total_budget/(24*30*VM_libraries[cloud_provider].rate_of_instance[VM_index]));
-        if(mem_sum==0) continue;
-        //console.log("VM="+VM_index+" cloud_provider:"+cloud_provider+" mem_sum="+mem_sum);
-        max_RAM_purchased=VM_libraries[cloud_provider].mem_of_instance[VM_index];
-        N=Variables.N/mem_sum;
-        //console.log(VM_libraries);
-        for (var T = 2; T <= 8; T++) {
-            for (var K = 1; K <= T - 1; K++) {
-                for (var Z = 1; Z <= T - 1; Z++) {
-                    for (var M_B_percent = 0.2; M_B_percent < 1; M_B_percent += 0.2) {
-                        var M_B = M_B_percent * max_RAM_purchased * 1024 * 1024 * 1024;
-                        var M = max_RAM_purchased * 1024 * 1024 * 1024;
-                        X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z) / T) * 8);
-                        M_F_HI = N * ((X / 8) / T + F / B);
-                        if ((N / B) < (M_B * T / (B * E))) {
-                            M_F_LO = (N / B) * F;
-                        } else {
-                            M_F_LO = (M_B * F * T) / (B * E);
-                        }
-                        M_F = M - M_B;
-                        if (M_F < M_F_LO)
-                            M_F = M_F_LO;
-                        L = Math.ceil(Math.log(N * (E) / (M_B)) / Math.log(T));
-
-                        if (M_F >= M_F_HI) {
-                            Y = 0;
-                            M_FP = N * F / B;
-                        } else if (M_F > M_F_LO && M_F < M_F_HI) {
-                            Y = L - 1;
-                            M_FP = M_F_LO;
-                            for (var i = L - 2; i >= 1; i--) {
-                                var h = L - i;
-                                var temp_M_FP = M_F_LO;
-                                for (var j = 2; j <= h; j++) {
-                                    temp_M_FP = temp_M_FP + (temp_M_FP * T);
-                                }
-                                if (temp_M_FP <= M_F) {
-                                    Y = i;
-                                    M_FP = temp_M_FP;
-                                }
-                            }
-                        } else {
-                            Y = L - 1;
-                            M_FP = M_F_LO;
-                        }
-                        M_BF = 0;
-                        var margin = 2;
-                        if (M_F - M_FP > 0)
-                            M_BF = M_F - M_FP - margin;
-                        else
-                            M_BF = 0.0;
-
-
-                        var update_cost;
-                        var read_cost;
-                        var no_result_read_cost;
-                        var short_scan_cost;
-                        var long_scan_cost;
-                        var FPR_sum;
-
-                        if (write_percentage != 0) {
-                            if(scenario=='A'){
-                                update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 1);
-                            }else {
-                                update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
-                            }
-                        }
-                        if (read_percentage != 0) {
-                            if (scenario == 'A') // Avg-case
-                            {
-                                read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E));
-                            } else // Worst-case
-                            {
-                                read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
-                                //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
-                            }
-                        }
-                        if (short_scan_percentage != 0) {
-                            short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
-                        }
-                        long_scan_cost = analyzeLongScanCost(B, s);
-                        if (scenario == 'A') // Avg-case
-                        {
-                            //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
-                        } else // Worst-case
-                        {
-                            //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
-                            //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
-                        }
-                        var total_cost = (w * update_cost + v * read_cost) / (v + w);
-                        var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60;
-
-                        if (best_latency < 0 || total_latency < best_latency) {
-                            best_latency = total_latency;
-                            Variables.K = K;
-                            Variables.T = T;
-                            Variables.L = L;
-                            Variables.Z = Z;
-                            Variables.Buffer = M_B;
-                            Variables.M_BF = M_BF;
-                            Variables.M_FP = M_FP;
-                            Variables.read_cost = read_cost;
-                            Variables.update_cost = update_cost;
-                            Variables.short_scan_cost = short_scan_cost;
-                            Variables.long_scan_cost = long_scan_cost;
-                            Variables.no_result_read_cost = read_cost - 1;
-                            Variables.total_cost = total_cost;
-                            Variables.latency = total_latency;
-                            Variables.VM_info= (mem_sum+" X "+VM_libraries[cloud_provider].name_of_instance[VM_index]);
-                            Variables.VM_instance= VM_libraries[cloud_provider].name_of_instance[VM_index];
-                            Variables.VM_instance_num=mem_sum;
-                        }
-                    }
-                }
-            }
-        }
+function computeSLARelatedCost(cloud_provider,N,E)
+{
+    console.log(N,E);
+    console.log((SLA_factors[cloud_provider].DB_migration_cost + SLA_factors[cloud_provider].backup)*(N*E)/(1024*1024*1024));
+    if(enable_DB_migration && enable_backup)
+    {
+        return (SLA_factors[cloud_provider].DB_migration_cost + SLA_factors[cloud_provider].backup)*(N*E)/(1024*1024*1024);
     }
-    //return  max_RAM_purchased;
-    //console.log(Variables.latency);
-    return Variables;
+    else if(enable_DB_migration && !enable_backup)
+    {
+        return (SLA_factors[cloud_provider].DB_migration_cost)*(N*E)/(1024*1024*1024);
+    }
+    else if(!enable_DB_migration && enable_backup)
+    {
+        return (SLA_factors[cloud_provider].backup)*(N*E)/(1024*1024*1024);
+    }
 }
+
 
 function countContinuum(combination, cloud_provider, compression_style=0) {
     var Variables = parseInputVariables();
@@ -597,6 +240,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
     var query_count=Variables.query_count;
 
     var VM_libraries=initializeVMLibraries();
+
     //Variables.cost=cost;
 
     if(using_compression==true){
@@ -605,6 +249,9 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
         Variables.E=E;
         Variables.F=F;
     }
+
+    var SLA_cost=computeSLARelatedCost(cloud_provider,Variables.N,Variables.E);
+
     var X;
     var Y;
     var L;
@@ -637,6 +284,18 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
             Variables.VM_instance= VM_libraries[cloud_provider].name_of_instance[i];
             Variables.VM_instance_num=mem_sum;
             Variables.Vcpu_num=VM_libraries[cloud_provider].num_of_vcpu[i];
+
+            if(enable_SLA == 1 && enable_dev_ops) // for AWS and Azure
+            {
+                var dev_ops_cost;
+
+                if(cloud_provider != 1){
+                    dev_ops_cost = SLA_factors[cloud_provider].dev_ops * combination[i];
+                } else {
+                    dev_ops_cost = SLA_factors[cloud_provider].dev_ops[i] * combination[i];
+                }
+                SLA_cost += dev_ops_cost;
+            }
         }
     }
 
@@ -739,10 +398,14 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                     }
                     //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
                     var total_cost = (w * update_cost + v * read_cost + r * no_result_read_cost) / (v + w + r);
-                    var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+
                     if(using_compression){
                         total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100) + r * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w + r);
                     }
+
+                    var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+
+
 
                     //log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
                     if (best_latency < 0 || total_latency < best_latency) {
@@ -763,11 +426,15 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         Variables.total_cost = total_cost;
                         Variables.latency = total_latency;
                         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
+                        if(enable_SLA){
+                            Variables.cost = (monthly_storage_cost + monthly_mem_cost + SLA_cost).toFixed(3);
+                        }
                         Variables.memory_footprint=max_RAM_purchased*mem_sum;
                         Variables.cloud_provider=cloud_provider;
                         Variables.throughput=mem_sum*IOPS/total_cost;
                         Variables.compression_name=compression_libraries[compression_style].compression_name;
                         Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
+                        Variables.SLA_cost=SLA_cost;
                     }
                 }
             }
@@ -838,6 +505,8 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         Variables.F=F;
     }
 
+    var SLA_cost=computeSLARelatedCost(cloud_provider,Variables.N,Variables.E);
+
     var Storage_Value=getStorageCost(Variables, cloud_provider);
     B=Storage_Value[0];
     var monthly_storage_cost=Storage_Value[1];
@@ -858,6 +527,18 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
             Variables.VM_instance= VM_libraries[cloud_provider].name_of_instance[i];
             Variables.VM_instance_num=mem_sum;
             Variables.Vcpu_num=VM_libraries[cloud_provider].num_of_vcpu[i];
+
+            if(enable_SLA == 1 && enable_dev_ops) // for AWS and Azure
+            {
+                var dev_ops_cost;
+
+                if(cloud_provider != 1){
+                    dev_ops_cost = SLA_factors[cloud_provider].dev_ops * combination[i];
+                } else {
+                    dev_ops_cost = SLA_factors[cloud_provider].dev_ops[i] * combination[i];
+                }
+                SLA_cost += dev_ops_cost;
+            }
         }
     }
     N=Variables.N/mem_sum;
@@ -955,10 +636,12 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
     }
     var total_cost = (w * update_cost + v * read_cost + r * no_result_read_cost) / (v + w + r);
-    var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+
     if(using_compression){
         total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100) + r * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w + r);
     }
+
+    var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
 
     if (best_latency < 0 || total_latency < best_latency) {
         best_latency = total_latency;
@@ -978,10 +661,14 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         Variables.total_cost = total_cost;
         Variables.latency = total_latency;
         Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
+        if(enable_SLA){
+            Variables.cost = (monthly_storage_cost + monthly_mem_cost + SLA_cost).toFixed(3);
+        }
         Variables.memory_footprint=max_RAM_purchased*mem_sum;
         Variables.cloud_provider=cloud_provider;
         Variables.compression_name=compression_libraries[compression_style].compression_name;
         Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
+        Variables.SLA_cost=SLA_cost;
     }
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
@@ -1694,6 +1381,10 @@ function getStorageCost(Variables, cloud_provider)
     var B;
     if(cloud_provider == 0)
     {
+        if(enable_SLA == 1)
+        {
+            total_budget = total_budget - SLA_factors[0].DB_migration_cost*storage;
+        }
         MIN_RAM_SIZE = 16; // GB
         RAM_BLOCK_COST = 0.091; // per RAM block per hour
         MBps = 3500; // it is actually Mbps  for AWS
@@ -1714,6 +1405,10 @@ function getStorageCost(Variables, cloud_provider)
     }
     if(cloud_provider == 1)
     {
+        if(enable_SLA == 1)
+        {
+            total_budget = total_budget - SLA_factors[1].DB_migration_cost*storage;
+        }
         MIN_RAM_SIZE = 13; // GB
         RAM_BLOCK_COST = 0.0745; // per RAM block per hour
         MBps = read_percentage*720/100 + write_percentage*160/100; // taking average
@@ -1727,6 +1422,10 @@ function getStorageCost(Variables, cloud_provider)
     }
     if(cloud_provider == 2)
     {
+        if(enable_SLA == 1)
+        {
+            total_budget = total_budget - SLA_factors[2].DB_migration_cost*storage;
+        }
         MIN_RAM_SIZE = 16; // GB
         RAM_BLOCK_COST = 0.0782; // per RAM block per hour
         B = 8*1024/(Variables.E);
@@ -2620,11 +2319,16 @@ onmessage = function(e) {
     console.log(e);
     input=e.data.input;
     initializeCompressionLibraries();
+    initializeSLAFactors();
     U = e.data.U;
     p_put = e.data.p_put;
     U_1 = e.data.U_1;
     U_2 = e.data.U_2;
     p_get = e.data.p_get;
+    enable_SLA=e.data.SLA.enable_SLA;
+    enable_DB_migration=e.data.SLA.enable_DB_migration;
+    enable_dev_ops=e.data.SLA.enable_dev_ops;
+    enable_backup=e.data.SLA.enable_backup;
     workload_type=e.data.workload_type;
     var result=buildContinuums(e.data.cloud_provider);
     console.log('Message received from main script');

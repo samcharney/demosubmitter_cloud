@@ -39,6 +39,11 @@ var if_display = 0;
 var compression_libraries;
 var using_compression=true;
 
+var enable_SLA=true;
+var enable_DB_migration = true;
+var enable_dev_ops = true;
+var enable_backup = true;
+
 var cri_count=0;
 var cri_miss_count=0;
 var dri_count=0;
@@ -46,6 +51,8 @@ var dri_miss_count=0;
 var cri_cache;
 var dri_cache;
 var log=new Array();
+
+
 
 
 
@@ -121,6 +128,12 @@ function Compression_library(){
     var space_reduction_ratio;
 }
 
+function SLA_factor() {
+    var DB_migration_cost;
+    var dev_ops;
+    var backup;
+}
+
 function parseInputVariables()
 {
 
@@ -172,6 +185,42 @@ function initializeCompressionLibraries()
     compression_libraries[2].space_reduction_ratio = 0.83;
 
     console.log(compression_libraries);
+}
+
+void initializeSLAFactors()
+{
+
+    SLA_factors=new Array();
+    for(var i=0;i<3;i++)
+        SLA_factors.push(new SLA_factor());
+
+    // 0 for AWS, 1 for GCP, 2 for Azure
+    /******************** DB Migration Cost ********************/
+
+    SLA_factors[0].DB_migration_cost = 0.115; // $/GB
+    SLA_factors[1].DB_migration_cost = 0.17; // $/GB
+    SLA_factors[2].DB_migration_cost = 0.17; // $/GB
+
+    SLA_factors[0].dev_ops = 0.02; // $/instance
+    SLA_factors[2].dev_ops = 6; // $6/month in the basic plan (https://azure.microsoft.com/en-us/pricing/details/devops/azure-devops-services/)
+
+    // dev_ops_GCP will be fixed based on the VM type
+    SLA_factors[1]=new Array();
+
+    SLA_factors[1][0]=0.1184;
+    SLA_factors[1][1]=0.2368;
+    SLA_factors[1][2]=0.4736;
+    SLA_factors[1][3]=0.9472;
+    SLA_factors[1][4]=1.8944;
+    SLA_factors[1][5]=3.7888;
+    SLA_factors[1][6]=5.6832;
+
+
+    SLA_factors[0].backup = 0.05; // $0.05 per GB-Month
+    SLA_factors[1].backup = 0.17; // $0.170 per GB/month for SSD storage capacity
+    SLA_factors[2].backup = 0.0448; // $0.0448 per GB
+
+    /******************** Other Factors ********************/
 }
 
 function navigateDesignSpace() {

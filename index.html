@@ -290,7 +290,7 @@
                 </div>
 
 
-                <div class="col-sm-3" style="width: 26%;position: relative; left: -2.5%">
+                <div class="col-sm-3" style="width: 22%;position: relative; left: -2.5%">
                     <div class="row">
                     <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
@@ -309,7 +309,7 @@
                           <div class="col-lg-4 col-md-4 col-sm-4"> <h4>Point Lookups</h4> </div>
                         </div> -->
                         <form id="myForm_1" style=" text-align: left; height:30px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px">
-                            <label class="radiobutton"  style=" margin:0px 80px 0px 30px"><input type="radio" name="radio_1" value="uniform" checked="checked"/> uniform <br />
+                            <label class="radiobutton"  style=" margin:0px 40px 0px 20px"><input type="radio" name="radio_1" value="uniform" checked="checked"/> uniform <br />
                                 <span class="check_mark"></span>
                             </label>
 
@@ -340,22 +340,22 @@
 
 
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Write" data-tooltip-position="bottom"> Proportion of Write </span></span>
+                            <span class="input-group-addon"><span data-tooltip="Proportion of Write" data-tooltip-position="bottom"> Write % </span></span>
                             <input id="w" type="text" class="form-control" aria-label="Proportion of write operation" placeholder=" w (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Non-result Point Lookup Operation" data-tooltip-position="bottom"> Proportion of Non-result Point Lookup </span></span>
+                            <span class="input-group-addon"><span data-tooltip="Proportion of Non-result Point Lookup Operation" data-tooltip-position="bottom"> Non-result Point Lookup % </span></span>
                             <input id="r" type="text" class="form-control" aria-label="Proportion of non-result point lookup operation" placeholder=" r (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group" style="display: none">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Short Range Lookup Operation" data-tooltip-position="bottom"> Proportion of Short Range Lookup </span></span>
+                            <span class="input-group-addon"><span data-tooltip="Proportion of Short Range Lookup Operation" data-tooltip-position="bottom"> Short Range Lookup % </span></span>
                             <input id="qS" type="text" class="form-control" aria-label="Proportion of short range lookup operation" placeholder=" qS (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group" style="display: none">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Long Range Lookup Operation" data-tooltip-position="bottom"> Proportion of Long Range Lookup  </span></span>
+                            <span class="input-group-addon"><span data-tooltip="Proportion of Long Range Lookup Operation" data-tooltip-position="bottom"> Long Range Lookup % </span></span>
                             <input id="qL" type="text" class="form-control" aria-label="Proportion of long range lookup operation" placeholder=" qL (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
@@ -366,7 +366,7 @@
 
 
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Existing Point Lookup Operation" data-tooltip-position="bottom"> Proportion of Existig Point Lookup </span></span>
+                            <span class="input-group-addon"><span data-tooltip="Proportion of Existing Point Lookup Operation" data-tooltip-position="bottom"> Existig Point Lookup % </span></span>
                             <input id="v" type="text" class="form-control" aria-label="Proportion of existing point lookup operation" placeholder=" v (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
@@ -461,7 +461,7 @@
                               <div class="row">
                                   <div>
                                       <div class="">
-                                          <select id="cloud-provider" name="" style="position: relative; left: -120px;width:200px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
+                                          <select id="cloud-provider" name="" style="position: relative; left: -120px;width:150px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
                                               <option value="Any">Any</option>
                                               <option value="AWS">AWS</option>
                                               <option value="GCP">GCP</option>
@@ -473,6 +473,40 @@
                               </div>
                           </div>
                       </div>
+
+                <div class="col-sm-3" style="width: 7%;position: relative; left: -1.5%">
+                    <div class="col-sm-3" style="width: 200px;position: relative;">
+                    <div class="row">
+                        <div style="display: inline-block">
+                            <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
+                            <span style="cursor: pointer;font-size:20px" id="SLA-text" >service<br>level<br>agreement<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
+                        </div>
+                        <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#SLA-setting" role="button" aria-expanded="false">
+                            <div id="SLA-trigger" onclick="adjustGuide()">
+                                <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="SLA-setting" class="collapse multi-collapse">
+
+
+                        <label class="radiobutton"  style="margin:20px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_0" value="1" /> enable SLA <br />
+                            <span name="SLA_check_mark" class="check_mark"></span>
+                        </label>
+                            <label class="radiobutton"  style="margin:0px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_1" value="1" /> database migration <br />
+                                <span id=name="SLA_check_mark" class="check_mark"></span>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_2" value="2" /> operational and tool support <br />
+                                <span name="SLA_check_mark" class="check_mark"></span>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_3" value="3" /> backup <br />
+                                <span name="SLA_check_mark" class="check_mark"></span>
+                            </label>
+
+
+                    </div>
+                    </div>
+                </div>
 
 
 

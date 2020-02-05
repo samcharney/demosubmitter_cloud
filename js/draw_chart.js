@@ -623,7 +623,7 @@ function drawContinuums(if_regenerate=true) {
     }];
 
     best_array=getBestDesignEverArray(ContinuumArray);
-
+/*
     latency_array=new Array();
     cost_array=new Array();
     info_array=new Array();
@@ -655,7 +655,7 @@ function drawContinuums(if_regenerate=true) {
             }
         }
     }
-    console.log(throughput_array)
+
     var data_ever=[{
         x: cost_array,
         y: latency_array,
@@ -669,58 +669,6 @@ function drawContinuums(if_regenerate=true) {
             "<b>%{hovertext}</b><extra></extra>",
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
-
-    var data_compare=[/*{
-        x: cost_array,
-        y: latency_array,
-        marker: { size: 7, symbol: 'circle', color: "purple"},
-        name: 'self-design',
-        mode: 'lines+markers',
-        showlegend: true,
-        text: info_array,
-        hovertext: name_array,
-        line: {color: 'purple', width: 2},
-        hovertemplate:
-            "<b>%{y}</b><extra></extra>",
-        type: 'scatter'},*/
-        {
-        x: cost_array,
-        y: CP_array,
-        marker: { size: 5, symbol: 'circle', color: "steelblue"},
-        mode: 'lines+markers',
-        showlegend: false,
-        text: info_array,
-        hovertext: name_array,
-        line: {color: 'lightblue', width: 2},
-        hovertemplate:
-            "<b>%{text}</b><br><br>",
-        type: 'scatter'}];
-
-    var data_gradient=[/*{
-        x: cost_array,
-        y: latency_array,
-        marker: { size: 7, symbol: 'circle', color: "purple"},
-        name: 'self-design',
-        mode: 'lines+markers',
-        showlegend: true,
-        text: info_array,
-        hovertext: name_array,
-        line: {color: 'purple', width: 2},
-        hovertemplate:
-            "<b>%{y}</b><extra></extra>",
-        type: 'scatter'},*/
-        {
-            x: cost_array,
-            y: gradient_array,
-            marker: { size: 5, symbol: 'circle', color: "orange"},
-            mode: 'lines+markers',
-            showlegend: false,
-            text: info_array,
-            hovertext: name_array,
-            line: {color: 'yellow', width: 2},
-            hovertemplate:
-                "<b>%{text}</b><br><br>",
-            type: 'scatter'}]
 
     var result_array_ad=ContinuumArray;
     result_array_ad.sort(function (a,b) {return a[1]-b[1];});
@@ -866,6 +814,7 @@ function drawContinuums(if_regenerate=true) {
             "<b>%{hovertext}</b><extra></extra>",
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
+*/
 
     console.log(best_array);
     var cost_result_text=new Array();
@@ -1018,7 +967,7 @@ function drawContinuums(if_regenerate=true) {
 
 
 
-
+/*
     var layout =
         {
             xaxis: {
@@ -1040,7 +989,7 @@ function drawContinuums(if_regenerate=true) {
             },
             autosize: true,
             hovermode: "closest",
-            width: 400,
+            width: 375,
             height: 300,
             margin: {
                 l: 60,
@@ -1068,7 +1017,7 @@ function drawContinuums(if_regenerate=true) {
             },
             autosize: true,
             hovermode: "closest",
-            width: 750,
+            width: 375,
             height: 500,
             margin: {
                 l: 60,
@@ -1094,7 +1043,7 @@ function drawContinuums(if_regenerate=true) {
     //Plotly.newPlot('tester3', data_gradient, layout);
 
 
-
+*/
 
 
 
@@ -1257,6 +1206,12 @@ function drawContinuumsMultithread(if_regenerate=true) {
         parameters.cloud_provider=cloud_provider;
         parameters.input=input;
         parameters.workload_type=workload_type;
+        var SLA={};
+        SLA.enable_SLA=enable_SLA;
+        SLA.enable_DB_migration=enable_DB_migration;
+        SLA.enable_dev_ops=enable_dev_ops;
+        SLA.enable_backup=enable_backup;
+        parameters.SLA=SLA;
         myWorker.postMessage(parameters);
         console.log(parameters);
         myWorker.onmessage = function(e) {
@@ -1340,6 +1295,8 @@ function drawContinuumsNew(ContinuumArray){
 
     best_array=getBestDesignEverArray(ContinuumArray);
 
+    /*
+
     latency_array=new Array();
     cost_array=new Array();
     info_array=new Array();
@@ -1386,7 +1343,7 @@ function drawContinuumsNew(ContinuumArray){
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
 
-    var data_compare=[/*{
+    var data_compare=[{
         x: cost_array,
         y: latency_array,
         marker: { size: 7, symbol: 'circle', color: "purple"},
@@ -1398,7 +1355,7 @@ function drawContinuumsNew(ContinuumArray){
         line: {color: 'purple', width: 2},
         hovertemplate:
             "<b>%{y}</b><extra></extra>",
-        type: 'scatter'},*/
+        type: 'scatter'},
         {
             x: cost_array,
             y: CP_array,
@@ -1412,7 +1369,7 @@ function drawContinuumsNew(ContinuumArray){
                 "<b>%{text}</b><br><br>",
             type: 'scatter'}];
 
-    var data_gradient=[/*{
+    var data_gradient=[{
         x: cost_array,
         y: latency_array,
         marker: { size: 7, symbol: 'circle', color: "purple"},
@@ -1424,7 +1381,7 @@ function drawContinuumsNew(ContinuumArray){
         line: {color: 'purple', width: 2},
         hovertemplate:
             "<b>%{y}</b><extra></extra>",
-        type: 'scatter'},*/
+        type: 'scatter'},
         {
             x: cost_array,
             y: gradient_array,
@@ -1583,6 +1540,8 @@ function drawContinuumsNew(ContinuumArray){
         type: 'scatter'
     },legend_array[0],legend_array[1],legend_array[2]];
 
+    */
+
     console.log(best_array);
     var cost_result_text=new Array();
     var chart_start_index;
@@ -1734,7 +1693,7 @@ function drawContinuumsNew(ContinuumArray){
 
 
 
-
+/*
     var layout =
         {
             xaxis: {
@@ -1810,7 +1769,7 @@ function drawContinuumsNew(ContinuumArray){
     //Plotly.newPlot('tester3', data_gradient, layout);
 
 
-
+*/
 
 
 
