@@ -52,6 +52,9 @@ var cri_cache;
 var dri_cache;
 var log=new Array();
 
+var worker_running=false;
+var myWorker;
+
 
 
 

@@ -234,7 +234,7 @@
 
 
     <section id="interactiveDemo">
-        <div id="demo_body" class="container page-scroll" style="width:1350px;">
+        <div id="demo_body" class="container page-scroll" style="width:100%;">
 
             <!-- <a href="#interactiveDemo" id="interactiveDemo"></a>  -->
 
@@ -474,44 +474,38 @@
                           </div>
                       </div>
 
-                <div class="col-sm-3" style="width: 7%;position: relative; left: -1.5%">
-                    <div class="col-sm-3" style="width: 200px;position: relative;">
-                    <div class="row">
-                        <div style="display: inline-block">
-                            <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
-                            <span style="cursor: pointer;font-size:20px" id="SLA-text" >service<br>level<br>agreement<span style="color: blue;margin-top:15px"><sup>*</sup></span></span>
-                        </div>
-                        <div class="trigger rotate" style="cursor: pointer; width:25px; position:relative; top:4px; display: inline-block" data-toggle="collapse" href="#SLA-setting" role="button" aria-expanded="false">
-                            <div id="SLA-trigger" onclick="adjustGuide()">
-                                <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="SLA-setting" class="collapse multi-collapse">
 
-
-                        <label class="radiobutton"  style="margin:20px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_0" value="1" /> enable SLA <br />
-                            <span name="SLA_check_mark" class="check_mark"></span>
-                        </label>
-                            <label class="radiobutton"  style="margin:0px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_1" value="1" /> database migration <br />
-                                <span id=name="SLA_check_mark" class="check_mark"></span>
-                            </label>
-                            <label class="radiobutton"  style="margin:0px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_2" value="2" /> operational and tool support <br />
-                                <span name="SLA_check_mark" class="check_mark"></span>
-                            </label>
-                            <label class="radiobutton"  style="margin:0px 0px 10px 0px; display: block; text-align: left"><input type="radio" name="SLA_radio_3" value="3" /> backup <br />
-                                <span name="SLA_check_mark" class="check_mark"></span>
-                            </label>
-
-
-                    </div>
-                    </div>
-                </div>
 
 
 
             </div>
 
+            <div style="width: 100%; height:0px; position: relative; ">
+                <div style="width: 220px;position: absolute; right: -20px;">
+                <div  style=" transform: rotate(90deg) translateX(260px); transform-origin: right top 0;border: #7F89FF solid 1.5px; border-bottom-left-radius:15px;border-bottom-right-radius:15px; ">
+                        <div style="display: inline-block; ">
+                            <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
+                            <span style="cursor: pointer;font-size:20px; padding-left:8px" id="SLA-text" >service level agreement</span>
+                        </div>
+                        <div style="width: 100%;height: 2px;background-color: #7F89FF"></div>
+                        <div id="SLA-setting"  style="display: block; width:180px; height: 0px;overflow: hidden; opacity: 0; transform: rotate(-90deg) translateY(-160px) translateX(-10px);transform-origin: right top 0;">
+
+                            <div style="margin:10px 0px 10px 0px; display: inline-block; text-align: left"><input class="checkbox" type="checkbox" id="SLA_radio_1" value="1" /> <label style="color: black" for="SLA_radio_1"><span style="position:relative; top:-2px">Database migration<br /></span></label>
+                            </div>
+                            <div style="margin:10px 0px 10px 0px; display: inline-block; text-align: left"><input class="checkbox" type="checkbox" id="SLA_radio_2" value="2" /> <label style="color: black" for="SLA_radio_2"><span style="position:relative; top:-2px">Operational and tool support<br /></span></label>
+                            </div>
+                            <div style="margin:10px 0px 10px 0px; display: inline-block; text-align: left"><input class="checkbox" type="checkbox" id="SLA_radio_3" value="3" /> <label style="color: black" for="SLA_radio_3"><span style="position:relative; top:-2px">Backup <br /></span></label>
+                            </div>
+                        </div>
+                        <div class="rotate_2" style="left: 40%; cursor: pointer; width:25px; position:relative; top:4px; display: inline-block"  role="button" aria-expanded="false">
+                            <div id="SLA-trigger" onclick="switch_SLA()">
+                                <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
+                            </div>
+                        </div>
+
+                </div>
+                </div>
+            </div>
 
 
             <br>
@@ -653,11 +647,11 @@
 
                 <div class="row" style="width: 100%; margin-bottom: 50px">
 
-                    <div  class="cloud_button" onclick="LoadCharts()" style=" left:660px; cursor:pointer" >
+                    <div  class="cloud_button" onclick="LoadCharts()" style=" left:calc(50% - 58px); cursor:pointer" >
                         Continue
                     </div>
 
-                    <div id="loading_canvas_2" style=" width: 40px; height: 40px; position: relative; top: 10px; left:720px; transform:scale(0.9); opacity: 0">
+                    <div id="loading_canvas_2" style=" width: 40px; height: 40px; position: relative; top: 10px; left:calc(50%); transform:scale(0.9); opacity: 0">
                         <div class="lds-roller" style=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                         <div id="loading_percentage" style="width: 64px; height: 20px;font-size: 15px;position: relative;bottom:24px; text-align: center">0%</div>
                     </div>
@@ -680,7 +674,7 @@
                 </div>
 
 
-                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; right: -180px">
+                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; left: calc(50% - 500px)">
 
 
 

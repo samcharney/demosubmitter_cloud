@@ -205,8 +205,8 @@ function initializeSLAFactors()
 
 function computeSLARelatedCost(cloud_provider,N,E)
 {
-    console.log(N,E);
-    console.log((SLA_factors[cloud_provider].DB_migration_cost + SLA_factors[cloud_provider].backup)*(N*E)/(1024*1024*1024));
+    //console.log(N,E);
+    //console.log((SLA_factors[cloud_provider].DB_migration_cost + SLA_factors[cloud_provider].backup)*(N*E)/(1024*1024*1024));
     if(enable_DB_migration && enable_backup)
     {
         return (SLA_factors[cloud_provider].DB_migration_cost + SLA_factors[cloud_provider].backup)*(N*E)/(1024*1024*1024);
@@ -219,6 +219,7 @@ function computeSLARelatedCost(cloud_provider,N,E)
     {
         return (SLA_factors[cloud_provider].backup)*(N*E)/(1024*1024*1024);
     }
+    return 0;
 }
 
 

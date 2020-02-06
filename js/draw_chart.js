@@ -1194,37 +1194,44 @@ function analyzeTKZ(){
 function drawContinuumsMultithread(if_regenerate=true) {
     var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
     if(if_regenerate) {
-        $("#loading_canvas_2").css('opacity','1');
-        var myWorker = new Worker('js/worker.js');
-        var input=parseInputVariables();
-        var parameters={};
+        if(!worker_running) {
+            worker_running=true;
+        }else{
+            myWorker.terminate();
+        }
+        $("#loading_canvas_2").css('opacity', '1');
+        myWorker = new Worker('js/worker.js');
+        var input = parseInputVariables();
+        var parameters = {};
         parameters.U = U;
         parameters.p_put = p_put;
         parameters.U_2 = U_2;
-        parameters.U_1=U_1;
+        parameters.U_1 = U_1;
         parameters.p_get = p_get;
-        parameters.cloud_provider=cloud_provider;
-        parameters.input=input;
-        parameters.workload_type=workload_type;
-        var SLA={};
-        SLA.enable_SLA=enable_SLA;
-        SLA.enable_DB_migration=enable_DB_migration;
-        SLA.enable_dev_ops=enable_dev_ops;
-        SLA.enable_backup=enable_backup;
-        parameters.SLA=SLA;
+        parameters.cloud_provider = cloud_provider;
+        parameters.input = input;
+        parameters.workload_type = workload_type;
+        var SLA = {};
+        SLA.enable_SLA = enable_SLA;
+        SLA.enable_DB_migration = enable_DB_migration;
+        SLA.enable_dev_ops = enable_dev_ops;
+        SLA.enable_backup = enable_backup;
+        parameters.SLA = SLA;
         myWorker.postMessage(parameters);
         console.log(parameters);
-        myWorker.onmessage = function(e) {
-            if(typeof e.data=="string") {
+        myWorker.onmessage = function (e) {
+            if (typeof e.data == "string") {
 
                 $("#loading_percentage").html(e.data);
-            }else{
+            } else {
                 console.log(typeof e.data);
                 var ContinuumArray = e.data;
                 drawContinuumsNew(ContinuumArray);
                 global_continuums_array = ContinuumArray;
                 displayCharts();
+                worker_running=false;
             }
+
         }
 
     }

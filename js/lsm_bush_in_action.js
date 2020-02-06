@@ -996,7 +996,7 @@ function init(){
 	initializeCompressionLibraries();
 
 	initializeSLACheckboxes();
-
+/*
 	if($( window ).width()<1400)
 		$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
 
@@ -1007,8 +1007,12 @@ function init(){
 		else
 			$("#demo_body").css('transform','');
 	});
-
+*/
 	$(".rotate").click(function () {
+		$(this).toggleClass("down");
+	})
+
+	$(".rotate_2").click(function () {
 		$(this).toggleClass("down");
 	})
 
@@ -3342,7 +3346,7 @@ function switchText() {
 		$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
 		$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
 		$("#interactive-panel").animate({width: '1136px',borderWidth:1,borderOpacity:1}, "slow");
-		$("#charts").animate({right:'-30px'});
+		$("#charts").css('left','calc(50% - 620px)');
 		$("#charts").css('transform','scale(0.9) translateY(-40px)');
 		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
@@ -3370,7 +3374,7 @@ function switchText() {
 		}
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
-		$("#charts").animate({right:'-180px'});
+		$("#charts").css('left','calc(50% - 500px)');
 		$("#charts").css('transform','scale(1) translateY(0px)');
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
@@ -3720,29 +3724,31 @@ function adjustGuide() {
 	//setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
 }
 
+function switch_SLA() {
+	if($("#SLA-setting").height()==0){
+		$("#SLA-setting").animate(({height:200+"px"}),"normal");
+		setTimeout('$("#SLA-setting").animate(({opacity:1}),"normal")', 100);
+		//$("#SLA-setting").animate(({width:200+"px"}),"normal");
+	}else{
+		$("#SLA-setting").animate(({opacity:0}),"normal");
+
+		//$("#SLA-setting").animate(({width:0}),"normal");
+		setTimeout('$("#SLA-setting").animate(({height:0}),"normal")', 100);
+	}
+}
+
 function hideNavigation(){
 	$("#question_navigation").animate({opacity:"0"}, "slow");
 	setTimeout('$("#question_navigation").css(\'display\',\'none\')',1000);
 }
 
 function initializeSLACheckboxes() {
-	$('[name=SLA_radio_0]').prop("checked", enable_SLA);
-	$('[name=SLA_radio_1]').prop("checked", enable_DB_migration);
-	$('[name=SLA_radio_2]').prop("checked", enable_dev_ops);
-	$('[name=SLA_radio_3]').prop("checked", enable_backup);
+	$("#SLA_radio_1").prop("checked", enable_DB_migration);
+	$("#SLA_radio_2").prop("checked", enable_dev_ops);
+	$("#SLA_radio_3").prop("checked", enable_backup);
 
-	$('[name=SLA_radio_0]').on('click', function() {
-		if(enable_SLA==true) {
-			enable_SLA = false;
-			$(this).prop("checked", false);
-		}else{
-			enable_SLA = true;
-			$(this).prop("checked", true);
-		}
-		drawContinuumsMultithread();
-	});
 
-	$('[name=SLA_radio_1]').on('click', function() {
+	$("#SLA_radio_1").on('click', function() {
 		if(enable_DB_migration==true) {
 			enable_DB_migration = false;
 			$(this).prop("checked", false);
@@ -3750,10 +3756,11 @@ function initializeSLACheckboxes() {
 			enable_DB_migration = true;
 			$(this).prop("checked", true);
 		}
-		drawContinuumsMultithread();
+		if(if_display)
+			drawContinuumsMultithread();
 	});
 
-	$('[name=SLA_radio_2]').on('click', function() {
+	$("#SLA_radio_2").on('click', function() {
 		if(enable_dev_ops==true) {
 			enable_dev_ops = false;
 			$(this).prop("checked", false);
@@ -3761,10 +3768,11 @@ function initializeSLACheckboxes() {
 			enable_dev_ops = true;
 			$(this).prop("checked", true);
 		}
-		drawContinuumsMultithread();
+		if(if_display)
+			drawContinuumsMultithread();
 	});
 
-	$('[name=SLA_radio_2]').on('click', function() {
+	$("#SLA_radio_3").on('click', function() {
 		if(enable_backup==true) {
 			enable_backup = false;
 			$(this).prop("checked", false);
@@ -3772,6 +3780,7 @@ function initializeSLACheckboxes() {
 			enable_backup = true;
 			$(this).prop("checked", true);
 		}
-		drawContinuumsMultithread();
+		if(if_display)
+			drawContinuumsMultithread();
 	});
 }

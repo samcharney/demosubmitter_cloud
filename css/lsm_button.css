@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
 .form-control {
   height: 30px;
   padding: 10px 15px;
@@ -157,6 +159,21 @@
     -moz-transform:rotate(90deg);
     -webkit-transform:rotate(90deg);
     transform:rotate(90deg);
+}
+
+.rotate_2 {
+    -moz-transform:rotate(90deg);
+    -webkit-transform:rotate(90deg);
+    transform:rotate(90deg);
+    -moz-transition: all .5s linear;
+    -webkit-transition: all .5s linear;
+    transition: all .5s linear;
+}
+
+.rotate_2.down {
+    -moz-transform:rotate(270deg);
+    -webkit-transform:rotate(270deg);
+    transform:rotate(270deg);
 }
 
 .switch {
@@ -457,6 +474,112 @@
 /* Style the indicator (dot/circle) */
 .radiobutton .check_mark:after {
 
+}
+
+.radiobutton input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.check_mark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: white;
+    border:1px solid #7F89FF;
+    border-radius: 50%;
+
+}
+
+/* On mouse-over, add a grey background color */
+.radiobutton:hover input ~ .check_mark {
+    background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.radiobutton input:checked ~ .check_mark {
+
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.check_mark::after {
+    content: "";
+    position: absolute;
+    background-color: white;
+    width: 0px;
+    height: 0px;
+    top: 9px;
+    left: 9px;
+    opacity: 0;
+    border-radius: 50%;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.radiobutton input:checked ~ .check_mark:after {
+    top: 3px;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+    background: #7F89FF;
+    z-index: 10;
+    -moz-transition: all .2s linear;
+    -webkit-transition: all .2s linear;
+    transition: all .2s linear;
+    opacity: 1;
+}
+
+/* Style the indicator (dot/circle) */
+.radiobutton .check_mark:after {
+
+}
+
+.checkbox { display: none; }
+
+.checkbox + label {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 20px;
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    font-weight:normal;
+    color: #ddd;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.checkbox + label:last-child { margin-bottom: 0; }
+
+.checkbox + label:before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #7F89FF;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: .6;
+    -webkit-transition: all .12s, border-color .08s;
+    transition: all .12s, border-color .08s;
+}
+
+.checkbox:checked + label:before {
+    width: 10px;
+    top: -5px;
+    left: 5px;
+    border-radius: 0;
+    opacity: 1;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
 }
 
 .tab{
