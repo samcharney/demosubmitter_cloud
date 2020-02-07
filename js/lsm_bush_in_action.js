@@ -1014,6 +1014,7 @@ function init(){
 
 	$(".rotate_2").click(function () {
 		$(this).toggleClass("down");
+		$(".SLA-tab").toggleClass("down");
 	})
 
 	$("#switch_1").click(function () {

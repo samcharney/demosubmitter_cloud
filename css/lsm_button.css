@@ -176,6 +176,28 @@
     transform:rotate(270deg);
 }
 
+.rotate_2.down {
+    -moz-transform:rotate(270deg);
+    -webkit-transform:rotate(270deg);
+    transform:rotate(270deg);
+}
+
+.SLA-tab{
+    background-color: #7F89FF;
+    color: white
+    -moz-transition: all .5s linear;
+    -webkit-transition: all .5s linear;
+    transition: all .5s linear;
+}
+
+.SLA-tab.down{
+    color: black;
+    background-color: white;
+    -moz-transition: all .5s linear;
+    -webkit-transition: all .5s linear;
+    transition: all .5s linear;
+}
+
 .switch {
     position:relative;
     top:2px;
@@ -580,6 +602,20 @@
     border-left-color: transparent;
     -webkit-transform: rotate(45deg);
     transform: rotate(45deg);
+}
+
+.checkbox:checked + label:after {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #7F89FF;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: .6;
+    -webkit-transition: all .12s, border-color .08s;
+    transition: all .12s, border-color .08s;
 }
 
 .tab{

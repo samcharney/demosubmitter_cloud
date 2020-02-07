@@ -40,9 +40,9 @@ var compression_libraries;
 var using_compression=true;
 
 var enable_SLA=true;
-var enable_DB_migration = true;
-var enable_dev_ops = true;
-var enable_backup = true;
+var enable_DB_migration = false;
+var enable_dev_ops = false;
+var enable_backup = false;
 
 var cri_count=0;
 var cri_miss_count=0;
