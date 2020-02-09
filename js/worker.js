@@ -742,7 +742,7 @@ function buildContinuums(cloud_mode){
             }
         }
     }else{
-        if(cloud_provider_enable[cloud_provider]) {
+        if(cloud_provider_enable[cloud_mode-1]) {
             cloud_provider = cloud_mode - 1;
             var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
             for (var i = 0; i < VMCombinations.length; i++) {
