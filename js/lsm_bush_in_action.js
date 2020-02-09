@@ -1146,6 +1146,10 @@ function init(){
 		}
 	});
 
+	$("#cloud-provider").change(function() {
+		prune_cloud_provider();
+	});
+
 	/*
 	$(window).scroll(function(){
 		$(".navbar").css({opacity:Math.max(0,(500-$(document).scrollTop()+1000))/500});
@@ -3726,15 +3730,14 @@ function adjustGuide() {
 }
 
 function switch_SLA() {
-	if($("#SLA-setting").height()==0){
-		$("#SLA-setting").animate(({height:200+"px"}),"normal");
-		setTimeout('$("#SLA-setting").animate(({opacity:1}),"normal")', 100);
+	if($("#SLA-setting").css('opacity')==0){
+		$("#SLA-tab").animate(({width:700+"px"}),"fast");
+		setTimeout('$("#SLA-setting,#SLA-title").animate(({opacity:1}),"normal")', 1000);
 		//$("#SLA-setting").animate(({width:200+"px"}),"normal");
 	}else{
-		$("#SLA-setting").animate(({opacity:0}),"normal");
-
+		$("#SLA-setting,#SLA-title").animate(({opacity:0}),"fast");
 		//$("#SLA-setting").animate(({width:0}),"normal");
-		setTimeout('$("#SLA-setting").animate(({height:0}),"normal")', 100);
+		setTimeout('$("#SLA-tab").animate(({width:60+"px"}),"normal")', 100);
 	}
 }
 
@@ -3784,4 +3787,88 @@ function initializeSLACheckboxes() {
 		if(if_display)
 			drawContinuumsMultithread();
 	});
+
+	$("#SLA_radio_4").on('click', function() {
+		if(enable_availability==true) {
+			enable_availability = false;
+			$(this).prop("checked", false);
+		}else{
+			enable_availability = true;
+			$(this).prop("checked", true);
+		}
+		prune_cloud_provider()
+		if(if_display)
+			drawContinuumsMultithread();
+	});
+
+	$("#SLA_radio_5").on('click', function() {
+		if(enable_durability==true) {
+			enable_durability = false;
+			$(this).prop("checked", false);
+		}else{
+			enable_durability = true;
+			$(this).prop("checked", true);
+		}
+		prune_cloud_provider()
+		if(if_display)
+			drawContinuumsMultithread();
+	});
+
+	$("#availability_checkbox_1,#availability_checkbox_2").on('click', function() {
+		if($(this).prop("checked")) {
+			$("#availability_checkbox_1").prop("checked", false);
+			$("#availability_checkbox_2").prop("checked", false);
+			$(this).prop("checked", true);
+		}
+		prune_cloud_provider()
+		if(if_display)
+			drawContinuumsMultithread();
+	});
+
+
+	$("#durability_checkbox_1,#durability_checkbox_2,#durability_checkbox_3").on('click', function() {
+		if($(this).prop("checked")) {
+			$("#durability_checkbox_1").prop("checked", false);
+			$("#durability_checkbox_2").prop("checked", false);
+			$("#durability_checkbox_3").prop("checked", false);
+			$(this).prop("checked", true);
+		}
+		prune_cloud_provider()
+		if(if_display)
+			drawContinuumsMultithread();
+	});
+}
+
+function prune_cloud_provider(){
+	var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
+	if(cloud_provider==0){
+		cloud_provider_enable=[1,1,1];
+	}else if(cloud_provider==1){
+		cloud_provider_enable=[1,0,0];
+	}else if(cloud_provider==2){
+		cloud_provider_enable=[0,1,0];
+	}else if(cloud_provider==3){
+		cloud_provider_enable=[0,0,1];
+	}
+	if(enable_availability) {
+		if ($("#availability_checkbox_2").prop("checked")) {
+			cloud_provider_enable[1] = 0;
+		}
+	}
+	if(enable_durability) {
+		if ($("#durability_checkbox_2").prop("checked")) {
+			cloud_provider_enable[0] = 0;
+		}
+		if ($("#durability_checkbox_3").prop("checked")) {
+			cloud_provider_enable[0] = 0;
+			cloud_provider_enable[1] = 0;
+		}
+	}
+	var flag=0;
+	for(i=0;i<cloud_provider_num;i++){
+		if(cloud_provider_enable[i])
+			flag=1;
+	}
+	if(!flag)
+		alert("No available cloud provider");
 }

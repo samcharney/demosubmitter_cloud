@@ -1216,6 +1216,7 @@ function drawContinuumsMultithread(if_regenerate=true) {
         SLA.enable_DB_migration = enable_DB_migration;
         SLA.enable_dev_ops = enable_dev_ops;
         SLA.enable_backup = enable_backup;
+        SLA.cloud_provider_enable = cloud_provider_enable;
         parameters.SLA = SLA;
         myWorker.postMessage(parameters);
         console.log(parameters);

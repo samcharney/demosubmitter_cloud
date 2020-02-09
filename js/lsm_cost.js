@@ -43,6 +43,8 @@ var enable_SLA=true;
 var enable_DB_migration = false;
 var enable_dev_ops = false;
 var enable_backup = false;
+var enable_availability = false;
+var enable_durability = false;
 
 var cri_count=0;
 var cri_miss_count=0;
@@ -54,6 +56,9 @@ var log=new Array();
 
 var worker_running=false;
 var myWorker;
+
+var cloud_provider_num=3;
+var cloud_provider_enable=[1,1,1];
 
 
 

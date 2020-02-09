@@ -42,6 +42,8 @@ var enable_SLA=true;
 var enable_DB_migration = true;
 var enable_dev_ops = true;
 var enable_backup = true;
+var enable_availability = false;
+var enable_durability = false;
 
 var cri_count=0;
 var cri_miss_count=0;
@@ -50,6 +52,10 @@ var dri_miss_count=0;
 var cri_cache;
 var dri_cache;
 var log=new Array();
+
+var cloud_provider_num=3;
+var cloud_provider_enable=[1,1,1];
+
 
 
 
@@ -695,55 +701,59 @@ function buildContinuums(cloud_mode){
     console.log(cloud_mode);
     if(cloud_mode==0||cloud_mode==NaN) {
         for (var cloud_provider = 0; cloud_provider < 3; cloud_provider++) {
-            var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
-            for (var i = 0; i < VMCombinations.length; i++) {
-                Variables=0;
-                progress=(cloud_provider+i/VMCombinations.length)/3;
-                postMessage((progress*100).toFixed(1)+"%");
-                var VMCombination = VMCombinations[i];
-                if(using_compression==false) {
-                    Variables = countContinuum(VMCombination, cloud_provider);
-                    rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
-                    WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
-                }else{
-                    for(var n=0;n<3;n++){
-                        if(Variables==0) {
-                            Variables = countContinuum(VMCombination, cloud_provider, n);
-                            rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", 1);
-                            WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", 1);
-                        }else{
-                            var temp;
-                            temp=countContinuum(VMCombination, cloud_provider, n);
-                            if(temp.latency<Variables.latency)
-                                Variables=temp;
-                            /*
-                            temp=countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", n);
-                            if(temp.latency<rocks_Variables.latency)
-                                rocks_Variables=temp;
-                            temp=countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", n);
-                            if(temp.latency<WT_Variables.latency)
-                                WT_Variables=temp;*/
+            if(cloud_provider_enable[cloud_provider]) {
+                var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
+                for (var i = 0; i < VMCombinations.length; i++) {
+                    Variables = 0;
+                    progress = (cloud_provider + i / VMCombinations.length) / 3;
+                    postMessage((progress * 100).toFixed(1) + "%");
+                    var VMCombination = VMCombinations[i];
+                    if (using_compression == false) {
+                        Variables = countContinuum(VMCombination, cloud_provider);
+                        rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
+                        WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
+                    } else {
+                        for (var n = 0; n < 3; n++) {
+                            if (Variables == 0) {
+                                Variables = countContinuum(VMCombination, cloud_provider, n);
+                                rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", 1);
+                                WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", 1);
+                            } else {
+                                var temp;
+                                temp = countContinuum(VMCombination, cloud_provider, n);
+                                if (temp.latency < Variables.latency)
+                                    Variables = temp;
+                                /*
+                                temp=countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", n);
+                                if(temp.latency<rocks_Variables.latency)
+                                    rocks_Variables=temp;
+                                temp=countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", n);
+                                if(temp.latency<WT_Variables.latency)
+                                    WT_Variables=temp;*/
+                            }
                         }
                     }
+                    var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info + "<br>Latency=" + fixTime(Variables.latency) + "<br>Cost=" + Variables.cost);
+                    if (using_compression)
+                        info += "<br>Compression: " + Variables.compression_name;
+                    var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables, WT_Variables];
+                    result_array.push(result);
                 }
-                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+"<br>Cost="+Variables.cost);
-                if(using_compression)
-                    info+="<br>Compression: "+Variables.compression_name;
-                var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables,WT_Variables];
-                result_array.push(result);
             }
         }
     }else{
-        cloud_provider=cloud_mode-1;
-        var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
-        for (var i = 0; i < VMCombinations.length; i++) {
-            var VMCombination = VMCombinations[i];
-            var Variables = countContinuum(VMCombination, cloud_provider);
-            var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
-            var WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
-            var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info +"<br>Latency=" + fixTime(Variables.latency)+"<br>Cost="+Variables.cost);
-            var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables,WT_Variables];
-            result_array.push(result);
+        if(cloud_provider_enable[cloud_provider]) {
+            cloud_provider = cloud_mode - 1;
+            var VMCombinations = getAllVMCombinations(cloud_provider, VM_libraries);
+            for (var i = 0; i < VMCombinations.length; i++) {
+                var VMCombination = VMCombinations[i];
+                var Variables = countContinuum(VMCombination, cloud_provider);
+                var rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
+                var WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
+                var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info + "<br>Latency=" + fixTime(Variables.latency) + "<br>Cost=" + Variables.cost);
+                var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables, WT_Variables];
+                result_array.push(result);
+            }
         }
     }
 
@@ -2331,6 +2341,7 @@ onmessage = function(e) {
     enable_dev_ops=e.data.SLA.enable_dev_ops;
     enable_backup=e.data.SLA.enable_backup;
     workload_type=e.data.workload_type;
+    cloud_provider_enable=e.data.SLA.cloud_provider_enable;
     var result=buildContinuums(e.data.cloud_provider);
     console.log('Message received from main script');
     console.log(result);

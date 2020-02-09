@@ -162,25 +162,21 @@
 }
 
 .rotate_2 {
-    -moz-transform:rotate(90deg);
-    -webkit-transform:rotate(90deg);
-    transform:rotate(90deg);
+    -moz-transform:rotate(0deg);
+    -webkit-transform:rotate(0deg);
+    transform:rotate(0deg);
     -moz-transition: all .5s linear;
     -webkit-transition: all .5s linear;
     transition: all .5s linear;
 }
 
 .rotate_2.down {
-    -moz-transform:rotate(270deg);
-    -webkit-transform:rotate(270deg);
-    transform:rotate(270deg);
+    -moz-transform:rotate(180deg);
+    -webkit-transform:rotate(180deg);
+    transform:rotate(180deg);
 }
 
-.rotate_2.down {
-    -moz-transform:rotate(270deg);
-    -webkit-transform:rotate(270deg);
-    transform:rotate(270deg);
-}
+
 
 .SLA-tab{
     background-color: #7F89FF;
@@ -565,7 +561,7 @@
     display: block;
     position: relative;
     padding-left: 30px;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 16px;
     font-weight:normal;
@@ -892,4 +888,22 @@
 .question-navi-text{
     margin-bottom: 6px;
 
+}
+
+.SLA-box{
+    display: inline-block;
+    padding-top: 10px;
+    padding-left: 5px;
+    width:200px;
+    border: #7F89FF solid 0.5px;
+    text-align: center;
+    font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    height: 100%;
+    vertical-align:top;
+
+}
+
+.SLA-box-2{
+    height: 20%;
 }
