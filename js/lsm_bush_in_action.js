@@ -3819,6 +3819,8 @@ function initializeSLACheckboxes() {
 			$("#availability_checkbox_1").prop("checked", false);
 			$("#availability_checkbox_2").prop("checked", false);
 			$(this).prop("checked", true);
+			enable_availability=true;
+			$("#SLA_radio_4").prop("checked",true);
 		}
 		prune_cloud_provider()
 		if(if_display)
@@ -3832,6 +3834,8 @@ function initializeSLACheckboxes() {
 			$("#durability_checkbox_2").prop("checked", false);
 			$("#durability_checkbox_3").prop("checked", false);
 			$(this).prop("checked", true);
+			enable_durability=true;
+			$("#SLA_radio_5").prop("checked",true);
 		}
 		prune_cloud_provider()
 		if(if_display)
@@ -3850,18 +3854,26 @@ function prune_cloud_provider(){
 	}else if(cloud_provider==3){
 		cloud_provider_enable=[0,0,1];
 	}
+	$("#cloud-provider").children().show();
 	if(enable_availability) {
 		if ($("#availability_checkbox_2").prop("checked")) {
 			cloud_provider_enable[1] = 0;
+			$("#cloud-provider").children("option[value=Any]").hide();
+			$("#cloud-provider").children("option[value=GCP]").hide();
 		}
 	}
 	if(enable_durability) {
 		if ($("#durability_checkbox_2").prop("checked")) {
 			cloud_provider_enable[0] = 0;
+			$("#cloud-provider").children("option[value=Any]").hide();
+			$("#cloud-provider").children("option[value=AWS]").hide();
 		}
 		if ($("#durability_checkbox_3").prop("checked")) {
 			cloud_provider_enable[0] = 0;
 			cloud_provider_enable[1] = 0;
+			$("#cloud-provider").children("option[value=Any]").hide();
+			$("#cloud-provider").children("option[value=AWS]").hide();
+			$("#cloud-provider").children("option[value=GCP]").hide();
 		}
 	}
 	var flag=0;

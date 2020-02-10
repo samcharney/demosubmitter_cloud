@@ -506,22 +506,22 @@
                 </div>
             </div>
 -->
-            <div style="width: 100%; height:0px; position: relative; ">
+            <div style="width: 100%; height:0px; position: relative; z-index: 10">
                 <div style="width: 244px;position: absolute; right: -20px;">
-                    <div id="SLA-tab" class="SLA-tab" style="position: absolute; right: 5px; width: 60px; height: 300px; border: #7F89FF solid 1.5px; border-bottom-left-radius:15px;border-top-left-radius:15px;">
-                        <div style="position: absolute;right: 0px; width: 250px; transform: rotate(90deg) translateX(254px); transform-origin: right top 0;">
+                    <div id="SLA-tab" class="SLA-tab" style="position: absolute; right: 5px; width: 80px; height: 300px; border: #7F89FF solid 1.5px; border-bottom-left-radius:15px;border-top-left-radius:15px;">
+                        <div style="position: absolute;right: 7px; width: 250px; transform: rotate(90deg) translateX(270px); transform-origin: right top 0;">
                             <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
                             <span style="cursor: pointer;font-size:20px; padding-left:12px; " id="SLA-text" >Service Level Agreement</span>
                         </div>
                         <div id="SLA-title"  style="display: block; width:610px; height: 15%; padding:0px; overflow: hidden; transform: translateX(40px) translateY(0px); opacity: 0;">
-                            <div class="SLA-box" style="">Parameters
-                            </div><div class="SLA-box" style="">Requirements
-                            </div><div class="SLA-box" style="">Description
+                            <div class="SLA-box" style=""><b>Parameters</b>
+                            </div><div class="SLA-box" style=""><b>Requirements</b>
+                            </div><div class="SLA-box" style=""><b>Description</b>
                             </div>
                         </div>
                         <div id="SLA-setting"  style="display: inline-block; width:605px; height: 85%; overflow: hidden; transform: translateX(40px) translateY(0px); opacity: 0; ">
-                            <div style="height: 16%">
-                                <div class="SLA-box" style=" display: inline-block; text-align: left;">
+                            <div style="height: 15%; ">
+                                <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 8px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_1" value="1" />
                                     <label style="color: black" for="SLA_radio_1"><span style="position:relative; top:-2px">Database migration<br /></span></label>
                                 </div><div class="SLA-box">
@@ -530,20 +530,20 @@
 
                                 </div>
                             </div>
-                            <div style="height: 16%">
-                                <div class="SLA-box" style=" display: inline-block; text-align: left">
+                            <div style="height: 20%">
+                                <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 4px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_2" value="2" />
-                                    <label style="color: black" for="SLA_radio_2"><span style="position:relative; top:-2px">Operational support<br /></span></label>
+                                    <label style="color: black" for="SLA_radio_2"><span style="position:relative; top:-2px">Operational and tooling support<br /></span></label>
                                 </div><div class="SLA-box">
 
                                 </div><div class="SLA-box">
 
                                 </div>
                             </div>
-                            <div style="height: 16%">
-                                <div class="SLA-box" style=" display: inline-block; text-align: left">
+                            <div style="height: 15%">
+                                <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 8px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_3" value="3" />
-                                    <label style="color: black" for="SLA_radio_3"><span style="position:relative; top:-2px">Backup <br /></span></label>
+                                    <label style="color: black" for="SLA_radio_3"><span style="position:relative; top:-2px">Backup and recovery <br /></span></label>
                                 </div><div class="SLA-box">
 
                                 </div><div class="SLA-box">
@@ -551,7 +551,7 @@
                                 </div>
                             </div>
                             <div style="height: 20%">
-                                <div class="SLA-box" style=" display: inline-block; text-align: left">
+                                <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 13px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_4" value="4" />
                                     <label style="color: black" for="SLA_radio_4"><span style="position:relative; top:-2px">Availability <br /></span></label>
                                 </div><div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 3px">
@@ -564,11 +564,11 @@
 
                                 </div>
                             </div>
-                            <div style="height: 32%">
-                                <div class="SLA-box" style=" display: inline-block; text-align: left">
+                            <div style="height: 30%">
+                                <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top:25px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_5" value="5" />
                                     <label style="color: black" for="SLA_radio_5"><span style="position:relative; top:-2px">Durability <br /></span></label>
-                                </div><div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 3px">
+                                </div><div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 6px">
                                 <input class="checkbox" type="checkbox" id="durability_checkbox_1" />
                                 <label style="color: black" for="durability_checkbox_1"><span style="position:relative; top:-2px">&gt;99.99...(11&nbsp;9s)% <br /></span></label>
                                 <input class="checkbox" type="checkbox" id="durability_checkbox_2" />
@@ -581,7 +581,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="rotate_2" style="top:-100px; cursor: pointer; width:25px; position:relative; display: block; background-color: white; border-radius: 20px"  role="button" aria-expanded="false">
+                        <div class="rotate_2" style="top:-170px; cursor: pointer; width:25px; position:relative; display: block; background-color: white; border-radius: 20px"  role="button" aria-expanded="false">
                             <div id="SLA-trigger" onclick="switch_SLA()">
                                 <img class="img-responsive img-centered" style="width:25px" src="./images/arrow.png"/>
                             </div>
