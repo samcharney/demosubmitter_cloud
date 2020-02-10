@@ -162,18 +162,18 @@
 }
 
 .rotate_2 {
-    -moz-transform:rotate(0deg);
-    -webkit-transform:rotate(0deg);
-    transform:rotate(0deg);
+    -moz-transform:rotate(180deg);
+    -webkit-transform:rotate(180deg);
+    transform:rotate(180deg);
     -moz-transition: all .5s linear;
     -webkit-transition: all .5s linear;
     transition: all .5s linear;
 }
 
 .rotate_2.down {
-    -moz-transform:rotate(180deg);
-    -webkit-transform:rotate(180deg);
-    transform:rotate(180deg);
+    -moz-transform:rotate(0deg);
+    -webkit-transform:rotate(0deg);
+    transform:rotate(0deg);
 }
 
 
@@ -189,10 +189,10 @@
 .SLA-tab.down{
     color: black;
     background-color: white;
-    -moz-transition: all .5s linear;
-    -webkit-transition: all .5s linear;
-    transition: all .5s linear;
+    transition: all 0.35s linear;
 }
+
+
 
 .switch {
     position:relative;
@@ -565,7 +565,7 @@
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 16px;
     font-weight:normal;
-    color: #ddd;
+    color: #000000;
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -579,7 +579,7 @@
     display: block;
     width: 20px;
     height: 20px;
-    border: 2px solid #7F89FF;
+    border: 2px solid #7799AA;
     position: absolute;
     left: 0;
     top: 0;
@@ -605,7 +605,7 @@
     display: block;
     width: 20px;
     height: 20px;
-    border: 2px solid #7F89FF;
+    border: 2px solid #7799AA;
     position: absolute;
     left: 0;
     top: 0;
@@ -894,16 +894,50 @@
     display: inline-block;
     padding-top: 10px;
     padding-left: 5px;
-    width:200px;
-    border: #C0D0E0 solid 0.5px;
+    width:190px;
+    border: #BBBBBB solid 0.5px;
+    border-bottom: #FFFFFF solid 0.5px;
+    border-right-width: 0px;
     text-align: center;
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 16px;
+    color: #000000;
     height: 100%;
     vertical-align:top;
 
 }
 
+.SLA-box.description{
+    width:800px;
+    padding-top: 2px;
+    font-size: 14px;
+    line-height: 15px;
+    text-align: left;
+    font-style: italic;
+    border-right-width: 0.5px;
+}
+
 .SLA-box-2{
     height: 20%;
 }
+
+
+
+.blur-body > *:not(#interactiveDemo){
+    filter: blur(10px);
+    pointer-events: none;
+    opacity: 0.7;
+    -moz-transition: all .4s linear;
+    -webkit-transition: all .4s linear;
+    transition: all .4s linear;
+}
+
+.blur > *:not(#SLA){
+    filter: blur(10px);
+    pointer-events: none;
+    opacity: 0.7;
+    -moz-transition: all .4s linear;
+    -webkit-transition: all .4s linear;
+    transition: all .4s linear;
+}
+

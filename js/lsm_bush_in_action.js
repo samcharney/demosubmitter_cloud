@@ -1014,7 +1014,12 @@ function init(){
 
 	$(".rotate_2").click(function () {
 		$(this).toggleClass("down");
-		$(".SLA-tab").toggleClass("down");
+		console.log($(".SLA-tab").css("color"))
+		if($(".SLA-tab").css("color")=="rgb(0, 0, 0)"){
+			setTimeout('$(".SLA-tab").toggleClass("down")',1000);
+		}else {
+			$(".SLA-tab").toggleClass("down");
+		}
 	})
 
 	$("#switch_1").click(function () {
@@ -3730,14 +3735,16 @@ function adjustGuide() {
 }
 
 function switch_SLA() {
+	$('body').toggleClass("blur-body");
+	$('#demo_body').toggleClass("blur");
 	if($("#SLA-setting").css('opacity')==0){
-		$("#SLA-tab").animate(({width:700+"px"}),"fast");
-		setTimeout('$("#SLA-setting,#SLA-title").animate(({opacity:1}),"normal")', 1000);
+		$("#SLA-tab").animate(({width:1300+"px"}),"fast");
+		setTimeout('$("#SLA-setting,#SLA-title").animate(({opacity:1}),"normal")', 500);
 		//$("#SLA-setting").animate(({width:200+"px"}),"normal");
 	}else{
 		$("#SLA-setting,#SLA-title").animate(({opacity:0}),"fast");
 		//$("#SLA-setting").animate(({width:0}),"normal");
-		setTimeout('$("#SLA-tab").animate(({width:60+"px"}),"normal")', 100);
+		$("#SLA-tab").animate(({width:70+"px"}),"fast");
 	}
 }
 
@@ -3821,6 +3828,9 @@ function initializeSLACheckboxes() {
 			$(this).prop("checked", true);
 			enable_availability=true;
 			$("#SLA_radio_4").prop("checked",true);
+		}else{
+			enable_availability=false;
+			$("#SLA_radio_4").prop("checked",false);
 		}
 		prune_cloud_provider()
 		if(if_display)
@@ -3836,6 +3846,9 @@ function initializeSLACheckboxes() {
 			$(this).prop("checked", true);
 			enable_durability=true;
 			$("#SLA_radio_5").prop("checked",true);
+		}else{
+			enable_durability=false;
+			$("#SLA_radio_5").prop("checked",false);
 		}
 		prune_cloud_provider()
 		if(if_display)
@@ -3856,6 +3869,13 @@ function prune_cloud_provider(){
 	}
 	$("#cloud-provider").children().show();
 	if(enable_availability) {
+		if ($("#availability_checkbox_1").prop("checked")) {
+			cloud_provider_enable[0] = 0;
+			cloud_provider_enable[2] = 0;
+			$("#cloud-provider").children("option[value=Any]").hide();
+			$("#cloud-provider").children("option[value=AWS]").hide();
+			$("#cloud-provider").children("option[value=Azure]").hide();
+		}
 		if ($("#availability_checkbox_2").prop("checked")) {
 			cloud_provider_enable[1] = 0;
 			$("#cloud-provider").children("option[value=Any]").hide();
