@@ -996,6 +996,8 @@ function init(){
 	initializeCompressionLibraries();
 
 	initializeSLACheckboxes();
+
+	initializeCloudCheckboxes();
 /*
 	if($( window ).width()<1400)
 		$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
@@ -3857,7 +3859,8 @@ function initializeSLACheckboxes() {
 }
 
 function prune_cloud_provider(){
-	var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
+	//var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
+	/*
 	if(cloud_provider==0){
 		cloud_provider_enable=[1,1,1];
 	}else if(cloud_provider==1){
@@ -3867,19 +3870,26 @@ function prune_cloud_provider(){
 	}else if(cloud_provider==3){
 		cloud_provider_enable=[0,0,1];
 	}
-	$("#cloud-provider").children().show();
+	*/
+	cloud_provider_enable[0]=$("#AWS_checkbox").prop("checked");
+	cloud_provider_enable[1]=$("#GCP_checkbox").prop("checked");
+	cloud_provider_enable[2]=$("#Azure_checkbox").prop("checked");
+	$("#AWS_checkbox").prop("disabled", "false");
+	$("#GCP_checkbox").prop("disabled", "false");
+	$("#Azure_checkbox").prop("disabled", "false");
 	if(enable_availability) {
 		if ($("#availability_checkbox_1").prop("checked")) {
 			cloud_provider_enable[0] = 0;
 			cloud_provider_enable[2] = 0;
-			$("#cloud-provider").children("option[value=Any]").hide();
-			$("#cloud-provider").children("option[value=AWS]").hide();
-			$("#cloud-provider").children("option[value=Azure]").hide();
+			$("#AWS_checkbox").prop("checked", false);
+			$("#AWS_checkbox").prop("disabled", "true");
+			$("#Azure_checkbox").prop("checked", false);
+			$("#Azure_checkbox").prop("disabled", "true");
 		}
 		if ($("#availability_checkbox_2").prop("checked")) {
 			cloud_provider_enable[1] = 0;
-			$("#cloud-provider").children("option[value=Any]").hide();
-			$("#cloud-provider").children("option[value=GCP]").hide();
+			$("#GCP_checkbox").prop("checked", false);
+			$("#GCP_checkbox").prop("disabled", "true");
 		}
 	}
 	if(enable_durability) {
@@ -3903,4 +3913,19 @@ function prune_cloud_provider(){
 	}
 	if(!flag)
 		alert("No available cloud provider");
+}
+
+function initializeCloudCheckboxes() {
+	$("#AWS_checkbox").prop("checked", true);
+	$("#GCP_checkbox").prop("checked", true);
+	$("#Azure_checkbox").prop("checked", true);
+
+	$("#AWS_checkbox,#GCP_checkbox,#Azure_checkbox").on('change', function() {
+		if($(this).prop("disabled")!="true") {
+			prune_cloud_provider();
+			if (if_display)
+				drawContinuumsMultithread();
+			console.log("click");
+		}
+	});
 }

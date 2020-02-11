@@ -461,12 +461,20 @@
                               <div class="row">
                                   <div>
                                       <div class="">
-                                          <select id="cloud-provider" name="" style="position: relative; left: -120px;width:150px;height: 30px ; margin:0px 80px;text-align: center" class="myselect myinput" onchange="re_run(event, 'input4')">
+                                          <select id="cloud-provider" name="" style="position: relative; left: -120px;width:150px;height: 30px ; margin:0px 80px;text-align: center; display: none;" class="myselect myinput" onchange="re_run(event, 'input4')">
                                               <option value="Any">Any</option>
                                               <option value="AWS">AWS</option>
                                               <option value="GCP">GCP</option>
                                               <option value="Azure">Azure</option>
                                           </select>
+                                          <div style="padding: 20px">
+                                              <input class="checkbox" type="checkbox" id="AWS_checkbox" value="1" />
+                                              <label style="margin-bottom: 10px" for="AWS_checkbox"><span style="position:relative; top:-2px">AWS<br /></span></label>
+                                              <input class="checkbox" type="checkbox" id="GCP_checkbox" value="1" />
+                                              <label style="margin-bottom: 10px" for="GCP_checkbox"><span style="position:relative; top:-2px">GCP<br /></span></label>
+                                              <input class="checkbox" type="checkbox" id="Azure_checkbox" value="1" />
+                                              <label style="" for="Azure_checkbox"><span style="position:relative; top:-2px">Azure<br /></span></label>
+                                          </div>
                                       </div>
                                   </div>
 
