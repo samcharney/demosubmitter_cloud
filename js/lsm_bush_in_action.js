@@ -3870,9 +3870,12 @@ function prune_cloud_provider(){
 		cloud_provider_enable=[0,0,1];
 	}
 	*/
-	cloud_provider_enable[0]=$("#AWS_checkbox").prop("checked");
-	cloud_provider_enable[1]=$("#GCP_checkbox").prop("checked");
-	cloud_provider_enable[2]=$("#Azure_checkbox").prop("checked");
+	$("#AWS_checkbox").prop("checked", user_cloud_provider_enable[0]);
+	$("#GCP_checkbox").prop("checked", user_cloud_provider_enable[1]);
+	$("#Azure_checkbox").prop("checked", user_cloud_provider_enable[2]);
+	cloud_provider_enable[0]=user_cloud_provider_enable[0];
+	cloud_provider_enable[1]=user_cloud_provider_enable[1];
+	cloud_provider_enable[2]=user_cloud_provider_enable[2];
 	$("#AWS_checkbox").prop("disabled", "");
 	$("#GCP_checkbox").prop("disabled", "");
 	$("#Azure_checkbox").prop("disabled", "");
@@ -3899,6 +3902,7 @@ function prune_cloud_provider(){
             $("#AWS_checkbox").prop("disabled", "true");
             $("#GCP_checkbox").prop("checked", false);
             $("#GCP_checkbox").prop("disabled", "true");
+            console.log(1);
 		}
 	}
 	var flag=0;
@@ -3915,8 +3919,10 @@ function initializeCloudCheckboxes() {
 	$("#GCP_checkbox").prop("checked", true);
 	$("#Azure_checkbox").prop("checked", true);
 
-	$("#AWS_checkbox,#GCP_checkbox,#Azure_checkbox").on('change', function() {
+	$("#AWS_checkbox,#GCP_checkbox,#Azure_checkbox").on('click', function() {
 		if($(this).prop("disabled")!="true") {
+
+			user_cloud_provider_enable[$(this).prop("value")]=$(this).prop("checked");
 			prune_cloud_provider();
 			if (if_display)
 				drawContinuumsMultithread();

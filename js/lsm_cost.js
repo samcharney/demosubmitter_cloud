@@ -59,6 +59,7 @@ var myWorker;
 
 var cloud_provider_num=3;
 var cloud_provider_enable=[1,1,1];
+var user_cloud_provider_enable=[1,1,1];
 
 
 
