@@ -3874,9 +3874,9 @@ function prune_cloud_provider(){
 	cloud_provider_enable[0]=$("#AWS_checkbox").prop("checked");
 	cloud_provider_enable[1]=$("#GCP_checkbox").prop("checked");
 	cloud_provider_enable[2]=$("#Azure_checkbox").prop("checked");
-	$("#AWS_checkbox").prop("disabled", "false");
-	$("#GCP_checkbox").prop("disabled", "false");
-	$("#Azure_checkbox").prop("disabled", "false");
+	$("#AWS_checkbox").prop("disabled", "");
+	$("#GCP_checkbox").prop("disabled", "");
+	$("#Azure_checkbox").prop("disabled", "");
 	if(enable_availability) {
 		if ($("#availability_checkbox_1").prop("checked")) {
 			cloud_provider_enable[0] = 0;
@@ -3894,16 +3894,18 @@ function prune_cloud_provider(){
 	}
 	if(enable_durability) {
 		if ($("#durability_checkbox_2").prop("checked")) {
-			cloud_provider_enable[0] = 0;
-			$("#cloud-provider").children("option[value=Any]").hide();
-			$("#cloud-provider").children("option[value=AWS]").hide();
+            cloud_provider_enable[0] = 0;
+
+            $("#AWS_checkbox").prop("checked", false);
+            $("#AWS_checkbox").prop("disabled", "true");
 		}
 		if ($("#durability_checkbox_3").prop("checked")) {
 			cloud_provider_enable[0] = 0;
 			cloud_provider_enable[1] = 0;
-			$("#cloud-provider").children("option[value=Any]").hide();
-			$("#cloud-provider").children("option[value=AWS]").hide();
-			$("#cloud-provider").children("option[value=GCP]").hide();
+            $("#AWS_checkbox").prop("checked", false);
+            $("#AWS_checkbox").prop("disabled", "true");
+            $("#GCP_checkbox").prop("checked", false);
+            $("#GCP_checkbox").prop("disabled", "true");
 		}
 	}
 	var flag=0;

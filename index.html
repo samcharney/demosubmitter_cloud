@@ -468,12 +468,18 @@
                                               <option value="Azure">Azure</option>
                                           </select>
                                           <div style="padding: 20px">
-                                              <input class="checkbox" type="checkbox" id="AWS_checkbox" value="1" />
-                                              <label style="margin-bottom: 10px" for="AWS_checkbox"><span style="position:relative; top:-2px">AWS<br /></span></label>
+                                              <div style="border: #dce4ec solid 1px; border-radius: 6px;  margin-bottom: 7px; padding-top: 3px; padding-left: 12px; ">
+                                                  <input class="checkbox" type="checkbox" id="AWS_checkbox" value="1" />
+                                                  <label style="font-size: 16px" for="AWS_checkbox"><span style="position:relative; top:-2px">AWS<br /></span></label>
+                                              </div>
+                                              <div style="border: #dce4ec solid 1px; border-radius: 6px;  margin-bottom: 7px; padding-top: 3px; padding-left: 12px">
                                               <input class="checkbox" type="checkbox" id="GCP_checkbox" value="1" />
-                                              <label style="margin-bottom: 10px" for="GCP_checkbox"><span style="position:relative; top:-2px">GCP<br /></span></label>
+                                              <label style="font-size: 16px" for="GCP_checkbox"><span style="position:relative; top:-2px">GCP<br /></span></label>
+                                              </div>
+                                              <div style="border: #dce4ec solid 1px; border-radius: 6px;  margin-bottom: 5px; padding-top: 3px; padding-left: 12px">
                                               <input class="checkbox" type="checkbox" id="Azure_checkbox" value="1" />
-                                              <label style="" for="Azure_checkbox"><span style="position:relative; top:-2px">Azure<br /></span></label>
+                                              <label style="font-size: 16px" for="Azure_checkbox"><span style="position:relative; top:-2px">Azure<br /></span></label>
+                                              </div>
                                           </div>
                                       </div>
                                   </div>
@@ -517,7 +523,7 @@
             <div id="SLA" style="width: 100%; height:0px; position: relative; z-index: 10; ">
                 <div style="width: 244px;position: absolute; right: -20px;">
                     <div id="SLA-tab" class="SLA-tab" style="position: absolute; right: 5px; width: 70px; height: 315px; border: #7F89FF solid 1.5px; border-bottom-left-radius:15px;border-top-left-radius:15px;">
-                        <div style="position: absolute;right: 7px; width: 250px; transform: rotate(90deg) translateX(270px); transform-origin: right top 0;">
+                        <div style="position: absolute;right: 7px; width: 250px; transform: rotate(90deg) translateX(285px); transform-origin: right top 0;">
                             <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
                             <span style="cursor: pointer;font-size:20px; padding-left:12px; " id="SLA-text" >Service Level Agreement</span>
                         </div>
@@ -531,7 +537,7 @@
                             <div style="height: 14%; ">
                                 <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 8px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_1" value="1" />
-                                    <label style="" for="SLA_radio_1"><span style="position:relative; top:-2px">Database migration<br /></span></label>
+                                    <label style="" for="SLA_radio_1"><span style="position:relative; ">Database migration<br /></span></label>
                                 </div><div class="SLA-box">
 
                                 </div><div class="SLA-box description" style="padding-top: 2px">
@@ -541,7 +547,7 @@
                             <div style="height: 20%">
                                 <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 4px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_2" value="2" />
-                                    <label style="" for="SLA_radio_2"><span style="position:relative; top:-2px">Operational and tooling support<br /></span></label>
+                                    <label style="" for="SLA_radio_2"><span style="position:relative; ">Operational and tooling support<br /></span></label>
                                 </div><div class="SLA-box">
 
                                 </div><div class="SLA-box description" style="padding-top: 10px">
@@ -551,7 +557,7 @@
                             <div style="height: 14%">
                                 <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 8px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_3" value="3" />
-                                    <label style="" for="SLA_radio_3"><span style="position:relative; top:-2px">Backup and recovery <br /></span></label>
+                                    <label style="" for="SLA_radio_3"><span style="position:relative; ">Backup and recovery <br /></span></label>
                                 </div><div class="SLA-box">
 
                                 </div><div class="SLA-box description" style="padding-top: 10px">
@@ -561,12 +567,12 @@
                             <div style="height: 22%">
                                 <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 13px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_4" value="4" />
-                                    <label style="" for="SLA_radio_4"><span style="position:relative; top:-2px">Availability <br /></span></label>
+                                    <label style="" for="SLA_radio_4"><span style="position:relative;">Availability <br /></span></label>
                                 </div><div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 8px">
                                     <input class="checkbox" type="checkbox" id="availability_checkbox_1" />
-                                    <label style="" for="availability_checkbox_1"><span style="position:relative; top:-2px">&gt;99.0%&nbsp;&amp;&nbsp;&le;99.5%<br /></span></label>
+                                    <label style="" for="availability_checkbox_1"><span style="position:relative; ">&lt99.5<br /></span></label>
                                     <input class="checkbox" type="checkbox" id="availability_checkbox_2" />
-                                    <label style="" for="availability_checkbox_2"><span style="position:relative; top:-2px">&gt;99.5%&nbsp;&amp;&nbsp;&le;99.9% <br /></span></label>
+                                    <label style="" for="availability_checkbox_2"><span style="position:relative; ">&lt;99.9%&nbsp;<br /></span></label>
 
                                 </div><div class="SLA-box description" style="padding-top: 5px">
                                 This refers to the promised percentage of time during which the the VMs of an application are promised to be up and running. The values specified to the left indicate the availability requirements in terms of monthly uptime percentage. For all providers that do not meet your availability requirements, we will exclude them from the optimal configurations.
@@ -575,14 +581,14 @@
                             <div style="height: 30%">
                                 <div class="SLA-box" style=" display: inline-block; text-align: left; padding-top:25px">
                                     <input class="checkbox" type="checkbox" id="SLA_radio_5" value="5" />
-                                    <label style="" for="SLA_radio_5"><span style="position:relative; top:-2px">Durability <br /></span></label>
+                                    <label style="" for="SLA_radio_5"><span style="position:relative; ">Durability <br /></span></label>
                                 </div><div class="SLA-box" style=" display: inline-block; text-align: left; padding-top: 6px">
                                 <input class="checkbox" type="checkbox" id="durability_checkbox_1" />
-                                <label style="" for="durability_checkbox_1"><span style="position:relative; top:-2px">&gt;99.99...(11&nbsp;9s)% <br /></span></label>
+                                <label style="" for="durability_checkbox_1"><span style="position:relative; ">&gt;99.99...(11&nbsp;9s)% <br /></span></label>
                                 <input class="checkbox" type="checkbox" id="durability_checkbox_2" />
-                                <label style="" for="durability_checkbox_2"><span style="position:relative; top:-2px">&gt;99.99...(12&nbsp;9s)% <br /></span></label>
+                                <label style="" for="durability_checkbox_2"><span style="position:relative; ">&gt;99.99...(12&nbsp;9s)% <br /></span></label>
                                 <input class="checkbox" type="checkbox" id="durability_checkbox_3" />
-                                <label style="" for="durability_checkbox_3"><span style="position:relative; top:-2px">&gt;99.99...(13&nbsp;9s)% <br /></span></label>
+                                <label style="" for="durability_checkbox_3"><span style="position:relative; ">&gt;99.99...(13&nbsp;9s)% <br /></span></label>
 
                             </div><div class="SLA-box description" style="padding-top: 23px">
                                 This parameter refers to the durability guarantees measured as the number of 9’s after the decimal of 99. For all providers that do not meet your durability requirements, we will exclude them from the optimal configurations.
