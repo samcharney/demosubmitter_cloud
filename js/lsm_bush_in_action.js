@@ -3747,6 +3747,7 @@ function switch_SLA() {
 		$("#SLA-setting,#SLA-title").animate(({opacity:0}),"fast");
 		//$("#SLA-setting").animate(({width:0}),"normal");
 		$("#SLA-tab").animate(({width:70+"px"}),"fast");
+		prune_cloud_provider();
 	}
 }
 
@@ -3834,7 +3835,6 @@ function initializeSLACheckboxes() {
 			enable_availability=false;
 			$("#SLA_radio_4").prop("checked",false);
 		}
-		prune_cloud_provider()
 		if(if_display)
 			drawContinuumsMultithread();
 	});
@@ -3852,7 +3852,6 @@ function initializeSLACheckboxes() {
 			enable_durability=false;
 			$("#SLA_radio_5").prop("checked",false);
 		}
-		prune_cloud_provider()
 		if(if_display)
 			drawContinuumsMultithread();
 	});

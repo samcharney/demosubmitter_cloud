@@ -579,8 +579,8 @@
 .checkbox + label:before {
     content: '';
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
     border: 2px solid #7F89FF;
     position: absolute;
     left: 0;
@@ -605,8 +605,8 @@
 .checkbox:checked + label:after {
     content: '';
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
     border: 2px solid #7F89FF;
     position: absolute;
     left: 0;
