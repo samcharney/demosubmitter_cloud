@@ -3879,12 +3879,6 @@ function prune_cloud_provider(){
 	$("#Azure_checkbox").prop("disabled", "");
 	if(enable_availability) {
 		if ($("#availability_checkbox_1").prop("checked")) {
-			cloud_provider_enable[0] = 0;
-			cloud_provider_enable[2] = 0;
-			$("#AWS_checkbox").prop("checked", false);
-			$("#AWS_checkbox").prop("disabled", "true");
-			$("#Azure_checkbox").prop("checked", false);
-			$("#Azure_checkbox").prop("disabled", "true");
 		}
 		if ($("#availability_checkbox_2").prop("checked")) {
 			cloud_provider_enable[1] = 0;
