@@ -1142,14 +1142,16 @@ function init(){
 	$("#cost_conscious_checkbox").change(function() {
 		if(this.checked) {
 			$("#performance_conscious_checkbox").prop( "checked", false );
-			setTimeout('drawContinuumsMultithread()',300);
+			if(if_display)
+				setTimeout('drawContinuumsMultithread()',300);
 		}
 	});
 
 	$("#performance_conscious_checkbox").change(function() {
 		if(this.checked) {
 			$("#cost_conscious_checkbox").prop( "checked", false );
-			setTimeout('drawContinuumsMultithread()',300);
+			if(if_display)
+				setTimeout('drawContinuumsMultithread()',300);
 		}
 	});
 
@@ -3402,7 +3404,7 @@ function switchText() {
 }
 
 function checkInput(input){
-	if(isNaN(parseFloat(input.value))||parseFloat(input.value)<0){
+	if(isNaN(parseFloat(input.value))){
 		alert("Invalid input!");
 		return false;
 	}else
@@ -3432,7 +3434,8 @@ function switchQuestion() {
 				if(checkInput(input)) {
 					document.getElementById("question0").style.display="";
 					document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("cost").value);
-					document.getElementById("cost").value = parseFloat(document.getElementById("cost").value) + parseFloat(input.value);
+					//document.getElementById("cost").value = parseFloat(document.getElementById("cost").value) + parseFloat(input.value);
+					budget_change=parseFloat(input.value);
 					re_run(e,false);
 				}
 			}
@@ -3442,7 +3445,19 @@ function switchQuestion() {
 		document.getElementById("question2").style.display = "";
 		var input = document.getElementById("question2_input");
 		input.addEventListener("change", function (e) {
-			document.getElementById("cloud-provider").value=input.value;
+			if(input.value=="Any"){
+				user_cloud_provider_enable=[1,1,1];
+			}
+			if(input.value=="AWS"){
+				user_cloud_provider_enable=[1,0,0]
+			}
+			if(input.value=="GCP"){
+				user_cloud_provider_enable=[0,1,0]
+			}
+			if(input.value=="Azure"){
+				user_cloud_provider_enable=[0,0,1]
+			}
+			prune_cloud_provider();
 			re_run(e);
 		});
 	}
@@ -3730,9 +3745,9 @@ function displayRocks() {
 }
 
 function adjustGuide() {
-	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"fast")',100);
-	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',300);
-	setTimeout('$("#guide_2").animate({height:$("#input").height()-31+57},"normal")',500);
+	setTimeout('$("#guide_3").animate({height:$("#input").height()-31+48},"fast")',100);
+	setTimeout('$("#guide_3").animate({height:$("#input").height()-31+48},"normal")',300);
+	setTimeout('$("#guide_3").animate({height:$("#input").height()-31+48},"normal")',500);
 	//setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
 }
 

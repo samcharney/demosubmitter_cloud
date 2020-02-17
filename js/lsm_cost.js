@@ -61,6 +61,8 @@ var cloud_provider_num=3;
 var cloud_provider_enable=[1,1,1];
 var user_cloud_provider_enable=[1,1,1];
 
+var budget_change=0;
+
 
 
 
@@ -196,7 +198,7 @@ function initializeCompressionLibraries()
     console.log(compression_libraries);
 }
 
-void initializeSLAFactors()
+function initializeSLAFactors()
 {
 
     SLA_factors=new Array();
@@ -2261,7 +2263,7 @@ function outputParameters(Variables, id, l) {
             outputText(result_div,"Cost",280);
             outputText(result_div,"Latency",330);
             outputText(result_div,"Throughput",382);
-            outputText(result_div,"Explanation",424);
+            outputText(result_div,"Detailed Storage Engine Design Description",424);
         }else{
             outputText(result_div,"Processor",8);
             outputText(result_div,"On-disk",150);
@@ -2270,7 +2272,7 @@ function outputParameters(Variables, id, l) {
             outputText(result_div,"Cost",330);
             outputText(result_div,"Latency",382);
             outputText(result_div,"Throughput",427);
-            outputText(result_div,"Explanation",473);
+            outputText(result_div,"Detailed Storage Engine Design Description",473);
         }
     }
 
@@ -2283,7 +2285,7 @@ function outputParameters(Variables, id, l) {
         div_tmp.setAttribute("class", "tooltip1");
         var span_tmp = document.createElement("span");
         span_tmp.setAttribute("class", "tooltiptext");
-        span_tmp.innerHTML = "T=" + Variables.T + "<br>K=" + Variables.K + "<br>Z=" + Variables.Z;
+        span_tmp.innerHTML = "(Growth Factor) &nbsp;T =" + Variables.T + "<br>(Hot Merge Threshold) &nbsp;K=" + Variables.K + "<br>(Cold Merge Threshold) &nbsp;Z=" + Variables.Z;
         div_tmp.appendChild(span_tmp);
 
     }
@@ -2310,10 +2312,23 @@ function outputParameters(Variables, id, l) {
 }
 
 function outputText(result_div,text,top){
-    var div_text = document.createElement("div");
-    div_text.setAttribute("style", "position:absolute; font-size:16px; left: -90px; top:"+top+"px; text-align:right");
-    div_text.innerHTML = text;
-    result_div.appendChild(div_text);
+    if(text=="Detailed Storage Engine Design Description"){
+        var div_text = document.createElement("div");
+        div_text.setAttribute("style", "position:absolute; font-size:16px; left: -90px; top:" + top + "px; text-align:right; ");
+        div_text.innerHTML = "Description";
+        div_text.setAttribute("class", "tooltip1");
+        var span_tmp = document.createElement("span");
+        span_tmp.setAttribute("class", "tooltiptext_mode");
+        span_tmp.setAttribute("style", "position:absolute; width:140px; height:50px; padding:5px; left: -20px")
+        span_tmp.innerHTML = "Detailed Storage Engine Design Description ";
+        div_text.appendChild(span_tmp);
+        result_div.appendChild(div_text);
+    }else {
+        var div_text = document.createElement("div");
+        div_text.setAttribute("style", "position:absolute; font-size:16px; left: -90px; top:" + top + "px; text-align:right");
+        div_text.innerHTML = text;
+        result_div.appendChild(div_text);
+    }
 }
 
 function outputNote(Variables, id){

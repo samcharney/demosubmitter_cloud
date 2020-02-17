@@ -40,7 +40,7 @@
 
 </head>
 
-<body id="page-top" class="index">
+<body id="page-top" class="index" >
 
     <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
         <div class="container">
@@ -112,7 +112,7 @@
                             </div>
                         </div> -->
 
-            <div class="row">
+            <div class="row" style="display: none">
                 <div class="col-sm-12" style="text-align: center; font-size: 32px;width: 100%">
                     <span class="text-center" style="">Overview</span>
 
@@ -243,10 +243,12 @@
             <div id="guide" style="position:relative; left:60px; top: 48px;height:0px; width:29px; border: 0px solid black">
                 <div style="position: absolute; top: -46px; left:-5px; font-size: 14px; width: 160px"><b>Navigation guide</b></div>
                 <div class="guide" style="">1<div class="guide_text" style="">Set inputs</div></div>
-                <div id="guide_2" style="height:57px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
-                <div class="guide" style="">2<div class="guide_text" style="">Click the button<br>to continue</div></div>
+                <div id="guide_2" style="height:48px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
+                <div class="guide" style="">2<div class="guide_text" style="">Check SLA Settings</div></div>
+                <div id="guide_3" style="height:48px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
+                <div class="guide" style="">3<div class="guide_text" style="">Click the button<br>to continue</div></div>
                 <div id="guide_4" style="height:310px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
-                <div id="guide_5" class="guide" style="display: none">3<div class="guide_text" style="">Check suggested storage engine templates</div></div>
+                <div id="guide_5" class="guide" style="display: none">3<div class="guide_text" style="">Check suggested storage engine designs</div></div>
                 <div id="guide_6" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
                 <div id="guide_7" class="guide" style="display: none">4<div class="guide_text" style="transform: translateY(-25px);">Turn on the radio button to compare with existing storage engines</div></div>
                 <div id="guide_8" style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
@@ -275,7 +277,7 @@
                     </div>
                     <div id="dataset-setting" class="collapse multi-collapse">
                             <div class="input-group" >
-                                <span class="input-group-addon"><span data-tooltip="Number of Entries in the Index (e.g., 10485760), which automatically changes the Level number" data-tooltip-position="bottom"> # Entries</span></span>
+                                <span class="input-group-addon"><span data-tooltip="Total data items to store" data-tooltip-position="bottom"> # Entries</span></span>
                                 <input id="N" type="text" class="form-control" aria-label="Index Size N (elements)" placeholder="Number of Entries in the Index (e.g., 10485760)" style="text-align:right" onchange="re_run(event, 'dataset_input')" autocomplete="false"/>
                             </div>
                             <div class="input-group">
@@ -319,17 +321,17 @@
                         </form>
 
                         <form id="myForm_2" style="text-align: left; height: 0px; opacity: 0; padding:0px; background-color:#FFFFFF; border:0px solid  #D3EBFF;border-radius:4px; margin:0px">
-                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="1" /> a) 80% reads are skewed <br />
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="1" /> 80% reads are skewed <br />
                                 <span id="check_1" name="skew_check_mark" class="check_mark"></span>
                                 <div id="check_mark_1" style="position: absolute;background-color: #7F89FF;width: 0px;height: 0px;top: 9px;left: 9px; opacity: 0; border-radius: 50%;z-index: 15"></div>
                             </label>
-                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="2" /> b) 80% writes are skewed <br />
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="2" /> 80% writes are skewed <br />
                                 <span name="skew_check_mark" class="check_mark"></span>
                             </label>
-                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="3" /> c) both read and writes are skewed by 20% <br />
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="3" /> both read and writes are skewed by 20% <br />
                                 <span name="skew_check_mark" class="check_mark"></span>
                             </label>
-                            <label class="radiobutton"  style="margin:0px 0px 0px 10px; display: block"><input type="radio" name="radio_2" value="4" /> d) both read and writes are skewed by 50% <br />
+                            <label class="radiobutton"  style="margin:0px 0px 0px 10px; display: block"><input type="radio" name="radio_2" value="4" /> both read and writes are skewed by 50% <br />
                                 <span name="skew_check_mark" class="check_mark"></span>
                             </label>
                         </form>
@@ -338,15 +340,24 @@
                             <div class="lds-roller" style=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                         </div>
 
-
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Write" data-tooltip-position="bottom"> Write % </span></span>
-                            <input id="w" type="text" class="form-control" aria-label="Proportion of write operation" placeholder=" w (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')" />
+                            <span class="input-group-addon"><span data-tooltip="No. of operations in the workload" data-tooltip-position="bottom">  Number of queries</span></span>
+                            <input id="query_count" type="text" class="form-control" aria-label="No. of operations in the workload" placeholder=" qL (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Non-result Point Lookup Operation" data-tooltip-position="bottom"> Non-result Point Lookup % </span></span>
+                            <span class="input-group-addon"><span data-tooltip="Proportion of Existing Point Lookup Operation" data-tooltip-position="bottom"> Point Lookups % </span></span>
+                            <input id="v" type="text" class="form-control" aria-label="Proportion of existing point lookup operation" placeholder=" v (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
+                        </div>
+
+                        <div class="input-group" >
+                            <span class="input-group-addon"><span data-tooltip="Proportion of Non-result Point Lookup Operation" data-tooltip-position="bottom"> Zero result Point Lookup % </span></span>
                             <input id="r" type="text" class="form-control" aria-label="Proportion of non-result point lookup operation" placeholder=" r (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
+                        </div>
+
+                        <div class="input-group">
+                            <span class="input-group-addon"><span data-tooltip="Proportion of writes (inserts, updates, and deletes) in the workload" data-tooltip-position="bottom"> Writes % </span></span>
+                            <input id="w" type="text" class="form-control" aria-label="Proportion of writes operation" placeholder=" w (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group" style="display: none">
@@ -359,22 +370,9 @@
                             <input id="qL" type="text" class="form-control" aria-label="Proportion of long range lookup operation" placeholder=" qL (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
-                        <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="No. of operations in the workload" data-tooltip-position="bottom"> Query Count  </span></span>
-                            <input id="query_count" type="text" class="form-control" aria-label="No. of operations in the workload" placeholder=" qL (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
-                        </div>
-
-
-                        <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Existing Point Lookup Operation" data-tooltip-position="bottom"> Existig Point Lookup % </span></span>
-                            <input id="v" type="text" class="form-control" aria-label="Proportion of existing point lookup operation" placeholder=" v (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
-                        </div>
-
-
-
-                        <div class="input-group">
+                        <div class="input-group" style="display: none">
                             <span class="input-group-addon"><span data-tooltip="The number of unique entries in the target key range" data-tooltip-position="bottom"> Target Range Size </span></span>
-                            <input id="s" type="number" class="form-control" aria-label="Proportion" placeholder=" s (e.g., 2048)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')"/>
+                            <input id="s" type="number" class="form-control" aria-label="Proportion" placeholder=" s (e.g., 2048)"  style="text-align:right;" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')"/>
                         </div>
                     </div>
                     <!--
@@ -407,7 +405,7 @@
                               </form>
                               <div class="row">
                                       <div class="input-group" style="text-align: center;">
-                                          <span class="input-group-addon"><span data-tooltip="The budget" data-tooltip-position="bottom">Budget </span></span>
+                                          <span class="input-group-addon"><span data-tooltip="The total amount of money you are willing to spend on the cloud to run this workload." data-tooltip-position="bottom">Budget </span></span>
                                           <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                                       </div>
                               </div>
@@ -437,7 +435,7 @@
                         </form>
                         <div class="row">
                             <div class="input-group" style="text-align: center;">
-                                <span class="input-group-addon"><span data-tooltip="The performance" data-tooltip-position="bottom">Latency (hours)</span></span>
+                                <span class="input-group-addon"><span data-tooltip="The target performance in terms of latency that you want to achieve for this workload." data-tooltip-position="bottom">Latency (hours)</span></span>
                                 <input id="latency" class="form-control" aria-label="Latency" placeholder="Latency" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                             </div>
                         </div>
@@ -743,10 +741,10 @@
 
                 </div>
 
-                <div class="row" style="width: 100%; margin-bottom: 50px">
+                <div class="row" style="width: 100%; margin-bottom: 50px; margin-top: 65px">
 
-                    <div  class="cloud_button" onclick="LoadCharts()" style=" left:calc(50% - 58px); cursor:pointer" >
-                        Continue
+                    <div  class="cloud_button" onclick="LoadCharts()" style=" left:calc(50% - 118px); cursor:pointer" >
+                        Design Storage Engine
                     </div>
 
                     <div id="loading_canvas_2" style=" width: 40px; height: 40px; position: relative; top: 10px; left:calc(50%); transform:scale(0.9); opacity: 0">
@@ -827,11 +825,11 @@
                             <div class="myinput" style="width:100%;background-color:white; color: black; margin: 10px 0px 2px 0px; border: 0; text-align: left"><b>What-If Questions</b></div>
                             <select  class="myinput myselect" onchange="switchQuestion()" id="questions" style="width:98%; border-radius: 0; " >
                                 <option value="0">Select a question! </option>
-                                <option value="1">What if I increase my budget</option>
+                                <option value="1">What if I change my budget</option>
                                 <option value="2">What if I change my cloud provider</option>
                                 <option value="3">What if I increase my performance</option>
-                                <option value="4">What if I change the proportion of read</option>
-                                <option value="5">What if I change the proportion of write</option>
+                                <option value="4">What if I change the proportion of reads</option>
+                                <option value="5">What if I change the proportion of writes</option>
                                 <option value="6">What-if I switch to the best trade-off configurations</option>
                             </select>
                             <div class="myinput" id="question0" style="display: none;width: 98%;font-size: 12px;font-style:italic;border-width: 0px;background-color: white;text-align: left"></div>

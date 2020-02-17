@@ -843,7 +843,7 @@ function drawContinuums(if_regenerate=true) {
 
         if(best_array[best_array.length-1][0]<cost) {
             design_1_index=best_array.length-2;
-            cost_result_text[0]=("We found 1 storage engine template for you at "+cost+".<br><br>");
+            cost_result_text[0]=("We found 1 storage engine design for you at "+cost+".<br><br>");
             console.log(cost_result_text[0],cost);
             //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
             cost_result_text[1]="<b>Our Option:</b>"
@@ -862,7 +862,7 @@ function drawContinuums(if_regenerate=true) {
                     design_2_index = i;
                     if(!isNaN(latency)) {
                         if (best_array[i][1] * 24 < latency)
-                            cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + " with latency less than " + fixTime(latency / 24) + ".</i><br><br>");
+                            cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + " with latency less than " + fixTime(latency / 24) + ".</i><br><br>");
                         else {
                             for (var j = 1; j < best_array.length; j++) {
                                 if (best_array[j][1]*24 < latency){
@@ -873,7 +873,7 @@ function drawContinuums(if_regenerate=true) {
                             cost_result_text[0] = ("<i>The budget $" + cost + " is too low to achieve " + fixTime(latency / 24) + " latency. However, we found the following two storage engines for you.</i><br><br>");
                         }
                     }else{
-                        cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + ".</i><br><br>");
+                        cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + ".</i><br><br>");
                     }
                     cost_result_text[1] = "<b>Cosine design 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
@@ -1222,7 +1222,6 @@ function drawContinuumsMultithread(if_regenerate=true) {
         console.log(parameters);
         myWorker.onmessage = function (e) {
             if (typeof e.data == "string") {
-
                 $("#loading_percentage").html(e.data);
             } else {
                 console.log(typeof e.data);
@@ -1266,7 +1265,7 @@ function drawContinuumsNew(ContinuumArray){
     document.getElementById("chart_style").value="1";
 
 
-    var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10);
+    var cost=parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+budget_change;
     var latency=parseFloat(document.getElementById("latency").value);
 
     var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
@@ -1577,7 +1576,7 @@ function drawContinuumsNew(ContinuumArray){
 
         if(best_array[best_array.length-1][0]<cost) {
             design_1_index=best_array.length-2;
-            cost_result_text[0]=("We found 1 storage engine template for you at "+cost+".<br><br>");
+            cost_result_text[0]=("We found 1 storage engine design for you at "+cost+".<br><br>");
             console.log(cost_result_text[0],cost);
             //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
             cost_result_text[1]="<b>Our Option:</b>"
@@ -1596,7 +1595,7 @@ function drawContinuumsNew(ContinuumArray){
                     design_2_index = i;
                     if(!isNaN(latency)) {
                         if (best_array[i][1] * 24 < latency)
-                            cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + " with latency less than " + fixTime(latency / 24) + ".</i><br><br>");
+                            cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + " with latency less than " + fixTime(latency / 24) + ".</i><br><br>");
                         else {
                             for (var j = 1; j < best_array.length; j++) {
                                 if (best_array[j][1]*24 < latency){
@@ -1607,7 +1606,7 @@ function drawContinuumsNew(ContinuumArray){
                             cost_result_text[0] = ("<i>The budget $" + cost + " is too low to achieve " + fixTime(latency / 24) + " latency. However, we found the following two storage engines for you.</i><br><br>");
                         }
                     }else{
-                        cost_result_text[0] = ("<i>We found 2 storage engine templates for you at $" + cost + ".</i><br><br>");
+                        cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + ".</i><br><br>");
                     }
                     cost_result_text[1] = "<b>Cosine design 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
