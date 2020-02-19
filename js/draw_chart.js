@@ -875,9 +875,9 @@ function drawContinuums(if_regenerate=true) {
                     }else{
                         cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + ".</i><br><br>");
                     }
-                    cost_result_text[1] = "<b>Cosine design 1 saves money</b>"
+                    cost_result_text[1] = "<b>Cosine configuration 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
-                    cost_result_text[3] = "<b>Cosine design 2 saves time</b>";
+                    cost_result_text[3] = "<b>Cosine configuration 2 saves time</b>";
                     cost_result_text[4] = best_array[design_2_index][5];
                     chart_start_index = Math.floor(i - best_array.length / 5);
                     if (chart_start_index < 0)
@@ -921,9 +921,9 @@ function drawContinuums(if_regenerate=true) {
             if(l2!=-1) {
                 //if(switch_option==true){
                 if(document.getElementById('performance_conscious_checkbox').checked){
-                    document.getElementById("cost_result_p4").innerHTML= "<b>Store engine 2 saves money</b>";
+                    document.getElementById("cost_result_p4").innerHTML= "<b>Configuration 2 saves money</b>";
                     outputParameters(cost_result_text[2],"cost_result_p5", l1);
-                    document.getElementById("cost_result_p2").innerHTML = "<b>Storage engine 1 saves time</b>";
+                    document.getElementById("cost_result_p2").innerHTML = "<b>Configuration 1 saves time</b>";
                     outputParameters(cost_result_text[4], "cost_result_p3", l2);
                 }else {
                     document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];

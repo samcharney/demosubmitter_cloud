@@ -590,6 +590,25 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         M_B = M_B - M_BC;
         //scenario == 'A'? getNoOfLevelsAvgCase(&L, M_B, T, data) : getNoOfLevels(&L, M_B, T, data);
     }
+    if(existing_system=="FASTER")
+    {
+        var scale_factor = 1000; // We assume about 1000 keys fit in the in-memory hash table
+        M_F = (data/scale_factor)*(F)*(1.0 + (1.0/B));
+        if(M_F >= M)
+        {
+            //printf("M: %f M_F: %f\n", M/(1024*1024*1024), M_F/(1024*1024*1024));
+            return -1;
+        }
+        M_B = M - M_F;
+        T = (data*E)/M_B;
+        K = T-1;
+        Z = T-1;
+        M_BF = 0.0;
+        Y = 0;
+        M_BC = 0.0;
+        //printf("T:%d, K:%d, Z:%d, M_B:%f, M_F:%f\n", T, K, Z, M_B/(1024*1024*1024), M_F/(1024*1024*1024));
+    }
+
     var universe_max = workload_type == 0 ? U : U_1 + U_2;
     if (workload_type == 1) {
         universe_max = U_1 + (1 - p_put) * (N);

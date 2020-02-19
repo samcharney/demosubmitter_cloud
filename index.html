@@ -241,7 +241,7 @@
             <!-- <div id="interactiveDemo" class="row" style="">  -->
             <!-- </div>  -->
             <div id="guide" style="position:relative; left:60px; top: 48px;height:0px; width:29px; border: 0px solid black">
-                <div style="position: absolute; top: -46px; left:-5px; font-size: 14px; width: 160px"><b>Navigation guide</b></div>
+                <div style="position: absolute; top: -46px; left:-5px; font-size: 14px; width: 160px"><b>Design Steps</b></div>
                 <div class="guide" style="">1<div class="guide_text" style="">Set inputs</div></div>
                 <div id="guide_2" style="height:48px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
                 <div class="guide" style="">2<div class="guide_text" style="">Check SLA Settings</div></div>
@@ -277,15 +277,15 @@
                     </div>
                     <div id="dataset-setting" class="collapse multi-collapse">
                             <div class="input-group" >
-                                <span class="input-group-addon"><span data-tooltip="Total data items to store" data-tooltip-position="bottom"> # Entries</span></span>
+                                <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Total data items to store</span># Entries</span>
                                 <input id="N" type="text" class="form-control" aria-label="Index Size N (elements)" placeholder="Number of Entries in the Index (e.g., 10485760)" style="text-align:right" onchange="re_run(event, 'dataset_input')" autocomplete="false"/>
                             </div>
                             <div class="input-group">
-                                <span class="input-group-addon"><span data-tooltip="Key-Value pair size in bytes (e.g., 16)." data-tooltip-position="bottom"> Entry size (bytes)</span></span>
+                                <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Key-Value pair size in bytes (e.g., 16).</span>Entry size (bytes) </span>
                                 <input id="E" type="number" class="form-control" aria-label="Key-Value pair size (bytes)" placeholder="Key-Value pair size in bytes (e.g., 16)" style="text-align:right" onchange="re_run(event, 'dataset_input')" onwheel="re_run(event, 'dataset_input')"  autocomplete="false"/>
                             </div>
                             <div class="input-group">
-                                <span class="input-group-addon"><span data-tooltip="Key size in bytes (e.g., 8)." data-tooltip-position="bottom"> Key size (bytes)</span></span>
+                                <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Key size in bytes (e.g., 8).</span>Key size (bytes) </span>
                                 <input id="F" type="text" class="form-control" aria-label="Key size (bytes)" placeholder="Key size in bytes (e.g., 8)" style="text-align:right" onchange="re_run(event, 'dataset_input')" autocomplete="false"/>
                             </div>
                     </div>
@@ -341,27 +341,27 @@
                         </div>
 
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="No. of operations in the workload" data-tooltip-position="bottom">  Number of queries</span></span>
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">No. of operations in the workload</span>Number of queries</span>
                             <input id="query_count" type="text" class="form-control" aria-label="No. of operations in the workload" placeholder=" qL (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Existing Point Lookup Operation" data-tooltip-position="bottom"> Point Lookups % </span></span>
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Existing Point Lookup Operation</span>Point Lookups %</span>
                             <input id="v" type="text" class="form-control" aria-label="Proportion of existing point lookup operation" placeholder=" v (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group" >
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Non-result Point Lookup Operation" data-tooltip-position="bottom"> Zero result Point Lookup % </span></span>
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Non-result Point Lookup Operation</span>Zero result Point Lookups %</span>
                             <input id="r" type="text" class="form-control" aria-label="Proportion of non-result point lookup operation" placeholder=" r (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of writes (inserts, updates, and deletes) in the workload" data-tooltip-position="bottom"> Writes % </span></span>
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Writes (inserts, updates, and deletes) in the Workload</span> Writes % </span>
                             <input id="w" type="text" class="form-control" aria-label="Proportion of writes operation" placeholder=" w (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
                         <div class="input-group" style="display: none">
-                            <span class="input-group-addon"><span data-tooltip="Proportion of Short Range Lookup Operation" data-tooltip-position="bottom"> Short Range Lookup % </span></span>
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Short Range Lookup Operation</span>Short Range Lookup %</span>
                             <input id="qS" type="text" class="form-control" aria-label="Proportion of short range lookup operation" placeholder=" qS (e.g., 1)"  style="text-align:right" onchange="re_run(event, 'workload_input')" onwheel="re_run(event, 'workload_input')" />
                         </div>
 
@@ -405,7 +405,7 @@
                               </form>
                               <div class="row">
                                       <div class="input-group" style="text-align: center;">
-                                          <span class="input-group-addon"><span data-tooltip="The total amount of money you are willing to spend on the cloud to run this workload." data-tooltip-position="bottom">Budget </span></span>
+                                          <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">The total amount of money you are willing to spend on the cloud to run this workload.</span>Budget </span>
                                           <input id="cost" type="number" class="form-control" aria-label="Cost" placeholder="Cost" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                                       </div>
                               </div>
@@ -435,7 +435,7 @@
                         </form>
                         <div class="row">
                             <div class="input-group" style="text-align: center;">
-                                <span class="input-group-addon"><span data-tooltip="The target performance in terms of latency that you want to achieve for this workload." data-tooltip-position="bottom">Latency (hours)</span></span>
+                                <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">The target performance in terms of latency that you want to achieve for this workload.</span>Latency (hours) </span>
                                 <input id="latency" class="form-control" aria-label="Latency" placeholder="Latency" style="text-align:right " onchange="re_run(event, 'input4')"  onwheel="re_run(event, 'input7')" autocomplete="false"/>
                             </div>
                         </div>
@@ -758,10 +758,10 @@
              </div>
                 <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; right:-150px; width: 85%; font-size: 16px; margin-bottom: 64px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
-                    <div class="tab_l down tooltip1" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px">
+                    <div class="tab_l down tooltip2" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px;">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
                             <img style="width:50px" class="img-responsive img-centered" src="images//normal.png">
-                        </div>Basic Mode<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span></div><div name="interactive_tab" class="tab_l tooltip1" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%;border-left-color: #7F89FF">Interactive Mode
+                        </div>Basic Mode<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span></div><div name="interactive_tab" class="tab_l tooltip2" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%;border-left-color: #7F89FF">Interactive Mode
                     <div style="width:60px; height:60px; position:absolute; bottom: -10px; right:-10px;  border-radius:30px; padding:8px; z-index:10">
                         <img style="width:44px" class="img-responsive img-centered" src="images//hand.png">
                     </div>
@@ -807,7 +807,7 @@
                                 Question Panel
                             </div>
                             <div id="question_navigation" style="width:29px; height:1px; top:45px; left:-160px; background-color:white; color: black; position:absolute; padding: 0px; ">
-                                <div style="position: absolute; top: -30px; left:-5px; font-size: 14px; width: 160px"><b>Navigation Guide</b></div>
+                                <div style="position: absolute; top: -30px; left:-5px; font-size: 14px; width: 160px"><b>Design Steps</b></div>
                                 <div class="guide" style="">1<div class="guide_text_wider" style="">Select a what-if question or a statistical query from the question panel</div></div>
                                 <div  style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
                                 <div class="guide" style="">2<div class="guide_text_wider" style="">Click the button<br>Check out the new results in the interaction panel</div></div>
@@ -944,8 +944,8 @@
                                         <div class="tab down" name="explore_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px">Off</div><div name="explore_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px">On</div>
                                 </div>
                                 <div id="continuums_chart"  style="display: none; width:805px; height: 0px;">
-                                    <div id="chart_banner" style="width: 635px; height:35px; background-color:white; color: black; font-size: 20px; text-align: left; padding-left:110px; opacity: 1">
-                                        <b>Continuum sub-space</b>
+                                    <div id="chart_banner" style="width: 635px; height:auto; background-color:white; color: black; font-size: 20px; text-align: left; padding-left:60px; opacity: 1">
+                                        <b>Browse the configuration continuum<br>of the top designs within your budget</b>
                                     </div>
                                     <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
                                     </div>

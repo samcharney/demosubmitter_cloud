@@ -2285,7 +2285,7 @@ function outputParameters(Variables, id, l) {
         div_tmp.setAttribute("class", "tooltip1");
         var span_tmp = document.createElement("span");
         span_tmp.setAttribute("class", "tooltiptext");
-        span_tmp.innerHTML = "(Growth Factor) &nbsp;T =" + Variables.T + "<br>(Hot Merge Threshold) &nbsp;K=" + Variables.K + "<br>(Cold Merge Threshold) &nbsp;Z=" + Variables.Z;
+        span_tmp.innerHTML = "<i>(Growth Factor) T=" + Variables.T + ", (Hot Merge Threshold) K=" + Variables.K + "<br>(Cold Merge Threshold) Z=" + Variables.Z+"</i>";
         div_tmp.appendChild(span_tmp);
 
     }
@@ -2316,7 +2316,7 @@ function outputText(result_div,text,top){
         var div_text = document.createElement("div");
         div_text.setAttribute("style", "position:absolute; font-size:16px; left: -90px; top:" + top + "px; text-align:right; ");
         div_text.innerHTML = "Description";
-        div_text.setAttribute("class", "tooltip1");
+        div_text.setAttribute("class", "tooltip2");
         var span_tmp = document.createElement("span");
         span_tmp.setAttribute("class", "tooltiptext_mode");
         span_tmp.setAttribute("style", "position:absolute; width:140px; height:50px; padding:5px; left: -20px")
@@ -2338,16 +2338,16 @@ function outputNote(Variables, id){
         text.setAttribute("style", "width:90%; position:absolute; top:462px; font-size:12px");
     else
         text.setAttribute("style", "width:90%; position:absolute; top:511px; font-size:12px");
-    text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the input takes $"+Variables.cost+".</i>"
+    text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the input takes $"+Variables.cost+".</i>"
     result_div.appendChild(text);
     var div_tmp = document.createElement("div");
     var popup_id=id+"_popup"
     div_tmp.setAttribute("class","download_icon");
     div_tmp.setAttribute("id",popup_id);
     if(!using_compression)
-        div_tmp.setAttribute("style","position:absolute; top:457px; left:120px")
+        div_tmp.setAttribute("style","position:absolute; top:457px; left:122px")
     else
-        div_tmp.setAttribute("style","position:absolute; top:506px; left:120px")
+        div_tmp.setAttribute("style","position:absolute; top:506px; left:122px")
     div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/popup.png\"/>"
     result_div.appendChild(div_tmp);
     $("#"+popup_id).click(function(){
