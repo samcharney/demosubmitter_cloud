@@ -3467,7 +3467,7 @@ function switchQuestion() {
 		var input = document.getElementById("question2_input");
 		input.addEventListener("change", function (e) {
 			if(input.value=="Any"){
-				user_cloud_provider_enable=[1,1,1];
+				user_cloud_provider_enable=[1,1,1]; 
 			}
 			if(input.value=="AWS"){
 				user_cloud_provider_enable=[1,0,0]
