@@ -63,6 +63,8 @@ var user_cloud_provider_enable=[1,1,1];
 
 var budget_change=0;
 
+var canvas_theta=0;
+
 
 
 
@@ -2285,7 +2287,7 @@ function outputParameters(Variables, id, l) {
         div_tmp.setAttribute("class", "tooltip1");
         var span_tmp = document.createElement("span");
         span_tmp.setAttribute("class", "tooltiptext");
-        span_tmp.innerHTML = "<i>(Growth Factor) T=" + Variables.T + ", (Hot Merge Threshold) K=" + Variables.K + "<br>(Cold Merge Threshold) Z=" + Variables.Z+"</i>";
+        span_tmp.innerHTML = "<i>Growth Factor (T)=" + Variables.T + ", Hot Merge Threshold (K)=" + Variables.K + "<br>Cold Merge Threshold (Z)=" + Variables.Z+"</i>";
         div_tmp.appendChild(span_tmp);
 
     }
@@ -2482,7 +2484,7 @@ function createExplanationPopup(Variables){
     var result_div = popup.document.createElement("div");
     result_div.setAttribute("id","popup");
     result_div.setAttribute("class","col-lg-1 col-md-1 col-sm-1")
-    result_div.setAttribute("style","width: 600px;   font-size: 18px; padding-top:10px;");
+    result_div.setAttribute("style","width: 600px;   font-size: 16px; padding-top:10px;");
 
     var w=Variables.w;
     var v=Variables.v;

@@ -593,14 +593,15 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     if(existing_system=="FASTER")
     {
         var scale_factor = 1000; // We assume about 1000 keys fit in the in-memory hash table
-        M_F = (data/scale_factor)*(F)*(1.0 + (1.0/B));
+        M_F = (N/scale_factor)*(F)*(1.0 + (1.0/B));
+        var M = max_RAM_purchased * 1024 * 1024 * 1024;
         if(M_F >= M)
         {
             //printf("M: %f M_F: %f\n", M/(1024*1024*1024), M_F/(1024*1024*1024));
             return -1;
         }
         M_B = M - M_F;
-        T = (data*E)/M_B;
+        T = Math.ceil((N*E)/M_B);
         K = T-1;
         Z = T-1;
         M_BF = 0.0;
@@ -708,6 +709,7 @@ function buildContinuums(cloud_mode){
     var Variables=0;
     var rocks_Variables;
     var WT_Variables;
+    var faster_Variables;
     var progress=0;
     cri_cache=new Array();
     for(var i=0;i<3;i++){
@@ -731,12 +733,14 @@ function buildContinuums(cloud_mode){
                         Variables = countContinuum(VMCombination, cloud_provider);
                         rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
                         WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
+                        faster_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "FASTER");
                     } else {
                         for (var n = 0; n < 3; n++) {
                             if (Variables == 0) {
                                 Variables = countContinuum(VMCombination, cloud_provider, n);
                                 rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", 1);
                                 WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", 1);
+                                faster_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "FASTER",1);
                             } else {
                                 var temp;
                                 temp = countContinuum(VMCombination, cloud_provider, n);
@@ -755,7 +759,7 @@ function buildContinuums(cloud_mode){
                     var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info + "<br>Latency=" + fixTime(Variables.latency) + "<br>Cost=" + Variables.cost);
                     if (using_compression)
                         info += "<br>Compression: " + Variables.compression_name;
-                    var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables, WT_Variables];
+                    var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables, WT_Variables, faster_Variables];
                     result_array.push(result);
                 }
             }
@@ -2112,7 +2116,7 @@ function createExplanationPopup(Variables){
     var result_div = popup.document.createElement("div");
     result_div.setAttribute("id","popup");
     result_div.setAttribute("class","col-lg-1 col-md-1 col-sm-1")
-    result_div.setAttribute("style","width: 600px;   font-size: 18px; padding-top:10px;");
+    result_div.setAttribute("style","width: 600px;   font-size: 14px; padding-top:10px;");
 
     var w=Variables.w;
     var v=Variables.v;

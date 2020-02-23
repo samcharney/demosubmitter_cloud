@@ -875,9 +875,9 @@ function drawContinuums(if_regenerate=true) {
                     }else{
                         cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + ".</i><br><br>");
                     }
-                    cost_result_text[1] = "<b>Cosine configuration 1 saves money</b>"
+                    cost_result_text[1] = "<b>Configuration 1 saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
-                    cost_result_text[3] = "<b>Cosine configuration 2 saves time</b>";
+                    cost_result_text[3] = "<b>Configuration 2 saves time</b>";
                     cost_result_text[4] = best_array[design_2_index][5];
                     chart_start_index = Math.floor(i - best_array.length / 5);
                     if (chart_start_index < 0)
@@ -1608,9 +1608,9 @@ function drawContinuumsNew(ContinuumArray){
                     }else{
                         cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + ".</i><br><br>");
                     }
-                    cost_result_text[1] = "<b>Cosine design 1 saves money</b>"
+                    cost_result_text[1] = "<b>Cosine configuration 1<br>saves money</b>"
                     cost_result_text[2] = best_array[i - 1][5];
-                    cost_result_text[3] = "<b>Cosine design 2 saves time</b>";
+                    cost_result_text[3] = "<b>Cosine configuration 2<br>saves time</b>";
                     cost_result_text[4] = best_array[design_2_index][5];
                     chart_start_index = Math.floor(i - best_array.length / 5);
                     if (chart_start_index < 0)
@@ -1654,9 +1654,9 @@ function drawContinuumsNew(ContinuumArray){
         if(l2!=-1) {
             //if(switch_option==true){
             if(document.getElementById('performance_conscious_checkbox').checked){
-                document.getElementById("cost_result_p4").innerHTML= "<b>Store engine 2 saves money</b>";
+                document.getElementById("cost_result_p4").innerHTML= "<b>Cosine configuration 2<br>saves money</b>";
                 outputParameters(cost_result_text[2],"cost_result_p5", l1);
-                document.getElementById("cost_result_p2").innerHTML = "<b>Storage engine 1 saves time</b>";
+                document.getElementById("cost_result_p2").innerHTML = "<b>Cosine configuration 1<br> saves time</b>";
                 outputParameters(cost_result_text[4], "cost_result_p3", l2);
             }else {
                 document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
@@ -1671,7 +1671,7 @@ function drawContinuumsNew(ContinuumArray){
 
             //document.getElementById("cost_result_p6").setAttribute("style","position:relative;top:0px");
             if(best_array[design_1_index][7]!=-1) {
-                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB</b>";
+                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB<br><br></b>";
                 if((cost-best_array[design_1_index][7].cost)>(best_array[design_1_index+1][7].cost-cost)) {
                     outputParameters(best_array[design_1_index+1][7], "cost_result_p7", l2);
                     outputNote(best_array[design_1_index][7], "cost_result_p7");
@@ -1680,10 +1680,10 @@ function drawContinuumsNew(ContinuumArray){
                     outputNote(best_array[design_1_index+1][7], "cost_result_p7");
                 }
             }else{
-                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory</b>";
+                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory<br><br></b>";
                 removeAllChildren(document.getElementById("cost_result_p7"));
             }
-            document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger</b>";
+            document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger<br><br></b>";
             //console.log(best_array[design_1_index][8])
             if((cost-best_array[design_1_index][8].cost)>(best_array[design_1_index+1][8].cost-cost)) {
                 outputParameters(best_array[design_1_index+1][8], "cost_result_p9", l2);
@@ -1691,6 +1691,15 @@ function drawContinuumsNew(ContinuumArray){
             }else{
                 outputParameters(best_array[design_1_index][8], "cost_result_p9", l1);
                 outputNote(best_array[design_1_index+1][8], "cost_result_p9");
+            }
+            document.getElementById("cost_result_p10").innerHTML = "<b>Faster<br><br></b>";
+            //console.log(best_array[design_1_index][8])
+            if((cost-best_array[design_1_index][9].cost)>(best_array[design_1_index+1][9].cost-cost)) {
+                outputParameters(best_array[design_1_index+1][9], "cost_result_p11", l2);
+                outputNote(best_array[design_1_index][9], "cost_result_p11");
+            }else{
+                outputParameters(best_array[design_1_index][9], "cost_result_p11", l1);
+                outputNote(best_array[design_1_index+1][9], "cost_result_p11");
             }
         }
     }
@@ -1915,3 +1924,76 @@ function fixTimeArray(array){
     return result;
 }
 
+function drawCanvas(){
+    var cost=Math.abs(Math.cos(canvas_theta));
+    var performance=Math.abs(Math.cos(canvas_theta+Math.PI/3));
+    var design=Math.abs(Math.cos(canvas_theta+Math.PI*2/3));
+    canvas_theta+=0.008*Math.PI
+    var origin={};
+    origin.x=100;
+    origin.y=190;
+    var length=170;
+
+    var Px={},Py={},Pz={};
+    Px.x=origin.x+20+length*0.7*cost;
+    Px.y=origin.y;
+    Py.x=origin.x;
+    Py.y=origin.y-20-length*0.7*performance;
+    Pz.x=origin.x-14-80*0.7*design;
+    Pz.y=origin.y+14+80*0.7*design;
+    var canvas=document.getElementById("axis_graph");
+    canvas.width=300;
+    canvas.height=300;
+    var ctx = canvas.getContext('2d');
+    ctx.lineWidth=3
+
+    drawAxis(ctx,100,190,270,190);
+    drawAxis(ctx,100,190,100,30);
+    drawAxis(ctx,100,190,20,270);
+
+    drawline(ctx,Px,Py);
+    drawline(ctx,Pz,Py);
+    drawline(ctx,Px,Pz);
+
+    ctx.moveTo(Px.x,Px.y);
+    ctx.lineTo(Py.x,Py.y);
+    ctx.lineTo(Pz.x,Pz.y);
+    ctx.fillStyle = 'rgba('+Math.abs(Math.cos(canvas_theta)*255)+', '+Math.abs(Math.cos(canvas_theta+Math.PI/3)*255)+', '+Math.abs(Math.cos(canvas_theta+Math.PI*2/3)*255)+', '+0.2+')';
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+    ctx.font = "20px Arial";
+    ctx.fillText("Cost", 240,175);
+    ctx.fillText("Performance", 120,40);
+    ctx.fillText("Design", 35,285);
+}
+
+function drawAxis(ctx,start_x,start_y,end_x,end_y){
+    var headlen=12;
+    ctx.moveTo(start_x,start_y);
+    ctx.lineTo(end_x,end_y);
+    ctx.stroke();
+
+    var dx = end_x - start_x;
+    var dy = end_y - start_y;
+    end_x=0.02*dx+end_x;
+    end_y=0.02*dy+end_y;
+    var angle = Math.atan2(dy, dx);
+    ctx.beginPath();
+    ctx.lineWidth=1;
+    ctx.moveTo(end_x, end_y);
+    ctx.lineTo(end_x - headlen * Math.cos(angle - Math.PI / 6), end_y - headlen * Math.sin(angle - Math.PI / 6));
+    ctx.stroke();
+    ctx.moveTo(end_x, end_y);
+    ctx.lineTo(end_x - headlen * Math.cos(angle + Math.PI / 6), end_y - headlen * Math.sin(angle + Math.PI / 6));
+    ctx.stroke();
+    ctx.closePath();
+    ctx.lineWidth=3;
+
+}
+
+function drawline(ctx, start, end) {
+    ctx.moveTo(start.x,start.y);
+    ctx.lineTo(end.x,end.y);
+    ctx.stroke()
+}

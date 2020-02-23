@@ -998,6 +998,10 @@ function init(){
 	initializeSLACheckboxes();
 
 	initializeCloudCheckboxes();
+
+	initializeExistDesignPanel();
+
+	setInterval("drawCanvas()",40);
 /*
 	if($( window ).width()<1400)
 		$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
@@ -1010,6 +1014,8 @@ function init(){
 			$("#demo_body").css('transform','');
 	});
 */
+	window.scrollTo(0, 1400);
+
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
 	})
@@ -3357,7 +3363,7 @@ function switchText() {
 	if(document.getElementById("interactive_mode_text").innerHTML=="Interactive Mode: Off") {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
 		$("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
-		$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
+		//$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
 		$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
 		$("#interactive-panel").animate({width: '1136px',borderWidth:1,borderOpacity:1}, "slow");
 		$("#charts").css('left','calc(50% - 620px)');
@@ -3374,10 +3380,14 @@ function switchText() {
         }
 		$("#guide").animate({opacity:"0"}, "slow");
 
+		$("#WT,#rocks,#faster").css("width","0");
+		$("#WT,#rocks,#faster").css("opacity","0");
+		$("#exist_panel").animate({width: '0', opacity: '0'}, "slow");
 	}
 	else {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
 		$("#questions_block").animate({width: '0px',opacity:'0'}, "slow");
+		/*
 		if(document.getElementById("exsys_text").innerHTML=="Compare with existing systems: On") {
 			$("#rocks,#WT").animate({width: '255px', opacity: '1'}, "slow");
 			$("#exist_title").animate({width: '30%', opacity: '1'}, "slow");
@@ -3386,9 +3396,10 @@ function switchText() {
 			$("#rocks,#WT").animate({width: '255px', opacity: '0'}, "slow");
 			$("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
 		}
+		*/
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
-		$("#charts").css('left','calc(50% - 500px)');
+		$("#charts").css('left','calc(50% - 400px)');
 		$("#charts").css('transform','scale(1) translateY(0px)');
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
@@ -3399,6 +3410,16 @@ function switchText() {
 
             $("#continuums_chart").animate({height: '0px',opacity:'0'}, "slow");
 		$("#guide").animate({opacity:"1"}, "slow");
+		$("#exist_panel").animate({width: '50px', opacity: '1'}, "slow");
+		if($("#rocks_button").hasClass("show-design")){
+			$("#rocks").animate({width: '255px',opacity:'1'}, "fast");
+		}
+		if($("#wt_button").hasClass("show-design")){
+			$("#WT").animate({width: '255px',opacity:'1'}, "fast");
+		}
+		if($("#fast_button").hasClass("show-design")){
+			$("#faster").animate({width: '255px',opacity:'1'}, "fast");
+		}
 	}
 
 }
@@ -3944,4 +3965,28 @@ function initializeCloudCheckboxes() {
 			console.log("click");
 		}
 	});
+}
+
+function initializeExistDesignPanel() {
+	$("#rocks_button").addClass("show-design");
+	$("#rocks").animate({width: '255px',opacity:'1'}, "fast");
+	$("#rocks_button,#wt_button,#fast_button").on('click', function() {
+		$("#rocks_button,#wt_button,#fast_button").removeClass("show-design");
+		$(this).addClass("show-design");
+		$("#WT,#rocks,#faster").css("width","0");
+		$("#WT,#rocks,#faster").css("opacity","0");
+		if($(this).attr("id")=="rocks_button"){
+			$("#rocks").css("width","255px");
+			$("#rocks").animate({width: '255px',opacity:'1'}, "fast");
+		}
+		if($(this).attr("id")=="wt_button"){
+			$("#WT").css("width","255px");
+			$("#WT").animate({width: '255px',opacity:'1'}, "fast");
+		}
+		if($(this).attr("id")=="fast_button"){
+			$("#faster").css("width","255px");
+			$("#faster").animate({width: '255px',opacity:'1'}, "fast");
+		}
+	});
+
 }

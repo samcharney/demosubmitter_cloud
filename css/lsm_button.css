@@ -321,7 +321,7 @@
     opacity: 0;
     background-color: white;
     font-size: 12px;
-    color: #AAAAAA;
+    color: #2c3e50;
     text-align: center;
     border: 1px solid #AAAAAA;
     border-radius: 6px;
@@ -381,7 +381,7 @@
 .tooltip1 .tooltiptext {
     visibility: hidden;
     opacity: 0;
-    width: 300px;
+    width: 250px;
     height: 0px;
     background-color: white;
     font-size: 10px;
@@ -394,7 +394,7 @@
     /* Position the tooltip */
     position: absolute;
     top:50px;
-    left: -30px;
+    left: -10px;
     z-index: 15;
 
     -webkit-transition-duration: 0.4s;
@@ -1000,5 +1000,22 @@
     -moz-transition: all .4s linear;
     -webkit-transition: all .4s linear;
     transition: all .4s linear;
+}
+
+.exist-button{
+    width: 100%;
+    height:200px;
+    text-align: center;
+    border: 2px solid #BBBBBB;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.show-design{
+    -moz-transition: all .4s linear;
+    -webkit-transition: all .4s linear;
+    transition: all .4s linear;
+    border-color: #7F89FF;
 }
 
