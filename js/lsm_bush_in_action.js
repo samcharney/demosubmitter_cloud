@@ -1024,7 +1024,7 @@ function init(){
 			$("#demo_body").css('transform','');
 	});
 */
-	window.scrollTo(0, 1400);
+	window.scrollTo(0, 1340);
 
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
