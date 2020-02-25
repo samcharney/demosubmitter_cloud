@@ -230,13 +230,12 @@
 			</div>
         </div>
     </section> -->
-    <div id="title" style="width: 100%; height: 300px; background-color: white; padding-top: 80px">
-        <canvas id="axis_graph" style="position: absolute; right:calc(50% - 650px); width: 150px; height: 150px;"></canvas>
-        <div style="font-size: 64px; font-family: Brush Script MT, Brush Script Std, cursive; color: black; width: 100%; text-align: center; margin-bottom: 20px">Try Out Cosine</div>
+    <div id="title" style="width: 100%; height: 100%; background-color: #CCCCCC">
+        <div style="font-size: 100px; font-family: scrap; color: black; width: 100%; text-align: center; margin-bottom: 10px">Try Out Cosine</div>
         <div style="font-size: 20px; font-family: Helvetica; color: black; width: 100%; text-align: center">
             <i>Let Cosine design the best storage engine for you and decide which cloud provider and VMs you should use.</i>
         </div>
-
+        <canvas id="axis_graph" style="position: relative; left:calc(50% - 125px); width: 250px; height: 250px;"></canvas>
     </div>
 
 
@@ -913,10 +912,11 @@
                             </div>
                             </div>
 
-                                <div id="exist_panel" style="width:50px; display:inline-block;vertical-align:top;background-color: #FFFFFF;  font-size: 22px; margin-left: 50px">
-                                    <div class="exist-button" id="rocks_button"><div style="width:180px; transform: rotateZ(90deg) translateY(-30px); transform-origin: top left 0; ">RocksDB</div></div>
-                                    <div class="exist-button" id="wt_button" style="padding-top: 20px"><div style="width:160px; transform: rotateZ(90deg) translateY(-30px); transform-origin: top left 0; ">Wiredtiger</div></div>
-                                    <div class="exist-button" id="fast_button" style="padding-top: 70px"><div style="width:70px; transform: rotateZ(90deg) translateY(-30px); transform-origin: top left 0; ">Faster</div></div>
+                                <div id="exist_panel" style="width:50px; display:inline-block;vertical-align:top;background-color: #FFFFFF; margin-left: 50px; ">
+                                    <div class="exist-button" id="rocks_button"><div style="width:100px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">RocksDB</div></div>
+                                    <div class="exist-button" id="wt_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">WiredTiger</div></div>
+                                    <div class="exist-button" id="fast_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">Faster</div></div>
+                                    <div class="exist-button" id="level_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">LevelDB</div></div>
                                 </div>
 
                             <div id="rocks" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
@@ -970,10 +970,10 @@
                                         <div class="tab down" name="explore_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px">Off</div><div name="explore_tab" class="tab" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px">On</div>
                                 </div>
                                 <div id="continuums_chart"  style="display: none; width:805px; height: 0px;">
-                                    <div id="chart_banner" style="width: 635px; height:auto; background-color:white; color: black; font-size: 20px; text-align: left; padding-left:60px; opacity: 1">
+                                    <div id="chart_banner" style="width: 400px; height:auto; background-color:white; color: black; font-size: 20px; text-align: left; padding-left:60px; opacity: 1">
                                         Browse the configuration continuum<br>of the top designs within your budget
                                     </div>
-                                    <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px;">
+                                    <div id="tester6" class="col-sm-4 js-plotly-plot" style="position: relative; width: 375px; height: 300px; transform: scale(1.1)">
                                     </div>
                                     <div class="col-lg-1 col-md-1 col-sm-1" style="position: relative; left:-20px; bottom: 50px; width: 380px;">
                                         <div id="hoverinfo6" class="col-lg-1 col-md-1 col-sm-1" style="position: relative;  width: 260px; height: 100px;  font-size: 10px; left: 66px; top:200px; padding:10px 20px;margin-bottom:10px; z-index: 5">
@@ -986,8 +986,8 @@
                                         </div>
 
                                     </div>
-                                    <div class="myinput myselect">
-                                        <select id="chart_style" name="" style="width:200px;  height: 30px ;position: absolute; right: 220px; bottom:40px; text-align: center" class="input-group-addon">
+                                    <div>
+                                        <select id="chart_style" name="" style="width:200px;  height: 30px ;position: absolute; right: 220px; bottom:120px; text-align: center" class="input-group-addon">
                                             <option value="1">Cost vs Latency</option>
                                             <option value="2">Latency vs Cost</option>
                                             <option value="3">Cost vs Memory</option>

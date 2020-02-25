@@ -1,5 +1,10 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
+@font-face {
+    font-family: 'scrap';
+    src: url('../fonts/scrap_fancy.ttf') format('truetype');
+}
+
 .form-control {
   height: 30px;
   padding: 10px 15px;
@@ -1003,13 +1008,15 @@
 }
 
 .exist-button{
-    width: 100%;
-    height:200px;
+    width: 35px;
+    height:120px;
     text-align: center;
     border: 2px solid #BBBBBB;
     border-radius: 10px;
     margin-bottom: 10px;
     padding: 10px;
+    font-weight: bold;
+    transform: perspective(10px) rotateY(2deg);
 }
 
 .show-design{

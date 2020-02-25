@@ -1002,6 +1002,16 @@ function init(){
 	initializeExistDesignPanel();
 
 	setInterval("drawCanvas()",40);
+	$("#title").css("height",($(window).height()-50)+"px");
+	$("#title").css("padding-top",($(window).height()/2-250)+"px");
+/*
+	$( window ).resize(function() {
+		console.log($( window ).height());
+
+		$("#title").css("padding-top",(($(window).height()-500)/2)+"px");
+	});
+	*/
+
 /*
 	if($( window ).width()<1400)
 		$("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
@@ -3383,6 +3393,7 @@ function switchText() {
 		$("#WT,#rocks,#faster").css("width","0");
 		$("#WT,#rocks,#faster").css("opacity","0");
 		$("#exist_panel").animate({width: '0', opacity: '0'}, "slow");
+		$("#exist_panel").css("margin-left","0px");
 	}
 	else {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
@@ -3420,6 +3431,7 @@ function switchText() {
 		if($("#fast_button").hasClass("show-design")){
 			$("#faster").animate({width: '255px',opacity:'1'}, "fast");
 		}
+		$("#exist_panel").css("margin-left","50px");
 	}
 
 }
@@ -3467,7 +3479,7 @@ function switchQuestion() {
 		var input = document.getElementById("question2_input");
 		input.addEventListener("change", function (e) {
 			if(input.value=="Any"){
-				user_cloud_provider_enable=[1,1,1]; 
+				user_cloud_provider_enable=[1,1,1];
 			}
 			if(input.value=="AWS"){
 				user_cloud_provider_enable=[1,0,0]
