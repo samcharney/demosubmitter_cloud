@@ -33,6 +33,7 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Permanent+Marker|Reenie+Beanie|Rock+Salt|Indie+Flower' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Raleway|Source+Sans+Pro" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Bad+Script|Caveat|Dancing+Script|Great+Vibes|Sacramento|Satisfy|Simonetta|Tangerine&display=swap" rel="stylesheet">
       <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -145,6 +146,7 @@
                 <div class="col-sm-12">
                     We present distribution-aware cost models that precisely estimate the CPU and I/O costs of each possible data structure design, which in turn, helps in comparing pairs of designs. Given a budget and desired performance, Cosine prunes the massive dimensionality of the search space by using the cost models to rank designs and collapse the design dimensions into a Pareto frontier that creates a continuum of holistically optimal configurations (for a budget) of data structure design, hardware, and cloud pricing policies. We demonstrate that using the continuum, Cosine can search through the massive space of designs in seconds and it can automatically generate (through templates) storage engine instances that outperform state-of-the-art key-value storage engines (RocksDB and WiredTiger) by picking the appropriate configurations that optimizes cloud-cost and performance.
                 </div>
+
             </div>
 
             <br>
@@ -230,10 +232,24 @@
 			</div>
         </div>
     </section> -->
-    <div id="title" style="width: 100%; height: 100%; background-color: #FFFFFF">
-        <div style="font-size: 100px; font-family: scrap; color: black; width: 100%; text-align: center; margin-bottom: 10px">Try Out Cosine</div>
-        <div style="font-size: 20px; font-family: Helvetica; color: black; width: 100%; text-align: center">
-            <i>Let Cosine design the best storage engine for you and decide which cloud provider and VMs you should use.</i>
+    <!--Bad+Script|Caveat|Dancing+Script|Great+Vibes|Sacramento|Satisfy|Simonetta|Tangerine-->
+    <div id="title" style="width: 100%; height: 100%; background-color: white; color: black">
+        <div style="position: relative; top: -20px">
+            <select id="title_fonts" name="" style="width:200px;  height: 30px ; text-align: center">
+                <option value="Bad Script">Bad Script</option>
+                <option value="Caveat">Caveat</option>
+                <option value="Dancing Script">Dancing Script</option>
+                <option value="Great Vibes">Great Vibes</option>
+                <option value="Sacramento">Sacramento</option>
+                <option value="Satisfy">Satisfy</option>
+                <option value="Simonetta">Simonetta</option>
+                <option value="Tangerine">Tangerine</option>
+            </select>
+        </div>
+        <div style="position: relative; top: 0px; left:50px; width: 20px; height: 20px; border-radius: 10px; border: 5px solid gray; cursor: pointer" onclick="reverseColor()"></div>
+        <div style="font-size: 100px; font-family: scrap;  width: 100%; text-align: center; margin-bottom: 10px">Try Out Cosine</div>
+        <div id="title_explanation" style="font-size: 20px; font-family: Bad Script;  width: 550px; margin-left: calc(50% - 200px); margin-bottom:20px; text-align: right">
+            Let Cosine design the best storage engine for you,<br>and decide which cloud provider and VMs you should use.
         </div>
         <canvas id="axis_graph" style="position: relative; left:calc(50% - 125px); width: 250px; height: 250px;"></canvas>
     </div>
@@ -246,7 +262,7 @@
 
             <!-- <div id="interactiveDemo" class="row" style="">  -->
             <!-- </div>  -->
-            <div id="guide" style="position:relative; left:60px; top: 48px;height:0px; width:29px; border: 0px solid black">
+            <div id="guide" style="position:relative; left:40px; top: 48px;height:0px; width:29px; border: 0px solid black">
                 <div style="position: absolute; top: -46px; left:-5px; font-size: 14px; width: 160px"><b>Design Steps</b></div>
                 <div class="guide" style="">1<div class="guide_text" style="">Set inputs</div></div>
                 <div id="guide_2" style="height:48px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
@@ -613,7 +629,7 @@
             <br>
             <br>
             <!-- Configuration for each architecture -->
-            <div class="row" style="margin:20px 0px;">
+            <div style="margin:20px 0px; width:100%">
 
                 <!-- Design Continuum -->
                 <div class="col-lg-3 col-md-3 col-sm-3" style="display: none">
@@ -762,7 +778,7 @@
 
 
              </div>
-                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; right:-150px; width: 85%; font-size: 16px; margin-bottom: 64px; display: none">
+                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:30%; width: 60%; font-size: 16px; margin-bottom: 40px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
                     <div class="tab_l down tooltip2" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px;">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
@@ -776,7 +792,7 @@
                 </div>
 
 
-                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; left: calc(50% - 400px)">
+                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; left: calc(50% - 460px)">
 
 
 
@@ -912,7 +928,8 @@
                             </div>
                             </div>
 
-                                <div id="exist_panel" style="width:50px; display:inline-block;vertical-align:top;background-color: #FFFFFF; margin-left: 50px; ">
+                                <div id="exist_panel" style="width:50px; display:inline-block;vertical-align:top;background-color: #FFFFFF; margin-left: 25px; ">
+                                    <div style="position: absolute; width:1.5px; height: 630px; top:-80px; background-color: #7F89FF; transform: translateX(-1px); z-index: 10"></div>
                                     <div class="exist-button" id="rocks_button"><div style="width:100px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">RocksDB</div></div>
                                     <div class="exist-button" id="wt_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">WiredTiger</div></div>
                                     <div class="exist-button" id="fast_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">Faster</div></div>

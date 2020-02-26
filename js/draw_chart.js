@@ -1924,7 +1924,7 @@ function fixTimeArray(array){
     return result;
 }
 
-function drawCanvas(){
+function drawCanvas(color){
     var cost=Math.abs(Math.cos(canvas_theta));
     var performance=Math.abs(Math.cos(canvas_theta+Math.PI/3));
     var design=Math.abs(Math.cos(canvas_theta+Math.PI*2/3));
@@ -1946,7 +1946,8 @@ function drawCanvas(){
     canvas.height=300;
     var ctx = canvas.getContext('2d');
     ctx.lineWidth=3
-
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
     drawAxis(ctx,100,190,270,190);
     drawAxis(ctx,100,190,100,30);
     drawAxis(ctx,100,190,20,270);
@@ -1960,8 +1961,7 @@ function drawCanvas(){
     ctx.lineTo(Pz.x,Pz.y);
     ctx.fillStyle = 'rgba('+Math.abs(Math.cos(canvas_theta)*255)+', '+Math.abs(Math.cos(canvas_theta+Math.PI/3)*255)+', '+Math.abs(Math.cos(canvas_theta+Math.PI*2/3)*255)+', '+0.2+')';
     ctx.fill();
-
-    ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+    ctx.fillStyle = color;
     ctx.font = "20px Arial";
     ctx.fillText("Cost", 240,175);
     ctx.fillText("Performance", 120,40);

@@ -1001,9 +1001,9 @@ function init(){
 
 	initializeExistDesignPanel();
 
-	setInterval("drawCanvas()",40);
-	$("#title").css("height",($(window).height()-50)+"px");
-	$("#title").css("padding-top",($(window).height()/2-250)+"px");
+	interval=setInterval("drawCanvas(\"#000000\")",40);
+	$("#title").css("height",($(window).height())+"px");
+	$("#title").css("padding-top",($(window).height()/2-350)+"px");
 /*
 	$( window ).resize(function() {
 		console.log($( window ).height());
@@ -1024,7 +1024,7 @@ function init(){
 			$("#demo_body").css('transform','');
 	});
 */
-	window.scrollTo(0, 1340);
+	window.scrollTo(0, 1380);
 
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
@@ -1175,6 +1175,10 @@ function init(){
 		prune_cloud_provider();
 	});
 
+	$("#title_fonts").change(function () {
+		console.log($(this).val())
+		$("#title_explanation").css("font-family",$(this).val())
+	})
 	/*
 	$(window).scroll(function(){
 		$(".navbar").css({opacity:Math.max(0,(500-$(document).scrollTop()+1000))/500});
@@ -3410,7 +3414,7 @@ function switchText() {
 		*/
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
-		$("#charts").css('left','calc(50% - 400px)');
+		$("#charts").css('left','calc(50% - 460px)');
 		$("#charts").css('transform','scale(1) translateY(0px)');
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
@@ -3431,7 +3435,7 @@ function switchText() {
 		if($("#fast_button").hasClass("show-design")){
 			$("#faster").animate({width: '255px',opacity:'1'}, "fast");
 		}
-		$("#exist_panel").css("margin-left","50px");
+		$("#exist_panel").css("margin-left","25px");
 	}
 
 }
@@ -4001,4 +4005,19 @@ function initializeExistDesignPanel() {
 		}
 	});
 
+}
+
+function reverseColor() {
+	if(document.getElementById("title").style.backgroundColor=="white"){
+		console.log(document.getElementById("title").style.backgroundColor)
+		document.getElementById("title").style.backgroundColor="#222222";
+		document.getElementById("title").style.color="white";
+		clearInterval(interval)
+		interval=setInterval("drawCanvas(\"#FFFFFF\")",40);
+	}else{
+		document.getElementById("title").style.backgroundColor="white";
+		document.getElementById("title").style.color="black";
+		clearInterval(interval)
+		interval=setInterval("drawCanvas(\"#000000\")",40);
+	}
 }
