@@ -66,6 +66,8 @@ var budget_change=0;
 var canvas_theta=0;
 
 var interval;
+var exist_1;
+var exist_2;
 
 
 

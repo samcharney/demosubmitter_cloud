@@ -1002,6 +1002,7 @@ function init(){
 	initializeExistDesignPanel();
 
 	interval=setInterval("drawCanvas(\"#000000\")",40);
+	reverseColor();
 	$("#title").css("height",($(window).height())+"px");
 	$("#title").css("padding-top",($(window).height()/2-350)+"px");
 /*
@@ -3984,24 +3985,32 @@ function initializeCloudCheckboxes() {
 }
 
 function initializeExistDesignPanel() {
+	exist_1="rocks_button";
 	$("#rocks_button").addClass("show-design");
 	$("#rocks").animate({width: '255px',opacity:'1'}, "fast");
+	exist_2="wt_button";
+	$("#wt_button").addClass("show-design");
+	$("#WT").animate({width: '255px',opacity:'1'}, "fast");
 	$("#rocks_button,#wt_button,#fast_button").on('click', function() {
-		$("#rocks_button,#wt_button,#fast_button").removeClass("show-design");
-		$(this).addClass("show-design");
-		$("#WT,#rocks,#faster").css("width","0");
-		$("#WT,#rocks,#faster").css("opacity","0");
-		if($(this).attr("id")=="rocks_button"){
-			$("#rocks").css("width","255px");
-			$("#rocks").animate({width: '255px',opacity:'1'}, "fast");
-		}
-		if($(this).attr("id")=="wt_button"){
-			$("#WT").css("width","255px");
-			$("#WT").animate({width: '255px',opacity:'1'}, "fast");
-		}
-		if($(this).attr("id")=="fast_button"){
-			$("#faster").css("width","255px");
-			$("#faster").animate({width: '255px',opacity:'1'}, "fast");
+		if(exist_2!=$(this).attr("id")) {
+			$("#"+exist_1).removeClass("show-design");
+			$(this).addClass("show-design");
+			exist_1=exist_2;
+			exist_2=$(this).attr("id");
+			$("#WT,#rocks,#faster").css("width", "0");
+			$("#WT,#rocks,#faster").css("opacity", "0");
+			if ($(this).attr("id") == "rocks_button" || exist_1== "rocks_button") {
+				$("#rocks").css("width", "255px");
+				$("#rocks").animate({width: '255px', opacity: '1'}, "fast");
+			}
+			if ($(this).attr("id") == "wt_button" || exist_1== "wt_button") {
+				$("#WT").css("width", "255px");
+				$("#WT").animate({width: '255px', opacity: '1'}, "fast");
+			}
+			if ($(this).attr("id") == "fast_button" || exist_1== "fast_button") {
+				$("#faster").css("width", "255px");
+				$("#faster").animate({width: '255px', opacity: '1'}, "fast");
+			}
 		}
 	});
 
