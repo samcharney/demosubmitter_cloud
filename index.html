@@ -248,7 +248,7 @@
         </div>
         <div style="position: relative; top: 0px; left:50px; width: 20px; height: 20px; border-radius: 10px; border: 5px solid gray; cursor: pointer" onclick="reverseColor()"></div>
         <div style="font-size: 100px; font-family: scrap;  width: 100%; text-align: center; margin-bottom: 15px">Try Out Cosine</div>
-        <div id="title_explanation" style="font-size: 20px; font-family: Bad Script;  width: 550px; margin-left: calc(50% - 200px); margin-bottom:50px; text-align: right">
+        <div id="title_explanation" style="font-size: 20px; font-family: Simonetta;  width: 550px; margin-left: calc(50% - 200px); margin-bottom:50px; text-align: right">
             &mdash;&mdash;&mdash;&mdash;&nbsp;&nbsp;Let Cosine design the best storage engine for you,<br>and decide which cloud provider and VMs you should use.
         </div>
         <canvas id="axis_graph" style="position: relative; left:calc(50% - 125px); width: 250px; height: 250px;"></canvas>
@@ -778,7 +778,7 @@
 
 
              </div>
-                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:30%; width: 60%; font-size: 16px; margin-bottom: 40px; display: none">
+                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:24%; width: 70%; font-size: 16px; margin-bottom: 40px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
                     <div class="tab_l down tooltip2" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px;">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
@@ -792,7 +792,7 @@
                 </div>
 
 
-                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; left: calc(50% - 460px)">
+                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; left: calc(50% - 480px)">
 
 
 
@@ -929,11 +929,11 @@
                             </div>
 
                                 <div id="exist_panel" style="width:50px; display:inline-block;vertical-align:top;background-color: #FFFFFF; margin-left: 25px; ">
-                                    <div style="position: absolute; width:1.5px; height: 630px; top:-80px; background-color: #7F89FF; transform: translateX(-1px); z-index: 10"></div>
+                                    <div style="position: absolute; width:1.5px; height: 630px; top:-80px; background-color: #7F89FF; transform: translateX(-1px); z-index: 10; display: none"></div>
                                     <div class="exist-button" id="rocks_button"><div style="width:100px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">RocksDB</div></div>
                                     <div class="exist-button" id="wt_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">WiredTiger</div></div>
                                     <div class="exist-button" id="fast_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">Faster</div></div>
-                                    <div class="exist-button" id="level_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">LevelDB</div></div>
+                                    <div class="exist-button" id="fasterh_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">Faster-H</div></div>
                                 </div>
 
                             <div id="rocks" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
@@ -969,6 +969,18 @@
                                         <div id="cost_result_diagram5" style="display:inline-block; width: 230px; ">
                                         </div>
                                         <div id="cost_result_p11" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 260px;  border-radius: 8px; font-size: 10px; ">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="faster_h" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
+                                    <div id="cost_result_p12" class="col-lg-1 col-md-1 col-sm-1" style=" width: 255px; border-radius: 8px; font-size: 15px; text-align: center;">
+                                    </div>
+                                    <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px;  padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 0px solid black;">
+
+
+                                        <div id="cost_result_diagram6" style="display:inline-block; width: 230px; ">
+                                        </div>
+                                        <div id="cost_result_p13" class="col-lg-1 col-md-1 col-sm-1" style="display:inline-block; width: 260px;  border-radius: 8px; font-size: 10px; ">
                                         </div>
                                     </div>
                                 </div>

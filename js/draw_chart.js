@@ -1701,6 +1701,15 @@ function drawContinuumsNew(ContinuumArray){
                 outputParameters(best_array[design_1_index][9], "cost_result_p11", l1);
                 outputNote(best_array[design_1_index+1][9], "cost_result_p11");
             }
+            document.getElementById("cost_result_p12").innerHTML = "<b>Faster<br><br></b>";
+            //console.log(best_array[design_1_index][8])
+            if((cost-best_array[design_1_index][10].cost)>(best_array[design_1_index+1][10].cost-cost)) {
+                outputParameters(best_array[design_1_index+1][10], "cost_result_p13", l2);
+                outputNote(best_array[design_1_index][10], "cost_result_p13");
+            }else{
+                outputParameters(best_array[design_1_index][10], "cost_result_p13", l1);
+                outputNote(best_array[design_1_index+1][10], "cost_result_p13");
+            }
         }
     }
     global_index=design_1_index;
@@ -1962,7 +1971,7 @@ function drawCanvas(color){
     ctx.fillStyle = 'rgba('+Math.abs(Math.cos(canvas_theta)*255)+', '+Math.abs(Math.cos(canvas_theta+Math.PI/3)*255)+', '+Math.abs(Math.cos(canvas_theta+Math.PI*2/3)*255)+', '+0.2+')';
     ctx.fill();
     ctx.fillStyle = color;
-    ctx.font = "20px Arial";
+    ctx.font = "20px Simonetta";
     ctx.fillText("Cost", 240,175);
     ctx.fillText("Performance", 120,40);
     ctx.fillText("Design", 35,285);

@@ -3415,7 +3415,7 @@ function switchText() {
 		*/
 		//$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
 		$("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
-		$("#charts").css('left','calc(50% - 460px)');
+		$("#charts").css('left','calc(50% - 480px)');
 		$("#charts").css('transform','scale(1) translateY(0px)');
 		$("#interactive-content").css('transform','scale(1)');
 		$("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
@@ -3985,20 +3985,22 @@ function initializeCloudCheckboxes() {
 }
 
 function initializeExistDesignPanel() {
+	$("#WT,#rocks,#faster,#faster_h").css("width", "0");
+	$("#WT,#rocks,#faster,#faster_h").css("opacity", "0");
 	exist_1="rocks_button";
 	$("#rocks_button").addClass("show-design");
 	$("#rocks").animate({width: '255px',opacity:'1'}, "fast");
 	exist_2="wt_button";
 	$("#wt_button").addClass("show-design");
 	$("#WT").animate({width: '255px',opacity:'1'}, "fast");
-	$("#rocks_button,#wt_button,#fast_button").on('click', function() {
+	$("#rocks_button,#wt_button,#fast_button,#fasterh_button").on('click', function() {
 		if(exist_2!=$(this).attr("id")) {
 			$("#"+exist_1).removeClass("show-design");
 			$(this).addClass("show-design");
 			exist_1=exist_2;
 			exist_2=$(this).attr("id");
-			$("#WT,#rocks,#faster").css("width", "0");
-			$("#WT,#rocks,#faster").css("opacity", "0");
+			$("#WT,#rocks,#faster,#faster_h").css("width", "0");
+			$("#WT,#rocks,#faster,#faster_h").css("opacity", "0");
 			if ($(this).attr("id") == "rocks_button" || exist_1== "rocks_button") {
 				$("#rocks").css("width", "255px");
 				$("#rocks").animate({width: '255px', opacity: '1'}, "fast");
@@ -4010,6 +4012,10 @@ function initializeExistDesignPanel() {
 			if ($(this).attr("id") == "fast_button" || exist_1== "fast_button") {
 				$("#faster").css("width", "255px");
 				$("#faster").animate({width: '255px', opacity: '1'}, "fast");
+			}
+			if ($(this).attr("id") == "fasterh_button" || exist_1== "fast_button") {
+				$("#faster_h").css("width", "255px");
+				$("#faster_h").animate({width: '255px', opacity: '1'}, "fast");
 			}
 		}
 	});

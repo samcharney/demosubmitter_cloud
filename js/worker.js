@@ -567,6 +567,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         M_BC=0;
         M_B = M - M_F;
         M_B = M_B < 0 ? 0.0 : M_B;
+
     }
 
     if(existing_system=="WT")
@@ -592,9 +593,31 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     }
     if(existing_system=="FASTER")
     {
-        var scale_factor = 1000; // We assume about 1000 keys fit in the in-memory hash table
+        var scale_factor = 8; // We assume about 1000 keys fit in the in-memory hash table
         M_F = (N/scale_factor)*(F)*(1.0 + (1.0/B));
         var M = max_RAM_purchased * 1024 * 1024 * 1024;
+        if(M_F >= M)
+        {
+            //printf("M: %f M_F: %f\n", M/(1024*1024*1024), M_F/(1024*1024*1024));
+            return -1;
+        }
+        M_FP=0;
+        M_B = M - M_F;
+        T = Math.ceil((N*E)/M_B);
+        K = T-1;
+        Z = 0;
+        L=1;
+        M_BF = 0.0;
+        Y = -1;
+        M_BC = 0.0;
+        //printf("T:%d, K:%d, Z:%d, M_B:%f, M_F:%f\n", T, K, Z, M_B/(1024*1024*1024), M_F/(1024*1024*1024));
+    }
+    if(existing_system=="FASTER_H")
+    {
+        var scale_factor = 8; // We assume about 1000 keys fit in the in-memory hash table
+        M_F = (N/scale_factor)*(F)*(1.0 + (1.0/B));
+        var M = max_RAM_purchased * 1024 * 1024 * 1024;
+        M_FP=0;
         if(M_F >= M)
         {
             //printf("M: %f M_F: %f\n", M/(1024*1024*1024), M_F/(1024*1024*1024));
@@ -603,9 +626,10 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         M_B = M - M_F;
         T = Math.ceil((N*E)/M_B);
         K = T-1;
-        Z = T-1;
+        Z = -1;
+        L=1;
         M_BF = 0.0;
-        Y = 0;
+        Y = -1;
         M_BC = 0.0;
         //printf("T:%d, K:%d, Z:%d, M_B:%f, M_F:%f\n", T, K, Z, M_B/(1024*1024*1024), M_F/(1024*1024*1024));
     }
@@ -618,9 +642,11 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     var multiplier_from_buffer = size*(E) / (M_B);
     // handle case where data fits in buffer
     if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
+
     L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
-
-
+    if(existing_system=="FASTER"||existing_system=="FASTER_H") {
+        L = 1;
+    }
 
     if(existing_system=="WT")
         Y=L-1;
@@ -633,7 +659,33 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
 
     if (write_percentage != 0) {
         if(scenario=='A'){
-            update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
+            if(Z == 0) // LSH-table append-only
+            {
+                var term1;
+                var c, q;
+                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 1)), K);
+                c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 0));
+                q = 1 - q*(1 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 0));
+                term1 = c/q;
+                update_cost = term1;
+            }
+            else if (Z == -1) // LSH-table hybrid logs
+            {
+                //printf("Hybrid log in FASTER\n");
+                var term1;
+                var c, q;
+                var alpha_mutable = getAlpha_i(workload_type, 0.9*M_B, 0.0, T, K, Z, L, Y, 0);
+                var alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, 0.0, T, K, Z, L, Y, 0);
+                var alpha_0 = 1 - ((1 - alpha_mutable) * (1 - alpha_read_only));
+                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, 0.0, T, K, 1, L, Y, 1)), K);
+                c = (1 - q)*(1 - alpha_0);
+                q = 1 - q*(1 - alpha_0);
+                term1 = c/q;
+                //printf("in DS: %f on disk: %f\n", q, c);
+                update_cost = term1;
+            }else {
+                update_cost = aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
+            }
         }else {
             update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
         }
@@ -710,6 +762,7 @@ function buildContinuums(cloud_mode){
     var rocks_Variables;
     var WT_Variables;
     var faster_Variables;
+    var fasterh_Variables;
     var progress=0;
     cri_cache=new Array();
     for(var i=0;i<3;i++){
@@ -734,6 +787,7 @@ function buildContinuums(cloud_mode){
                         rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks");
                         WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT");
                         faster_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "FASTER");
+                        fasterh_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "FASTER_H");
                     } else {
                         for (var n = 0; n < 3; n++) {
                             if (Variables == 0) {
@@ -741,6 +795,7 @@ function buildContinuums(cloud_mode){
                                 rocks_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "rocks", 1);
                                 WT_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "WT", 1);
                                 faster_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "FASTER",1);
+                                fasterh_Variables = countContinuumForExistingDesign(VMCombination, cloud_provider, "FASTER_H",1);
                             } else {
                                 var temp;
                                 temp = countContinuum(VMCombination, cloud_provider, n);
@@ -759,7 +814,7 @@ function buildContinuums(cloud_mode){
                     var info = ("<b>" + VM_libraries[cloud_provider].provider_name + " :</b><br>T=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L + "<br>M_B=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB, M_BF=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB<br>M_FP=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB, " + Variables.VM_info + "<br>Latency=" + fixTime(Variables.latency) + "<br>Cost=" + Variables.cost);
                     if (using_compression)
                         info += "<br>Compression: " + Variables.compression_name;
-                    var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables, WT_Variables, faster_Variables];
+                    var result = [Variables.cost, Variables.latency, VMCombination, VM_libraries[cloud_provider].provider_name, info, Variables, Variables.memory_footprint, rocks_Variables, WT_Variables, faster_Variables, fasterh_Variables];
                     result_array.push(result);
                 }
             }
