@@ -3395,8 +3395,8 @@ function switchText() {
         }
 		$("#guide").animate({opacity:"0"}, "slow");
 
-		$("#WT,#rocks,#faster").css("width","0");
-		$("#WT,#rocks,#faster").css("opacity","0");
+		$("#WT,#rocks,#faster,#faster_h").css("width","0");
+		$("#WT,#rocks,#faster,#faster_h").css("opacity","0");
 		$("#exist_panel").animate({width: '0', opacity: '0'}, "slow");
 		$("#exist_panel").css("margin-left","0px");
 	}
@@ -3435,6 +3435,9 @@ function switchText() {
 		}
 		if($("#fast_button").hasClass("show-design")){
 			$("#faster").animate({width: '255px',opacity:'1'}, "fast");
+		}
+		if($("#fasterh_button").hasClass("show-design")){
+			$("#faster_h").animate({width: '255px',opacity:'1'}, "fast");
 		}
 		$("#exist_panel").css("margin-left","25px");
 	}
