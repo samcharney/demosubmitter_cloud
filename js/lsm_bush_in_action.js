@@ -1001,7 +1001,7 @@ function init(){
 
 	initializeExistDesignPanel();
 
-	interval=setInterval("drawCanvas(\"#000000\")",40);
+	interval=setInterval("drawCanvas(\"#FFFFFF\")",40);
 	reverseColor();
 	$("#title").css("height",($(window).height()+100)+"px");
 	$("#title").css("padding-top",($(window).height()/2-350)+"px");
