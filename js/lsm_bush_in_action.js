@@ -1003,7 +1003,7 @@ function init(){
 
 	interval=setInterval("drawCanvas(\"#000000\")",40);
 	reverseColor();
-	$("#title").css("height",($(window).height())+"px");
+	$("#title").css("height",($(window).height()+100)+"px");
 	$("#title").css("padding-top",($(window).height()/2-350)+"px");
 /*
 	$( window ).resize(function() {
@@ -1025,7 +1025,7 @@ function init(){
 			$("#demo_body").css('transform','');
 	});
 */
-	window.scrollTo(0, 1380);
+	window.scrollTo(0, 1340);
 
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
@@ -4013,7 +4013,7 @@ function initializeExistDesignPanel() {
 				$("#faster").css("width", "255px");
 				$("#faster").animate({width: '255px', opacity: '1'}, "fast");
 			}
-			if ($(this).attr("id") == "fasterh_button" || exist_1== "fast_button") {
+			if ($(this).attr("id") == "fasterh_button" || exist_1== "fasterh_button") {
 				$("#faster_h").css("width", "255px");
 				$("#faster_h").animate({width: '255px', opacity: '1'}, "fast");
 			}

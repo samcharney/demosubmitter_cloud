@@ -86,7 +86,7 @@
         <div class="lds-roller" style="z-index: 20"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
     </div>
 -->
-    <header class="viewport">
+    <header class="viewport" style="height: 850px">
         <div class="container">
             <div class="row">
                 <div class="col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-6 col-xs-offset-3">
@@ -251,7 +251,46 @@
         <div id="title_explanation" style="font-size: 20px; font-family: Simonetta;  width: 550px; margin-left: calc(50% - 200px); margin-bottom:50px; text-align: right">
             &mdash;&nbsp;&nbsp;Let Cosine design the best storage engine for you,<br>and decide which cloud provider and VMs you should use.
         </div>
-        <canvas id="axis_graph" style="position: relative; left:calc(50% - 125px); width: 250px; height: 250px;"></canvas>
+        <div id="design_graph" style="position: relative; height: 0px; width: 0px; top:-140px; left:40%; transform: scale(0.85);">
+            <div style="width:200px; position:absolute; left:-250px; top: 180px; font-size:20px; font-family: Simonetta; text-align:center; line-height:55px; color: white; text-shadow: 0 0 5px #fff;">
+                <div>Cloud Provider</div>
+                <div>+</div>
+                <div>Hardware</div>
+                <div>+</div>
+                <div>Data Structure</div>
+            </div>
+            <div class="stage" style="-webkit-perspective-origin: 50% 425px;">
+                <div class="shape" style="-webkit-animation: spin 18s infinite linear;">
+                    <img class="plane" src="images/AWS.png">
+                    <img class="plane" src="images/GCP.png">
+                    <img class="plane" src="images/Azure.png">
+                    <img class="plane" src="images/AWS.png">
+                    <img class="plane" src="images/GCP.png">
+                    <img class="plane" src="images/Azure.png">
+                </div>
+            </div>
+            <div class="stage" style="-webkit-perspective-origin: 50% 325px;">
+                <div class="shape" style="-webkit-animation: spin 12s infinite linear; animation-direction: reverse;">
+                    <img class="plane" src="images/hardware1.png">
+                    <img class="plane" src="images/hardware3.png">
+                    <img class="plane" src="images/hardware2.png">
+                    <img class="plane" src="images/hardware1.png">
+                    <img class="plane" src="images/hardware3.png">
+                    <img class="plane" src="images/hardware2.png">
+                </div>
+            </div>
+            <div class="stage" style="-webkit-perspective-origin: 50% 225px; ">
+                <div class="shape" style="-webkit-animation: spin 8s infinite linear;">
+                    <img class="plane" src="images/lsh.png">
+                    <img class="plane" src="images/lsm.png">
+                    <img class="plane" src="images/btree.png">
+                    <img class="plane" src="images/lsh.png">
+                    <img class="plane" src="images/lsm.png">
+                    <img class="plane" src="images/btree.png">
+                </div>
+            </div>
+        </div>
+        <canvas id="axis_graph" style="position: relative; left:calc(65% - 125px); width: 250px; height: 250px;"></canvas>
     </div>
 
 
@@ -778,7 +817,7 @@
 
 
              </div>
-                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:24%; width: 70%; font-size: 16px; margin-bottom: 40px; display: none">
+                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:21%; width: 76%; font-size: 16px; margin-bottom: 40px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
                     <div class="tab_l down tooltip2" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px;">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
@@ -932,8 +971,8 @@
                                     <div style="position: absolute; width:1.5px; height: 630px; top:-80px; background-color: #7F89FF; transform: translateX(-1px); z-index: 10; display: none"></div>
                                     <div class="exist-button" id="rocks_button"><div style="width:100px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">RocksDB</div></div>
                                     <div class="exist-button" id="wt_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">WiredTiger</div></div>
-                                    <div class="exist-button" id="fast_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">Faster</div></div>
                                     <div class="exist-button" id="fasterh_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">Faster-H</div></div>
+                                    <div class="exist-button" id="fast_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">Faster</div></div>
                                 </div>
 
                             <div id="rocks" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
@@ -960,7 +999,7 @@
                                     </div>
                                 </div>
                             </div>
-                                <div id="faster" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
+                                <div id="faster_h" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
                                     <div id="cost_result_p10" class="col-lg-1 col-md-1 col-sm-1" style=" width: 255px; border-radius: 8px; font-size: 15px; text-align: center;">
                                     </div>
                                     <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px;  padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 0px solid black;">
@@ -972,7 +1011,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="faster_h" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
+                                <div id="faster" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
                                     <div id="cost_result_p12" class="col-lg-1 col-md-1 col-sm-1" style=" width: 255px; border-radius: 8px; font-size: 15px; text-align: center;">
                                     </div>
                                     <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px;  padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 0px solid black;">

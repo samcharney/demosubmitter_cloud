@@ -1692,7 +1692,7 @@ function drawContinuumsNew(ContinuumArray){
                 outputParameters(best_array[design_1_index][8], "cost_result_p9", l1);
                 outputNote(best_array[design_1_index+1][8], "cost_result_p9");
             }
-            document.getElementById("cost_result_p10").innerHTML = "<b>Faster<br><br></b>";
+            document.getElementById("cost_result_p10").innerHTML = "<b>FASTER <br>(hybrid logs)<br></b>";
             //console.log(best_array[design_1_index][8])
             if((cost-best_array[design_1_index][9].cost)>(best_array[design_1_index+1][9].cost-cost)) {
                 outputParameters(best_array[design_1_index+1][9], "cost_result_p11", l2);
@@ -1701,7 +1701,7 @@ function drawContinuumsNew(ContinuumArray){
                 outputParameters(best_array[design_1_index][9], "cost_result_p11", l1);
                 outputNote(best_array[design_1_index+1][9], "cost_result_p11");
             }
-            document.getElementById("cost_result_p12").innerHTML = "<b>Faster<br><br></b>";
+            document.getElementById("cost_result_p12").innerHTML = "<b>FASTER <br>(append-only logs)<br></b>";
             //console.log(best_array[design_1_index][8])
             if((cost-best_array[design_1_index][10].cost)>(best_array[design_1_index+1][10].cost-cost)) {
                 outputParameters(best_array[design_1_index+1][10], "cost_result_p13", l2);
@@ -1974,7 +1974,7 @@ function drawCanvas(color){
     ctx.font = "20px Simonetta";
     ctx.fillText("Cost", 240,175);
     ctx.fillText("Performance", 120,40);
-    ctx.fillText("Design", 35,285);
+    ctx.fillText("Data Structure", 35,285);
 }
 
 function drawAxis(ctx,start_x,start_y,end_x,end_y){

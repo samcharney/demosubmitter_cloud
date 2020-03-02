@@ -1026,3 +1026,100 @@
     border-color: #7F89FF;
 }
 
+.stage {
+    width: 100%;
+    height: 102px;
+    -webkit-transform-style: preserve-3d;
+    -webkit-perspective: 1200px;
+}
+
+
+@-webkit-keyframes spin {
+    0% {
+        -webkit-transform: rotateY(0);
+    }
+    4% {
+        -webkit-transform: rotateY(60deg);
+    }
+    16% {
+        -webkit-transform: rotateY(60deg);
+    }
+    20% {
+        -webkit-transform: rotateY(120deg);
+    }
+    32% {
+        -webkit-transform: rotateY(120deg);
+    }
+    36% {
+        -webkit-transform: rotateY(180deg);
+    }
+    48% {
+        -webkit-transform: rotateY(180deg);
+    }
+    52% {
+        -webkit-transform: rotateY(240deg);
+    }
+    64% {
+        -webkit-transform: rotateY(240deg);
+    }
+    68% {
+        -webkit-transform: rotateY(300deg);
+    }
+    80% {
+        -webkit-transform: rotateY(300deg);
+    }
+    84% {
+        -webkit-transform: rotateY(360deg);
+    }
+    96% {
+        -webkit-transform: rotateY(360deg);
+    }
+    100% {
+        -webkit-transform: rotateY(360deg);
+    }
+}
+
+.shape {
+    position: relative;
+    top: 160px;
+    margin: 0 auto;
+    height: 100px;
+    width: 100px;
+    -webkit-transform-style: preserve-3d;
+}
+.plane {
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    border: 1px solid #CCCCCC;
+    -webkit-border-radius: 12px;
+    -webkit-box-sizing: border-box;
+    text-align: center;
+    font-family: Times, serif;
+    font-size: 42px;
+    color: white;
+    -webkit-transform: translateZ(380px);
+    backface-visibility: visible;
+    -webkit-box-shadow: 0 0 8px #CCCCCC;
+    box-shadow: 0 0 8px #CCCCCC;
+    -webkit-box-reflect: below 10px linear-gradient(transparent, transparent, #0005);
+}
+.plane:nth-child(1) {
+    -webkit-transform: rotateY(-60deg) translateZ(90px);
+}
+.plane:nth-child(2) {
+    -webkit-transform: rotateY(-120deg) translateZ(90px);
+}
+.plane:nth-child(3) {
+    -webkit-transform: rotateY(-180deg) translateZ(90px);
+}
+.plane:nth-child(4) {
+    -webkit-transform: rotateY(-240deg) translateZ(90px);
+}
+.plane:nth-child(5) {
+    -webkit-transform: rotateY(-300deg) translateZ(90px);
+}
+.plane:nth-child(6) {
+    -webkit-transform: rotateY(-360deg) translateZ(90px);
+}
+
