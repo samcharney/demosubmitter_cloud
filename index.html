@@ -233,8 +233,8 @@
         </div>
     </section> -->
     <!--Bad+Script|Caveat|Dancing+Script|Great+Vibes|Sacramento|Satisfy|Simonetta|Tangerine-->
-    <div id="title" style="width: 100%; height: 100%; background-color: white; color: black">
-        <div style="position: relative; top: -20px">
+    <div id="title" style="width: 100%; height: 100%; background-color: white; color: black; text-shadow: 0 0 4px #DDD;">
+        <div style="position: relative; top: -20px; display: none">
             <select id="title_fonts" name="" style="width:200px;  height: 30px ; text-align: center">
                 <option value="Bad Script">Bad Script</option>
                 <option value="Caveat">Caveat</option>
@@ -246,19 +246,19 @@
                 <option value="Tangerine">Tangerine</option>
             </select>
         </div>
-        <div style="position: relative; top: 0px; left:50px; width: 20px; height: 20px; border-radius: 10px; border: 5px solid gray; cursor: pointer" onclick="reverseColor()"></div>
-        <div style="font-size: 100px; font-family: scrap;  width: 100%; text-align: center; margin-bottom: 10px">Try Out Cosine</div>
-        <div id="title_explanation" style="font-size: 20px; font-family: Simonetta;  width: 550px; margin-left: calc(50% - 200px); margin-bottom:50px; text-align: right">
+        <div style="position: relative; top: 0px; left:50px; width: 20px; height: 20px; border-radius: 10px; border: 5px solid gray; cursor: pointer; display: none" onclick="reverseColor()"></div>
+        <div style="height:125px; font-size: 100px; font-family: scrap;  width: 100%; text-align: center;">Try Out Cosine</div>
+        <div id="title_explanation" style="font-size: 20px; font-family: Simonetta;  width: 550px; margin-left: calc(50% - 200px); margin-bottom:70px; text-align: right">
             &mdash;&nbsp;&nbsp;Let Cosine design the best storage engine for you,<br>and decide which cloud provider and VMs you should use.
         </div>
-        <div id="design_graph" style="position: relative; height: 0px; width: 0px; top:-140px; left:40%; transform: scale(0.80);">
+        <div id="design_graph" style="position: relative; height: 0px; width: 0px; top:-100px; left:38%; transform: scale(0.70);">
             <div style="width:200px; position:absolute; left:-250px; top: 180px; font-size:20px; font-family: Simonetta; text-align:center; line-height:55px; color: white; text-shadow: 0 0 5px #fff;">
                 <div>Cloud Provider</div>
                 <div>+</div>
                 <div>Hardware</div>
                 <div>+</div>
                 <div>Data Structure</div>
-                <div style="position: absolute; top:100px; left:500px; font-size: 30px">&xrarr;</div>
+                <div style="position: absolute; top:100px; left:520px; font-size: 60px; text-shadow: 0 0 8px #fff; transform: scale(1.3)">&xrarr;</div>
             </div>
             <div class="stage" style="-webkit-perspective-origin: 50% 425px;">
                 <div class="shape" style="-webkit-animation: spin 18s infinite linear;">
@@ -291,12 +291,12 @@
                 </div>
             </div>
         </div>
-        <canvas id="axis_graph" style="position: relative; left:calc(65% - 125px); width: 250px; height: 250px;"></canvas>
+        <canvas id="axis_graph" style="position: relative; left:calc(63% - 125px); width: 250px; height: 250px;"></canvas>
     </div>
 
 
     <section id="interactiveDemo">
-        <div id="demo_body" class="container page-scroll" style="width:100%; ">
+        <div id="demo_body" class="container page-scroll" style="width:100%; overflow:hidden;">
 
             <!-- <a href="#interactiveDemo" id="interactiveDemo"></a>  -->
 
