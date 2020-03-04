@@ -2258,7 +2258,13 @@ function outputParameters(Variables, id, l) {
     text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
     div_tmp.appendChild(text_tmp);
     result_div.appendChild(div_tmp);
-    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
+    if(id=="cost_result_p11"){
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"]], l);
+    }else if(id=="cost_result_p13"){
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
+    }else {
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2), "Bloom filter"], [(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2), "Fence pointer"]], l);
+    }
 
     if(result_div.id=="cost_result_p3") {
 

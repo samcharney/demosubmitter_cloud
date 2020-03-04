@@ -748,6 +748,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
         Variables.compression_name=compression_libraries[compression_style].compression_name;
         Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
         Variables.SLA_cost=SLA_cost;
+        Variables.M_F=M_F;
     }
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
