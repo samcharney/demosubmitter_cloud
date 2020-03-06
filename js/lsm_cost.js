@@ -25,7 +25,7 @@ var RAM_BLOCK_COST;
 var IOPS;
 var network_bandwidth;
 
-var machines = 18;
+var machines = 2;
 var workload_type = 0;
 
 var time_unit;
@@ -2259,7 +2259,7 @@ function outputParameters(Variables, id, l) {
     div_tmp.appendChild(text_tmp);
     result_div.appendChild(div_tmp);
     if(id=="cost_result_p11"){
-        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"]], l);
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"],[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else if(id=="cost_result_p13"){
         drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else {
