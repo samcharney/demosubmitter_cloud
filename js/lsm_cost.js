@@ -2259,7 +2259,7 @@ function outputParameters(Variables, id, l) {
     div_tmp.appendChild(text_tmp);
     result_div.appendChild(div_tmp);
     if(id=="cost_result_p11"){
-        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"],[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "(B) Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "(B) Read-only"],[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else if(id=="cost_result_p13"){
         drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else {
@@ -2681,7 +2681,7 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
     for(var i=0;i<length;i++){
         var bar=document.createElement("div");
         bar.setAttribute("class","color_bar");
-        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]+"; height:"+h+"px");
+        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[3-length+i]+"; height:"+h+"px");
         div_tmp.append(bar);
     }
     result_div.appendChild(div_tmp);
@@ -2690,7 +2690,7 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
         for (var i = 0; i < length; i++) {
             var legend = document.createElement("div");
             legend.setAttribute("class", "color_bar");
-            legend.setAttribute("style", "width: 10px;height: 10px;background-color:" + colors[i]);
+            legend.setAttribute("style", "width: 10px;height: 10px;background-color:" + colors[3-length+i]);
             div_tmp.append(legend);
             var text = document.createElement("div");
             text.setAttribute("style", "display: inline-block;font-size:10px ; padding:4px 7px 8px 3px");

@@ -417,6 +417,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
 
 
 
+
                     //log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
                     if (best_latency < 0 || total_latency < best_latency) {
                         best_latency = total_latency;
@@ -450,7 +451,9 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
             }
         }
     }
+
     var scale_factor=8;
+
     for(var T=8;T<=32;T++)
     {
         var K = T-1;
@@ -810,7 +813,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
                 q = 1 - q*(1 - alpha_0);
                 term1 = c/q;
                 //printf("in DS: %f on disk: %f\n", q, c);
-                update_cost = term1;
+                update_cost = term1*1.5;
             }else {
                 update_cost = aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
             }
@@ -824,7 +827,40 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     if (read_percentage != 0) {
         if (scenario == 'A') // Avg-case
         {
-            read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E,Math.ceil(M_B),Math.ceil(E), compression_style);
+            /*
+            if(Z == 0) // LSH-table append-only
+            {
+                var scale_up = 1.8;
+                var term1;
+                var c, q;
+                var alpha_0 = getAlpha_i(workload_type, M_B, M_BC, T, K, Z, L, Y, 0);
+                q = 1 - q*(1 - getAlpha_i(workload_type, M_B, M_BC, T, K, Z, L, Y, 0));
+                term1 = c/q;
+                //printf("in DS: %f on disk: %f\n", q, c);
+                -		*avg_read_cost = term1;
+                +		*avg_read_cost = term1*scale_up;
+                return;
+            }
+            else if (Z == -1) // LSH-table hybrid logs
+            {
+                double term1;
+                double c, q;
+                double alpha_mutable = getAlpha_i(workload_type, 0.9*M_B, M_BC, T, K, Z, L, Y, 0);
+                double alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, M_BC, T, K, Z, L, Y, 0);
+                double alpha_0 = 1 - ((1 - alpha_mutable) * (1 - alpha_read_only));
+                q = pow((1.0 - getAlpha_i(workload_type, M_B, M_BC, T, K, 1, L, Y, 1)), K);
+                c = (1 - q)*(1 - alpha_0);
+                q = 1 - q*(1 - alpha_0);
+                term1 = c/q;
+                //printf("in DS: %f on disk: %f\n", q, c);
+                *avg_read_cost = term1;
+                return;
+            }else
+             */
+            read_cost = analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E), compression_style);
+            if(existing_system=="FASTER_H")
+                read_cost=read_cost*1.8;
+
         } else // Worst-case
         {
             read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
