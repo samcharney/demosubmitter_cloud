@@ -2196,16 +2196,18 @@ function drawDiagram(Variables, id){
         }
 
         for (var j = 0; j < n; j++) {
-            /*if (maxRuns > 6 && j == 5) {
+            if (maxRuns > 8 && j == 7) {
                 var span =document.createElement("span");
-                var message="This level contains "+maxRuns+" runs";
-                span.setAttribute("data-tooltip", message);
-                span.setAttribute("data-tooltip-position", "left");
-                span.setAttribute("style", "width:19.27px; font-size: 20px; color: #a51c30;");
+                //var message="This level contains "+maxRuns+" runs";
+                //span.setAttribute("data-tooltip", message);
+                //span.setAttribute("data-tooltip-position", "left");
+                span.setAttribute("style", "width:19.27px; font-size: 20px; color: #777;");
                 span.id = i + "span";
                 span.textContent=" ...";
                 div_lsm_runs.appendChild(span);
-            } else*/ {
+            } else {
+                if(j>8)
+                    break;
                 var button=document.createElement("button");
                 //button.setAttribute("class","lsm_button lsm_button"+(levelcss));
 
@@ -2230,9 +2232,9 @@ function drawDiagram(Variables, id){
                 // }
 
                 //console.log(cur_length);
-                /*if(maxRuns >= 7){
-                    button.setAttribute("style","width: "+(cur_length- 19.27)/6+"px; height: 12px; padding: 1px 0px 2px 0px");
-                }else*/{
+                if(maxRuns > 8){
+                    button.setAttribute("style","width: "+cur_length/8+"px; height:"+height*2/3+"px; padding: 1px 0px 2px 0px");
+                }else{
                     button.setAttribute("style","width: "+cur_length/n+"px; height: "+height*2/3+"px; background-color: white; padding: 1px 0px 2px 0px");
                 }
                 div_lsm_runs.appendChild(button);
@@ -2259,7 +2261,7 @@ function outputParameters(Variables, id, l) {
     div_tmp.appendChild(text_tmp);
     result_div.appendChild(div_tmp);
     if(id=="cost_result_p11"){
-        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "(B) Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "(B) Read-only"],[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"],[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else if(id=="cost_result_p13"){
         drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else {
@@ -2660,14 +2662,23 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
     };
     Plotly.newPlot(div_tmp, data, layout, {displayModeBar: false});
     result_div.appendChild(div_tmp);*/
-    var colors=[
-        "#837BFF",
-        "#83AAFF",
-        "#83DEFF"
-    ]
     var div_tmp = document.createElement("div");
     var width = w*l;
     var length=value.length;
+    if(length==3) {
+        var colors = [
+            "#837BFF",
+            "#83AAFF",
+            "#83DEFF"
+        ]
+    }
+
+    if(length==2) {
+        var colors = [
+            "#837BFF",
+            "#83DEFF"
+        ]
+    }
     var data=new Array();
     var memory_sum=0;
     for(var i=0;i<length;i++)
@@ -2681,7 +2692,7 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
     for(var i=0;i<length;i++){
         var bar=document.createElement("div");
         bar.setAttribute("class","color_bar");
-        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[3-length+i]+"; height:"+h+"px");
+        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]+"; height:"+h+"px");
         div_tmp.append(bar);
     }
     result_div.appendChild(div_tmp);
@@ -2690,7 +2701,7 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
         for (var i = 0; i < length; i++) {
             var legend = document.createElement("div");
             legend.setAttribute("class", "color_bar");
-            legend.setAttribute("style", "width: 10px;height: 10px;background-color:" + colors[3-length+i]);
+            legend.setAttribute("style", "width: 10px;height: 10px;background-color:" + colors[i]);
             div_tmp.append(legend);
             var text = document.createElement("div");
             text.setAttribute("style", "display: inline-block;font-size:10px ; padding:4px 7px 8px 3px");

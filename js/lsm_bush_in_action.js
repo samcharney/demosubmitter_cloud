@@ -1004,7 +1004,7 @@ function init(){
 	interval=setInterval("drawCanvas(\"#FFFFFF\")",40);
 	reverseColor();
 	$("#title").css("height",($(window).height()+100)+"px");
-	$("#title").css("padding-top",($(window).height()/2-350)+"px");
+	$("#title").css("padding-top",($(window).height()/2-300)+"px");
 /*
 	$( window ).resize(function() {
 		console.log($( window ).height());
@@ -1025,7 +1025,7 @@ function init(){
 			$("#demo_body").css('transform','');
 	});
 */
-	window.scrollTo(0, 1340);
+	window.scrollTo(0, 1390);
 
 	$(".rotate").click(function () {
 		$(this).toggleClass("down");
@@ -3399,6 +3399,7 @@ function switchText() {
 		$("#WT,#rocks,#faster,#faster_h").css("opacity","0");
 		$("#exist_panel").animate({width: '0', opacity: '0'}, "slow");
 		$("#exist_panel").css("margin-left","0px");
+		$("#cost_result_p1_1").css("opacity","0");
 	}
 	else {
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
@@ -3440,6 +3441,7 @@ function switchText() {
 			$("#faster_h").animate({width: '255px',opacity:'1'}, "fast");
 		}
 		$("#exist_panel").css("margin-left","25px");
+		$("#cost_result_p1_1").css("opacity","1");
 	}
 
 }
@@ -3797,12 +3799,16 @@ function switch_SLA() {
 	$('#demo_body').toggleClass("blur");
 	if($("#SLA-setting").css('opacity')==0){
 		$("#SLA-tab").animate(({width:1300+"px"}),"fast");
+		$("#SLA-tab").animate(({height:365+"px"}),"fast");
+		$("#SLA-setting").css("height","85%");
 		setTimeout('$("#SLA-setting,#SLA-title").animate(({opacity:1}),"normal")', 500);
 		//$("#SLA-setting").animate(({width:200+"px"}),"normal");
 	}else{
 		$("#SLA-setting,#SLA-title").animate(({opacity:0}),"fast");
 		//$("#SLA-setting").animate(({width:0}),"normal");
-		$("#SLA-tab").animate(({width:70+"px"}),"fast");
+		$("#SLA-tab").animate(({width:315+"px"}),"fast");
+		$("#SLA-tab").animate(({height:50+"px"}),"fast");
+		$("#SLA-setting").css("height","0%");
 		prune_cloud_provider();
 	}
 }
