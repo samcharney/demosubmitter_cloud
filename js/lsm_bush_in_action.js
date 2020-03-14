@@ -1078,7 +1078,7 @@ function init(){
 		redraw=true;
 		workload_type = 1;
 		U_1 = 10000;
-		U_2=100000000;
+		U_2 = 10000000000;
 		if($('input[name=radio_2]:checked', '#myForm_2').val()=="1"){
 			//$("#check_mark_1").animate({top: "3px", left: "3px", width: "12px",height: "12px",opacity: 1}, {speed:"slow",quene:false});
 			p_get=0.8;

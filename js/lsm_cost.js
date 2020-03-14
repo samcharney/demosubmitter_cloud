@@ -2156,7 +2156,7 @@ function drawDiagram(Variables, id){
                 var div_tmp_row=document.createElement("div");
                 div_tmp_row.setAttribute("class","row");
                 var margin_left = (max_button_size-cur_length+lsm_button_size_ratio)/2;
-                div_tmp_row.setAttribute("style","text-align: center;font-weight:bold;margin-top:-"+(height-3)+"px;width:100%;z-index:2;position:absolute");
+                div_tmp_row.setAttribute("style","text-align: center;font-weight:bold;margin-top:-"+(height-3)+"px;width:100%;z-index:2;position:absolute;left:15px");
                 var div_tmp_lsm_runs=document.createElement("div");
                 div_tmp_lsm_runs.setAttribute("style","text-align: center;height:25px;width:"+cur_length+"px;margin:auto auto");
                 var tmp = Math.ceil((i-1)/3);
@@ -2314,7 +2314,7 @@ function outputParameters(Variables, id, l) {
         outputParameter(result_div,"","./images/throughput.png");
     }else {
         outputParameter(result_div, fixTime(Variables.latency), "./images/performance.png");
-        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " querys/s", "./images/throughput.png");
+        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " queries/s", "./images/throughput.png");
     }
 
    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
@@ -2352,7 +2352,7 @@ function outputNote(Variables, id){
         text.setAttribute("style", "width:90%; position:absolute; top:462px; font-size:12px");
     else
         text.setAttribute("style", "width:90%; position:absolute; top:511px; font-size:12px");
-    text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the input takes $"+Variables.cost+".</i>"
+    text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the requirement takes $"+Variables.cost+".</i>"
     result_div.appendChild(text);
     var div_tmp = document.createElement("div");
     var popup_id=id+"_popup"
@@ -2457,7 +2457,7 @@ function createPopup(Variables){
         outputParameter(result_div,"","https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
     }else {
         outputParameter(result_div, fixTime(Variables.latency), "https://volatill.github.io/demosubmitter_cloud//images/performance.png");
-        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " querys/s", "https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
+        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " queries/s", "https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
     }
     if(using_compression){
         outputParameter(result_div, Variables.compression_name, "https://volatill.github.io/demosubmitter_cloud//images/compression.png")

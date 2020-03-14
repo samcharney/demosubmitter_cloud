@@ -17,6 +17,7 @@ var U_1 = 10000;
 var U_2 = 100000000000;
 // NOTE: it must always be true that (p_put / U_1) > (1 / U_2)
 var p_get = 0.7;
+var B_;
 
 var MIN_RAM_SIZE;
 var RAM_BLOCK_COST;
@@ -306,7 +307,8 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
         }
     }
 
-    console.log(B,combination)
+    //console.log(B,combination)
+    B_=B;
     N=Variables.N/mem_sum;
     M_BC=0;
     for (var T = 2; T <= 12; T++) {
@@ -415,6 +417,9 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
 
                     var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
 
+                    if(L==0)
+                        total_latency=0;
+
 
 
 
@@ -454,6 +459,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
 
     var scale_factor=8;
 
+
     for(var T=8;T<=32;T++)
     {
         var K = T-1;
@@ -482,21 +488,22 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                     {
                         var term1;
                         var c, q;
-                        q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 1)), K);
-                        c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 0));
-                        q = 1 - q*(1 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 0));
+                        q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E)), K);
+                        console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
+                        c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
+                        q = 1 - q*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
                         term1 = c/q;
-                        update_cost = term1;
+                        update_cost = term1*1.5;
                     }
                     else if (Z == -1) // LSH-table hybrid logs
                     {
                         //printf("Hybrid log in FASTER\n");
                         var term1;
                         var c, q;
-                        var alpha_mutable = getAlpha_i(workload_type, 0.9*M_B, 0.0, T, K, Z, L, Y, 0);
-                        var alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, 0.0, T, K, Z, L, Y, 0);
+                        var alpha_mutable = getAlpha_i(workload_type, 0.9*M_B,  T, K, Z, L, Y, 0, E);
+                        var alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, T, K, Z, L, Y, 0, E);
                         var alpha_0 = 1 - ((1 - alpha_mutable) * (1 - alpha_read_only));
-                        q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, 0.0, T, K, 1, L, Y, 1)), K);
+                        q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, 1, L, Y, 1, E)), K);
                         c = (1 - q)*(1 - alpha_0);
                         q = 1 - q*(1 - alpha_0);
                         term1 = c/q;
@@ -514,7 +521,34 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
             if (read_percentage != 0) {
                 if (scenario == 'A') // Avg-case
                 {
-                    read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E), compression_style);
+                    if(Z == 0) // LSH-table append-only
+                    {
+                        var term1;
+                        var c, q;
+                        q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E)), K);
+                        console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
+                        c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
+                        q = 1 - q*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
+                        term1 = c/q;
+                        read_cost = term1*1.8;
+                    }
+                    else if (Z == -1) // LSH-table hybrid logs
+                    {
+                        var term1;
+                        var c, q;
+                        var alpha_mutable = getAlpha_i(workload_type, 0.9*M_B,  T, K, Z, L, Y, 0, E);
+                        var alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, T, K, Z, L, Y, 0, E);
+                        var alpha_0 = 1 - ((1 - alpha_mutable) * (1 - alpha_read_only));
+                        q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, 1, L, Y, 1, E)), K);
+                        c = (1 - q)*(1 - alpha_0);
+                        q = 1 - q*(1 - alpha_0);
+                        term1 = c/q;
+                        //printf("in DS: %f on disk: %f\n", q, c);
+                        read_cost = term1;
+                        return;
+                    }else {
+                        read_cost = analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E), compression_style);
+                    }
                 } else // Worst-case
                 {
                     read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
@@ -581,6 +615,8 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
     //console.log(Variables.VM_info,(monthly_storage_cost + monthly_mem_cost).toFixed(3),log_array);
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
+
+
     return Variables;
 }
 
@@ -794,26 +830,27 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
             {
                 var term1;
                 var c, q;
-                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 1)), K);
-                c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 0));
-                q = 1 - q*(1 - getAlpha_i(workload_type, M_B, 0.0, T, K, Z, L, Y, 0));
+                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E)), K);
+                console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
+                c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
+                q = 1 - q*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
                 term1 = c/q;
-                update_cost = term1;
+                update_cost = term1*1.5;
             }
             else if (Z == -1) // LSH-table hybrid logs
             {
                 //printf("Hybrid log in FASTER\n");
                 var term1;
                 var c, q;
-                var alpha_mutable = getAlpha_i(workload_type, 0.9*M_B, 0.0, T, K, Z, L, Y, 0);
-                var alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, 0.0, T, K, Z, L, Y, 0);
+                var alpha_mutable = getAlpha_i(workload_type, 0.9*M_B,  T, K, Z, L, Y, 0, E);
+                var alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, T, K, Z, L, Y, 0, E);
                 var alpha_0 = 1 - ((1 - alpha_mutable) * (1 - alpha_read_only));
-                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, 0.0, T, K, 1, L, Y, 1)), K);
+                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, 1, L, Y, 1, E)), K);
                 c = (1 - q)*(1 - alpha_0);
                 q = 1 - q*(1 - alpha_0);
                 term1 = c/q;
                 //printf("in DS: %f on disk: %f\n", q, c);
-                update_cost = term1*1.5;
+                update_cost = term1;
             }else {
                 update_cost = aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
             }
@@ -827,36 +864,32 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     if (read_percentage != 0) {
         if (scenario == 'A') // Avg-case
         {
-            /*
             if(Z == 0) // LSH-table append-only
             {
-                var scale_up = 1.8;
                 var term1;
                 var c, q;
-                var alpha_0 = getAlpha_i(workload_type, M_B, M_BC, T, K, Z, L, Y, 0);
-                q = 1 - q*(1 - getAlpha_i(workload_type, M_B, M_BC, T, K, Z, L, Y, 0));
+                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E)), K);
+                console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
+                c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
+                q = 1 - q*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
                 term1 = c/q;
-                //printf("in DS: %f on disk: %f\n", q, c);
-                -		*avg_read_cost = term1;
-                +		*avg_read_cost = term1*scale_up;
-                return;
+                read_cost = term1*1.8;
             }
             else if (Z == -1) // LSH-table hybrid logs
             {
-                double term1;
-                double c, q;
-                double alpha_mutable = getAlpha_i(workload_type, 0.9*M_B, M_BC, T, K, Z, L, Y, 0);
-                double alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, M_BC, T, K, Z, L, Y, 0);
-                double alpha_0 = 1 - ((1 - alpha_mutable) * (1 - alpha_read_only));
-                q = pow((1.0 - getAlpha_i(workload_type, M_B, M_BC, T, K, 1, L, Y, 1)), K);
+                var term1;
+                var c, q;
+                var alpha_mutable = getAlpha_i(workload_type, 0.9*M_B,  T, K, Z, L, Y, 0, E);
+                var alpha_read_only = getAlpha_i(workload_type, 0.1*M_B, T, K, Z, L, Y, 0, E);
+                var alpha_0 = 1 - ((1 - alpha_mutable) * (1 - alpha_read_only));
+                q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, 1, L, Y, 1, E)), K);
                 c = (1 - q)*(1 - alpha_0);
                 q = 1 - q*(1 - alpha_0);
                 term1 = c/q;
                 //printf("in DS: %f on disk: %f\n", q, c);
-                *avg_read_cost = term1;
+                read_cost = term1;
                 return;
             }else
-             */
             read_cost = analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E), compression_style);
             if(existing_system=="FASTER_H")
                 read_cost=read_cost*1.8;
@@ -888,6 +921,9 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     }
 
     var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+
+    if(L==0)
+        total_latency=0;
 
     if (best_latency < 0 || total_latency < best_latency) {
         best_latency = total_latency;
@@ -1192,7 +1228,7 @@ function aggregateAvgCase(type, FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, data,
     //console.log(c,q);
     //console.log(term1,term2,term3);
     //if((term1 + term2 + term3)==0)
-    //console.log(T,K,Z,term1,term2,term3,cq);
+   // console.log(T,K,Z,term1,term2,term3,c,q);
     return term1 + term2 + term3;
 }
 
@@ -1463,6 +1499,8 @@ function getAlpha_i(type, M_B, T, K, Z, L, Y, i, E)
     // block cache
     if (i == -1) {
         size_run = M_BC / E;
+        if (type == 1)
+            size_run /= B_;
         p_skew = p_get;
     }
     // buffer
@@ -1639,7 +1677,7 @@ function setPricesBasedOnScheme(Variables, cloud_provider)
 function getStorageCost(Variables, cloud_provider)
 {
     var storage, MBps, monthly_storage_cost;
-    console.log(Variables.E);
+    //console.log(Variables.E);
     storage = (Variables.N*Variables.E)/(1024*1024*1024);
     if(cloud_provider==undefined) {
         cloud_provider = getCloudProvider("cloud-provider");
