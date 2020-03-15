@@ -825,10 +825,14 @@
              </div>
                 <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:19%; width: 76%; font-size: 16px; margin-bottom: 60px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
-                    <div class="tab_l down tooltip2" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:50% ;border-right: 0px;">
-                        <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10">
+                    <div class="tab_l down tooltip2" id="interactive_tab_1" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:33% ;border-right: 0px;">
+                        <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:15">
                             <img style="width:50px" class="img-responsive img-centered" src="images//normal.png">
-                        </div>Basic Mode<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span></div><div name="interactive_tab" class="tab_l tooltip2" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:50%;border-left-color: #7F89FF">Interactive Mode
+                        </div>Basic Mode<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span>
+                    </div><div class="tab_l tooltip2" id="interactive_tab_2" name="interactive_tab" style="border-radius: 0px; width:34% ;border-right: 1px;">
+                    <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10; display: none">
+                    </div>Statistic Mode
+                    </div><div name="interactive_tab" id="interactive_tab_3" class="tab_l tooltip2" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:33%;border-left-color: #7F89FF">Interactive Mode
                     <div style="width:60px; height:60px; position:absolute; bottom: -10px; right:-10px;  border-radius:30px; padding:8px; z-index:10">
                         <img style="width:44px" class="img-responsive img-centered" src="images//hand.png">
                     </div>
@@ -836,8 +840,33 @@
                 </div>
                 </div>
 
+                <div id="stat" style="position: absolute; opacity: 0; width: 80%; height: 0px; left: 15%; text-align: center; z-index: 0">
+                    <div class="stat-block">
+                        <input id="stat_input_1" style="position: absolute; height: 16px; width: 24px; top: 8px; left: calc(17% - 60px);" value="50" onchange="displayStats()">
+                        <span style="width: 100%;">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% &nbsp;cloud provider</span>
+                        <div class="stat-graph" id="stat_graph_1"></div>
+                    </div>
+                    <div class="stat-block">
+                        <span style="width: 100%;">Cheapest budget</span>
+                        <div class="stat-graph" id="stat_graph_2"></div>
+                    </div>
+                    <div class="stat-block">
+                        <span style="width: 100%;">Break-up of I/O cost</span>
+                        <div class="stat-graph" id="stat_graph_3"></div>
+                    </div>
+                    <div class="stat-block">
+                        <span style="width: 100%;">Data Structure</span>
+                        <div class="stat-graph" id="stat_graph_4"></div>
+                    </div>
+                    <div class="stat-block"></div>
+                    <div class="stat-block"></div>
+                    <div class="stat-block"></div>
+                    <div class="stat-block"></div>
+                    <div class="stat-block"></div>
 
-                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; left: calc(50% - 480px)">
+                </div>
+
+                <div id="charts" class="col-lg-12 col-md-12 col-sm-12" style="display: none; width: 1420px; position: relative; left: calc(50% - 480px); z-index: 1">
 
 
 

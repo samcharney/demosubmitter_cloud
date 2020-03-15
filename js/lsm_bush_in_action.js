@@ -1136,7 +1136,7 @@ function init(){
 		if(!$(this).hasClass("down")){
 			$('[name=interactive_tab]').removeClass('down');
 			$(this).addClass('down');
-			switchText();
+			switchText($(this).attr('id'));
 		}
 	})
 
@@ -3370,12 +3370,16 @@ function displayContinuums() {
 		document.getElementById("explore_text").innerHTML="Explore More Designs: Off";
 }
 
-function switchText() {
+function switchText(id) {
 	if(using_compression){
 		$("#interactive-panel").height(640);
 		$("#questions_block").height(638);
 	}
-	if(document.getElementById("interactive_mode_text").innerHTML=="Interactive Mode: Off") {
+	$("#stat").css("height","0px");
+	$("#stat").css("opacity","0");
+	$("#stat").css("z-index","0");
+	if(id=="interactive_tab_3") {
+		$("#charts").animate({opacity:"1"}, "slow");
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
 		$("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
 		//$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
@@ -3401,7 +3405,8 @@ function switchText() {
 		$("#exist_panel").css("margin-left","0px");
 		$("#cost_result_p1_1").css("opacity","0");
 	}
-	else {
+	else if (id=="interactive_tab_1"){
+		$("#charts").animate({opacity:"1"}, "slow");
 		document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
 		$("#questions_block").animate({width: '0px',opacity:'0'}, "slow");
 		/*
@@ -3442,6 +3447,11 @@ function switchText() {
 		}
 		$("#exist_panel").css("margin-left","25px");
 		$("#cost_result_p1_1").css("opacity","1");
+	}else{
+		$("#charts").animate({opacity:"0"}, "slow");
+		$("#guide").animate({opacity:"0"}, "slow");
+		$("#stat").animate({height:"650px", opacity:"1"}, "slow");
+		$("#stat").css("z-index","2");
 	}
 
 }

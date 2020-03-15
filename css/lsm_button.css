@@ -1123,3 +1123,25 @@
     -webkit-transform: rotateY(-360deg) translateZ(90px);
 }
 
+.stat-block {
+    display: inline-block;
+    margin-bottom: 4px;
+    padding-top: 4px;
+    width: 33%;
+    height: 33%;
+    border: #6699CC solid 0.5px;
+    border-radius: 12px;
+    background-color: white;
+    vertical-align: top;
+}
+
+
+.stat-graph{
+    margin-top: 2%;
+    padding: 2px;
+    width: 310px;
+    height: calc( 80% + 10px);
+    margin-left: calc(50% - 155px);
+    border: #90ACEE solid 0.5px;
+    border-radius: 5px;
+}

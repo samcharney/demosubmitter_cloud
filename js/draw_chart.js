@@ -1226,9 +1226,10 @@ function drawContinuumsMultithread(if_regenerate=true) {
             } else {
                 console.log(typeof e.data);
                 var ContinuumArray = e.data;
-                drawContinuumsNew(ContinuumArray);
                 global_continuums_array = ContinuumArray;
+                drawContinuumsNew(ContinuumArray);
                 displayCharts();
+                displayStats();
                 worker_running=false;
             }
 
@@ -1875,6 +1876,8 @@ function drawContinuumsNew(ContinuumArray){
         $("#diagram6").html("<div style=\"font-size:18px;text-align: center;position: relative;top: 64px;\">Hover along the continuum to learn more.</span>");
         //$("#diagram6").html("Out of top 10% designs,<br>"+(provider_num_array[0]*100/ContinuumArray.length).toFixed(2)+"% are of AWS,<br>"+(provider_num_array[1]*100/ContinuumArray.length).toFixed(2)+"% are of GCP,<br>and "+(provider_num_array[2]*100/ContinuumArray.length).toFixed(2)+"% are of AZURE.");
     });
+
+
 }
 
 function addTextAndBar(result_div,Variables,w,h){
@@ -2005,4 +2008,56 @@ function drawline(ctx, start, end) {
     ctx.moveTo(start.x,start.y);
     ctx.lineTo(end.x,end.y);
     ctx.stroke()
+}
+
+function displayStats() {
+    var height=168;
+    var width=266;
+
+    var layout={
+        height:168,
+        width:300,
+        margin: {
+            l: 30,
+            r: 20,
+            b: 25,
+            t: 0,
+            pad: 0
+        }
+    }
+
+    var result_array = global_continuums_array;
+    var input=parseFloat(document.getElementById("stat_input_1").value);
+    result_array.sort(function (a, b) {
+        return a[1] - b[1];
+    });
+    var cloud_provider_num = [0, 0, 0];
+    for (var i = 0; i < Math.ceil(result_array.length * input / 100); i++) {
+        for (var j = 0; j < 3; j++) {
+            if (result_array[i][3] == cloud_array[j]) {
+                cloud_provider_num[j]++;
+            }
+        }
+    }
+
+    for (var j=0; j<3; j++){
+        cloud_provider_num[j]=((cloud_provider_num[j]/result_array.length)*100);
+    }
+
+
+    var trace1 = {
+        x: ['AWS', 'GCP', 'Azure'],
+        y: cloud_provider_num,
+        width: [0.35,0.35,0.35],
+        type: 'bar',
+        marker: {
+            color: ['rgb(130,195,245)','rgb(130,165,245)','rgb(130,135,245)']
+        },
+        hovertemplate:
+            "%{y:.2f}%",
+    };
+
+    var data1 = [trace1];
+
+    Plotly.newPlot('stat_graph_1', data1, layout);
 }

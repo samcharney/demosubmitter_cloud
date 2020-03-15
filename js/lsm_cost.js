@@ -2261,7 +2261,7 @@ function outputParameters(Variables, id, l) {
     div_tmp.appendChild(text_tmp);
     result_div.appendChild(div_tmp);
     if(id=="cost_result_p11"){
-        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"],[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"],[(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else if(id=="cost_result_p13"){
         drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
     }else {

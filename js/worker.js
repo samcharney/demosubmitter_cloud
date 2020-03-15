@@ -489,7 +489,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         var term1;
                         var c, q;
                         q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E)), K);
-                        console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
+                        //console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
                         c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
                         q = 1 - q*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
                         term1 = c/q;
@@ -831,7 +831,7 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
                 var term1;
                 var c, q;
                 q = Math.pow((1.0 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E)), K);
-                console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
+                //console.log(getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 1, E));
                 c = (1 - q)*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
                 q = 1 - q*(1 - getAlpha_i(workload_type, M_B, T, K, Z, L, Y, 0, E));
                 term1 = c/q;
