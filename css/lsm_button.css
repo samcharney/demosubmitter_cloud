@@ -1140,8 +1140,6 @@
     margin-top: 2%;
     padding: 2px;
     width: 310px;
-    height: calc( 80% + 10px);
+    height: calc( 80% );
     margin-left: calc(50% - 155px);
-    border: #90ACEE solid 0.5px;
-    border-radius: 5px;
 }

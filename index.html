@@ -842,12 +842,13 @@
 
                 <div id="stat" style="position: absolute; opacity: 0; width: 80%; height: 0px; left: 15%; text-align: center; z-index: 0">
                     <div class="stat-block">
-                        <input id="stat_input_1" style="position: absolute; height: 16px; width: 24px; top: 8px; left: calc(17% - 60px);" value="50" onchange="displayStats()">
+                        <input id="stat_input_1" style="position: absolute; height: 16px; width: 24px; top: 8px; left: calc(17% - 60px); padding: 0px; font-size: 12px; text-align: center" value="50" onchange="displayStats()"/>
                         <span style="width: 100%;">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% &nbsp;cloud provider</span>
                         <div class="stat-graph" id="stat_graph_1"></div>
                     </div>
                     <div class="stat-block">
-                        <span style="width: 100%;">Cheapest budget</span>
+                        <input id="stat_input_2" style="position: absolute; height: 16px; width: 24px; top: 8px; left: calc(50% - 6px);  padding: 0px; font-size: 12px;  text-align: center" value="5" onchange="displayStats()">
+                        <span style="width: 100%;">Cheapest &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; budget</span>
                         <div class="stat-graph" id="stat_graph_2"></div>
                     </div>
                     <div class="stat-block">
@@ -1061,7 +1062,7 @@
                                         </div>
                                     </div>
                                 </div>
-                               <div id="split_1" style="position:absolute; display:inline-block; width: 1px; height:0px; background-color:#7379DE; top:-50px; opacity: 0"></div>
+                               <div id="split_1" style="position:absolute; display:inline-block; width: 1px; height:0px; background-color:#7379DE; top:-41px; opacity: 0"></div>
                             <div style="width: 405px; display: inline-block " >
                                 <div id="explore_switch" style=" display:inline-block; position:relative; width: 250px; height:50px; left: 110px; margin:15px; font-size: 16px; opacity: 0; ">
                                     <!--<div id="explore_text" style="margin-bottom: 8px;">Explore More Designs: Off</div>

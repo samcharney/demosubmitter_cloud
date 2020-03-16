@@ -311,6 +311,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
     B_=B;
     N=Variables.N/mem_sum;
     M_BC=0;
+
     for (var T = 2; T <= 12; T++) {
         for (var K = 1; K <= T - 1; K++) {
             for (var Z = 1; Z <= T - 1; Z++) {
@@ -451,6 +452,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                         Variables.compression_name=compression_libraries[compression_style].compression_name;
                         Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
                         Variables.SLA_cost=SLA_cost;
+                        Variables.data_structure="LSM";
                     }
                 }
             }
@@ -608,6 +610,7 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
                 Variables.compression_name=compression_libraries[compression_style].compression_name;
                 Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
                 Variables.SLA_cost=SLA_cost;
+                Variables.data_structure="B-tree";
             }
             Z=temp;
         }
@@ -616,6 +619,150 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
     //return  max_RAM_purchased;
     //console.log(Variables.latency);
 
+    for (var T = 32; T <= 128; T=T*2) {
+        for (var M_B_percent = 0.2; M_B_percent <= 1; M_B_percent += 0.2) {
+            var K=1;
+            var Z=1
+            var M_B = M_B_percent * max_RAM_purchased * 1024 * 1024 * 1024;
+            var M = max_RAM_purchased * 1024 * 1024 * 1024;
+            X = Math.max(Math.pow(1 / Math.log(2), 2) * (Math.log(T) / 1 / (T - 1) + Math.log(K / Z) / T) * 8);
+            //console.log(X);
+            M_F_HI = N * ((X / 8) / T + F / B);
+
+            if ((N / B) < (M_B * T / (B * E))) {
+                M_F_LO = (N / B) * F;
+            } else {
+                M_F_LO = (M_B * F * T) / (B * E);
+            }
+            M_F = M - M_B;
+            if (M_F < M_F_LO)
+                M_F = M_F_LO;
+
+            var universe_max = workload_type == 0 ? U : U_1 + U_2;
+            if (workload_type == 1) {
+                universe_max = U_1 + (1 - p_put) * (N);
+            }
+            var size = universe_max < N ? universe_max : N;
+            var multiplier_from_buffer = size*(E) / (M_B);
+            // handle case where data fits in buffer
+            if (multiplier_from_buffer < 1) multiplier_from_buffer = 1;
+            L = Math.ceil(Math.log(multiplier_from_buffer)/Math.log(T));
+            //console.log(M_F,M_F_HI);
+
+            if (M_F >= M_F_HI) {
+                Y = 0;
+                M_FP = N * F / B;
+            } else if (M_F > M_F_LO && M_F < M_F_HI) {
+                Y = L - 1;
+                M_FP = M_F_LO;
+                for (var i = L - 2; i >= 1; i--) {
+                    var h = L - i;
+                    var temp_M_FP = M_F_LO;
+                    for (var j = 2; j <= h; j++) {
+                        temp_M_FP = temp_M_FP + (temp_M_FP * T);
+                    }
+                    if (temp_M_FP <= M_F) {
+                        Y = i;
+                        M_FP = temp_M_FP;
+                    }
+                }
+            } else {
+                Y = L - 1;
+                M_FP = M_F_LO;
+            }
+            M_BF = 0;
+            var margin = 2;
+            if (M_F - M_FP > 0)
+                M_BF = M_F - M_FP - margin;
+            else
+                M_BF = 0.0;
+
+
+            var update_cost;
+            var read_cost;
+            var no_result_read_cost;
+            var short_scan_cost;
+            var long_scan_cost;
+
+
+            if (write_percentage != 0) {
+                if(scenario=='A'){
+                    update_cost=aggregateAvgCaseUpdate(B, E, workload_type, T, K, Z, L, Y, M_B, 0);
+                }else {
+                    update_cost = analyzeUpdateCost(B, T, K, Z, L, Y, M, M_F, M_B, M_F_HI, M_F_LO);
+                }
+            }
+            if (read_percentage != 0) {
+                if (scenario == 'A') // Avg-case
+                {
+                    read_cost=analyzeReadCostAvgCase(FPR_sum, T, K, Z, L, Y, M, M_B, M_F, M_BF, N, E, Math.ceil(M_B), Math.ceil(E), compression_style);
+                } else // Worst-case
+                {
+                    read_cost = analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum);
+                    //logReadCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, read_cost, "");
+                }
+
+            }
+            if (short_scan_percentage != 0) {
+                short_scan_cost = analyzeShortScanCost(B, T, K, Z, L, Y, M, M_B, M_F, M_BF);
+            }
+            long_scan_cost = analyzeLongScanCost(B, s);
+            no_result_read_cost=analyzeReadCost(B, E, N, T, K, Z, L, Y, M, M_B, M_F, M_BF, FPR_sum)-1;
+            if (scenario == 'A') // Avg-case
+            {
+                //logTotalCost(T, K, Z, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, M_FP, M_BF, FPR_sum, update_cost, avg_read_cost, short_scan_cost, long_scan_cost);
+            } else // Worst-case
+            {
+                //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+                //logTotalCostSortByUpdateCost(d_list, T, K, 0, L, Y, M, M_B, M_F, M_F_HI, M_F_LO, update_cost, read_cost, "");
+            }
+            //logTotalCost(T, K, Z, L, Y, M/(1024*1024*1024), M_B/(1024*1024*1024), M_F/(1024*1024*1024), M_F_HI/(1024*1024*1024), M_F_LO/(1024*1024*1024), M_FP/(1024*1024*1024), M_BF/(1024*1024*1024), FPR_sum, update_cost, read_cost, short_scan_cost, long_scan_cost);
+            var total_cost = (w * update_cost + v * read_cost + r * no_result_read_cost) / (v + w + r);
+
+            if(using_compression){
+                total_cost = (w * update_cost * (1+compression_libraries[compression_style].put_overhead/100) + v * read_cost * (1+compression_libraries[compression_style].get_overhead/100) + r * read_cost * (1+compression_libraries[compression_style].get_overhead/100)) / (v + w + r);
+            }
+
+            var total_latency= total_cost * query_count/ mem_sum / IOPS / 60 / 60 / 24;
+
+            if(L==0)
+                total_latency=0;
+
+
+
+
+            //log_array.push([T,K,Z,read_cost.toFixed(2),update_cost.toFixed(2),total_latency.toFixed(2)]);
+            if (best_latency < 0 || total_latency < best_latency) {
+                best_latency = total_latency;
+                Variables.K = K;
+                Variables.T = T;
+                Variables.L = L;
+                Variables.Z = Z;
+                Variables.Y = Y;
+                Variables.Buffer = M_B;
+                Variables.M_BF = M_BF;
+                Variables.M_FP = M_FP;
+                Variables.read_cost = read_cost;
+                Variables.update_cost = update_cost;
+                Variables.short_scan_cost = short_scan_cost;
+                Variables.long_scan_cost = long_scan_cost;
+                Variables.no_result_read_cost = no_result_read_cost;
+                Variables.total_cost = total_cost;
+                Variables.latency = total_latency;
+                Variables.cost = (monthly_storage_cost + monthly_mem_cost).toFixed(3);
+                if(enable_SLA){
+                    Variables.cost = (monthly_storage_cost + monthly_mem_cost + SLA_cost).toFixed(3);
+                }
+                Variables.memory_footprint=max_RAM_purchased*mem_sum;
+                Variables.cloud_provider=cloud_provider;
+                Variables.throughput=mem_sum*IOPS/total_cost;
+                Variables.compression_name=compression_libraries[compression_style].compression_name;
+                Variables.FPR=getFPR(T, K, Z, L, Y, M, M_B, M_F, M_BF, N);
+                Variables.SLA_cost=SLA_cost;
+                Variables.data_structure="LSH";
+            }
+        }
+    }
 
     return Variables;
 }

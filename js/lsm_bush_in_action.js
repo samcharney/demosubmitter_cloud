@@ -3387,7 +3387,7 @@ function switchText(id) {
 		$("#interactive-panel").animate({width: '1136px',borderWidth:1,borderOpacity:1}, "slow");
 		$("#charts").css('left','calc(50% - 620px)');
 		$("#charts").css('transform','scale(0.9) translateY(-40px)');
-		$("#interactive-content").css('transform','scale(0.9) translateX(-40px)');
+		$("#interactive-content").css('transform','scale(0.9) translateX(-40px) translateY(-12px)');
 		//$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
 		$("#interactive_banner").animate({height: "35px", opacity:"1", borderWidth:1}, "slow");
 		$("#explore_switch").css('transform','translateY(-50px) ');

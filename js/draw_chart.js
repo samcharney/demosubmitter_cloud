@@ -2028,10 +2028,18 @@ function displayStats() {
 
     var result_array = global_continuums_array;
     var input=parseFloat(document.getElementById("stat_input_1").value);
+    var cheapestNum=parseInt(document.getElementById("stat_input_2").value);
     result_array.sort(function (a, b) {
         return a[1] - b[1];
     });
+
     var cloud_provider_num = [0, 0, 0];
+    var cheapest_budget=new Array();
+    var color_array=new Array();
+    var count_array=new Array();
+    var width_array=new Array();
+
+
     for (var i = 0; i < Math.ceil(result_array.length * input / 100); i++) {
         for (var j = 0; j < 3; j++) {
             if (result_array[i][3] == cloud_array[j]) {
@@ -2042,6 +2050,42 @@ function displayStats() {
 
     for (var j=0; j<3; j++){
         cloud_provider_num[j]=((cloud_provider_num[j]/result_array.length)*100);
+    }
+
+
+    result_array.sort(function (a, b) {
+        return a[0] - b[0];
+    });
+
+    for(var i=0; i < cheapestNum; i++){
+        cheapest_budget.push(result_array[i][0]);
+        color_array.push('rgb(130,'+(205-150/cheapestNum*i)+',245)');
+        count_array.push(i+1);
+        width_array.push(0.2);
+    }
+
+    result_array.sort(function (a, b) {
+        return a[1] - b[1];
+    });
+
+    var query_IO = [result_array[global_index+j-1][5].read_cost * result_array[global_index+j-1][5].v, result_array[global_index+j-1][5].update_cost * result_array[global_index+j-1][5].w];
+
+    var data_structure_array=[0,0,0];
+
+    for(var i=0; i<result_array.length; i++){
+        if(result_array[i][5].data_structure=="LSM"){
+            data_structure_array[0]++;
+        }
+        if(result_array[i][5].data_structure=="LSH"){
+            data_structure_array[1]++;
+        }
+        if(result_array[i][5].data_structure=="B-tree"){
+            data_structure_array[1]++;
+        }
+    }
+
+    for (var j=0; j<3; j++){
+        data_structure_array[j]=((data_structure_array[j]/result_array.length)*100);
     }
 
 
@@ -2057,7 +2101,53 @@ function displayStats() {
             "%{y:.2f}%",
     };
 
+    var trace2 = {
+        x: count_array,
+        y: cheapest_budget,
+        width: width_array,
+        type: 'bar',
+        marker: {
+            color: color_array
+        },
+        hovertemplate:
+            "$%{y:.2f}",
+    };
+
+    var trace3 = {
+        x: ['Read','Write'],
+        y: [query_IO[0]/(query_IO[0]+query_IO[1])*100,query_IO[1]/(query_IO[0]+query_IO[1])*100],
+        width: ['rgb(130,195,245)','rgb(130,135,245)'],
+        type: 'bar',
+        marker: {
+            color: color_array
+        },
+        hovertemplate:
+            "%{y:.3f}%",
+    };
+
+    var trace4 = {
+        x: ['LSM', 'LSH', 'B-tree'],
+        y: data_structure_array,
+        width: [0.35,0.35,0.35],
+        type: 'bar',
+        marker: {
+            color: ['rgb(130,195,245)','rgb(130,165,245)','rgb(130,135,245)']
+        },
+        hovertemplate:
+            "%{y:.2f}%",
+    };
+
     var data1 = [trace1];
+    var  data2 = [trace2];
+    var  data3 = [trace3];
+    var  data4 = [trace4];
+
+
+
 
     Plotly.newPlot('stat_graph_1', data1, layout);
+    Plotly.newPlot('stat_graph_2', data2, layout);
+    Plotly.newPlot('stat_graph_3', data3, layout);
+    Plotly.newPlot('stat_graph_4', data4, layout);
+
 }
