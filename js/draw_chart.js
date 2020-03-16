@@ -2018,11 +2018,14 @@ function displayStats() {
         height:168,
         width:300,
         margin: {
-            l: 30,
+            l: 45,
             r: 20,
             b: 25,
             t: 0,
             pad: 0
+        },
+        yaxis: {
+            title: ''
         }
     }
 
@@ -2144,10 +2147,13 @@ function displayStats() {
 
 
 
-
+    layout.yaxis.title="design space (%)"
     Plotly.newPlot('stat_graph_1', data1, layout);
+    layout.yaxis.title="budget ($)"
     Plotly.newPlot('stat_graph_2', data2, layout);
+    layout.yaxis.title="cost (I/O))"
     Plotly.newPlot('stat_graph_3', data3, layout);
+    layout.yaxis.title="data structure (%))"
     Plotly.newPlot('stat_graph_4', data4, layout);
 
 }
