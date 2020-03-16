@@ -1,60 +1,6 @@
 
 var timer=null;
 
-function update_lsm_tree(id, lsm_tree_type, lsm_tree_L, lsm_tree_T, lsm_tree_mbuffer, N, E, obsolete_coefficient){
-  if(id == 'lsm_tree_L' || id == 'obsolete_coefficient' || id == 'lsm_tree_Z'){
-    var result = getLSMTreeT(lsm_tree_type);
-    var T = result[0];
-    var maxL = result[1];
-      if(T < 2){
-        alert("L="+lsm_tree_L+" is larger than the maximum L="+maxL+" in LSM-tree.")
-        console.log("L="+lsm_tree_L+" is larger than the maximum L="+maxL+" in LSM-tree.");
-        update_lsm_tree('lsm_tree_T', lsm_tree_type, lsm_tree_L, lsm_tree_T, lsm_tree_mbuffer, N, E)
-
-    }
-
-    document.getElementById("lsm_tree_T").value=T;
-
-
-  }
-
-  // else if(id.startsWith('lsm_tree') || id == 'N' || id == "E" || id == "Key-Size" || id == "P"){
-  //   var L;
-  //   if(lsm_tree_type == 0){
-  //     L = Math.log(N*Math.floor(lsm_tree_T-1)*E/lsm_tree_mbuffer)/Math.log(lsm_tree_T);
-  //   }else{
-  //     L = Math.log(N*E/lsm_tree_mbuffer)/Math.log(lsm_tree_T);
-  //   }
-  //
-  //   if(Math.abs(L - Math.round(L))<1e-6){
-  //     L = Math.round(L);
-  //   }else{
-  //     L = Math.ceil(L);
-  //   }
-  //   var tmpN;
-  //   if(lsm_tree_type == 0){
-  //     tmpN = obsolete_coefficient*((1 - 1/Math.pow(lsm_tree_T, L))/(1 - 1/lsm_tree_T)*N*(Math.floor(lsm_tree_T)-1) + lsm_tree_mbuffer/E - N)+N;
-  //   }else{
-  //     tmpN = obsolete_coefficient*((1 - 1/Math.pow(lsm_tree_T, L))/(1 - 1/lsm_tree_T)*N + lsm_tree_mbuffer/E - N) + N;
-  //   }
-  //   L = Math.log(tmpN*E*(lsm_tree_T-1)/lsm_tree_mbuffer+1)/Math.log(lsm_tree_T)-1;
-  //   if(Math.abs(L - Math.round(L))<1e-6){
-  //     L = Math.round(L);
-  //   }else{
-  //     L = Math.ceil(L);
-  //   }
-  //
-  //   if(L < 0){
-  //     L = 0;
-  //   }
-  //   document.getElementById("lsm_tree_L").value=L;
-  // }
-
-  	draw_lsm_graph("lsm_tree");
-}
-
-
-
 function re_run(e, if_regenerate=true) {
 
 
@@ -102,403 +48,978 @@ function re_run(e, if_regenerate=true) {
         //$(document.body).css({'cursor' : 'wait'});
         drawContinuumsMultithread(if_regenerate);
     }
-   // setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
-   // setTimeout('$("#loading_canvas").animate({opacity:0}, \'normal\').css(\'z-index\',0)',5000);
+}
+
+function init(){
+
+    // Dataset and Environment
+    document.getElementById("N").value=numberWithCommas(20000000000); //(10M values)
+    document.getElementById("E").value=2048;
+    //document.getElementById("B").value=4096; //in B
+    document.getElementById("F").value=64;
+
+    // Workload
+    document.getElementById("s").value = 8192;
+    document.getElementById("qS").value = 0;
+    document.getElementById("w").value = 0.1;
+    document.getElementById("r").value = 0.0;
+    document.getElementById("v").value = 0.9;
+    document.getElementById("qL").value = 0.0;
+    //document.getElementById("X").value = numberWithCommas(0);
+
+    //buttons
+
+    document.getElementById("AWS").style.fontWeight='bold';
+    document.getElementById("AWS").style.fontSize='16px';
+
+    document.getElementById("cost").value = 3400;
+    //document.getElementById("latency").value = 5.7;
+
+    document.getElementById("query_count").value=10000000000;
+
+    initializeCompressionLibraries();
+
+    initializeSLACheckboxes();
+
+    initializeCloudCheckboxes();
+
+    initializeExistDesignPanel();
+
+    interval=setInterval("drawCanvas(\"#FFFFFF\")",40);
+    reverseColor();
+    $("#title").css("height",($(window).height()+100)+"px");
+    $("#title").css("padding-top",($(window).height()/2-300)+"px");
     /*
-    if(event.target.id.endsWith("mfilter_per_entry"))
-    {
-        var mfilter_per_entry = parseFloat(document.getElementById(event.target.id).value);
-        if(!isNaN(mfilter_per_entry)){
-        document.getElementById(event.target.id).value=mfilter_per_entry
-      }else{
-        document.getElementById(event.target.id).value="";
-      }
-        // console.log(numberWithCommas(N))
-    }
+        $( window ).resize(function() {
+            console.log($( window ).height());
 
-    var N = parseInt(document.getElementById("N").value.replace(/\D/g,''),10);
-    var P = parseInt(document.getElementById("P").value.replace(/\D/g,''),10);
-    document.getElementById("N").value=numberWithCommas(N)
-    var E = parseInt(document.getElementById("E").value.replace(/\D/g,''),10);
+            $("#title").css("padding-top",(($(window).height()-500)/2)+"px");
+        });
+        */
 
-    var w=parseFloat(document.getElementById("w").value);
-    var r=parseFloat(document.getElementById("r").value);
-    var v=parseFloat(document.getElementById("v").value);
-    var qL=parseFloat(document.getElementById("qL").value);
+    /*
+        if($( window ).width()<1400)
+            $("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
 
-    var obsolete_coefficient_str = document.getElementById("obsolete_coefficient").value;
-    if(isNaN(obsolete_coefficient_str)){
-      alert(obsolete_coefficient_str+" is not valid.")
-      console.log("UI ratio is not valid: "+obsolete_coefficient_str)
-      document.getElementById("UI-ratio").value=1.0;
-    }
-    var obsolete_coefficient = parseFloat(obsolete_coefficient_str);
-    if(obsolete_coefficient > 1 || obsolete_coefficient < 0){
-      alert(obsolete_coefficient+" should be in the range of [0, 1].")
-      console.log("Obsolete coefficient should be in the range of (0, 1) :"+key_size)
-      document.getElementById("obsolete_coefficient").value=1.0;
-    }
-
-    if(r <= 0.0){
-      document.getElementById("Zero-result-lookup-text-Div").style.display='none';
-    }else{
-      document.getElementById("Zero-result-lookup-text-Div").style.display='';
-    }
-
-    var key_size;
-    if(event.target.id == "Key-Size"){
-      key_size = document.getElementById("Key-Size").value;
-      if(isNaN(key_size)){
-        alert("Key_Size="+key_size+" is not a valid number.")
-        console.log("Key Size is not a valid number: "+key_size)
-        document.getElementById("Key-Size").value=E/2;
-      }else if(key_size <= 0 || key_size >= E){
-        alert("Key_Size="+key_size+" should be in the range of (0, " + E + ").")
-        console.log("Key Size should be in the range of (0, " + E + ") :"+key_size)
-        document.getElementById("Key-Size").value=E/2;
-      }else{
-        document.getElementById("lsm_bush_mfence_pointer_per_entry").value=key_size/(P/E)*8;
-        document.getElementById("lsm_tree_mfence_pointer_per_entry").value=key_size/(P/E)*8;
-      }
-    }
-
-    if(input_type == "dataset_input"){
-      document.getElementById("data-text").setAttribute("data-tooltip",
-      "The dataset consists of " + formatBytes(N*E, 1) +
-      " of data comprising unique " + E +
-      "-byte key-value pairs of " + key_size +
-      "-byte keys");
-    }else if(input_type == "workload_input"){
-      var sum = qL+r+v+w;
-      document.getElementById("workload-text").setAttribute("data-tooltip",
-      "The workload consists of " + (w/sum*100).toFixed(3) +
-      "% writes, " + ((v+r)/sum*100).toFixed(3) +
-      "% point lookups, and " + (qL/sum*100).toFixed(3) +
-      "% range lookups with target range of " + s +
-      " entries");
-    }else if(input_type == "storage_input"){
-      document.getElementById("storage-text").setAttribute("data-tooltip",
-      "The storage device is an SSD with " + formatBytes(P, 1) +
-      " blocks and for which reading a block takes " + document.getElementById("read-latency").value +
-      " microseconds and writing a block takes " + document.getElementById("write-latency").value +
-      " microseconds");
-    }
-
-    //lsh-Table
-    var lsh_table_mbuffer = document.getElementById("lsh_table_mbuffer").value;
-    if(isNaN(lsh_table_mbuffer)){
-      alert("LSH-Table buffer="+lsh_table_mbuffer+" MB is invalid.")
-      console.log("LSH-Table buffer is invalid: "+lsh_table_mbuffer);
-      document.getElementById("lsh_table_mbuffer") = 2;
-      lsh_table_mbuffer = 2;
-    }
-    lsh_table_mbuffer = parseFloat(lsh_table_mbuffer);
-    if (lsh_table_mbuffer<0){
-        alert("Buffer="+lsh_table_mbuffer+" is too small in LSH-Table.");
-        document.getElementById("lsh_table_mbuffer") = 2;
-        lsh_table_mbuffer = 2;
-    }
-    lsh_table_mbuffer *= 1048576;
-    var hash_table_gc_threshold =document.getElementById("lsh_table_gc_threshold").value;
-    if(isNaN(hash_table_gc_threshold)){
-      alert("GC Threshold="+hash_table_gc_threshol+" is invalid.");
-      console.log("The threshold ratio of garbage collection is invalid: "+hash_table_gc_threshold);
-      document.getElementById("lsh_table_gc_threshold").value = 0.5;
-      hash_table_gc_threshold = 0.5;
-    }
-    hash_table_gc_threshold = parseFloat(hash_table_gc_threshold);
-    if (hash_table_gc_threshold<=0 || hash_table_gc_threshold >= 1){
-        alert("GC Threshold="+hash_table_gc_threshold+" should be in the range (0, 1).");
-        document.getElementById("lsh_table_gc_threshold").value = 0.5;
-        hash_table_gc_threshold = 0.5;
-    }
-    var hash_table_key_signature_size = document.getElementById("lsh_table_key_signature_size").value;
-    if(isNaN(hash_table_key_signature_size) || Number.isInteger(hash_table_key_signature_size)){
-      alert("The size of key signature="+hash_table_key_signature_size+" is invalid.");
-      console.log("Thesize of key signature is invalid: "+hash_table_key_signature_size);
-      document.getElementById("lsh_table_key_signature_size").value = 10;
-      hash_table_key_signature_size = 10;
-    }
-    hash_table_key_signature_size = parseInt(hash_table_key_signature_size);
-    if(hash_table_key_signature_size < 0){
-      alert("The size of key signature="+hash_table_key_signature_size+" should be no less than 0.");
-      document.getElementById("lsh_table_key_signature_size").value = 10;
-      hash_table_key_signature_size = 10;
-    }
-    var hash_table_hash_bucket_fraction = document.getElementById("lsh_table_hash_bucket_fraction").value;
-    if(isNaN(hash_table_hash_bucket_fraction)){
-      alert("The bucket fraction="+hash_table_hash_bucket_fraction+" is invalid.");
-      console.log("The bucket fraction is invalid: "+hash_table_hash_bucket_fraction);
-      document.getElementById("lsh_table_hash_bucket_fraction").value = 1;
-      hash_table_hash_bucket_fraction = 10;
-    }
-    hash_table_hash_bucket_fraction = parseFloat(hash_table_hash_bucket_fraction);
-    if(hash_table_hash_bucket_fraction <= 0 || hash_table_hash_bucket_fraction > 1){
-      alert("The bucket fraction="+hash_table_hash_bucket_fraction+" should be in the range (0, 1].");
-      document.getElementById("lsh_table_hash_bucket_fraction").value = 1;
-      hash_table_hash_bucket_fraction = 1;
-    }
-    scenario1();
-
-    // lsm tree
-    var L = document.getElementById("lsm_tree_L").value;
-    if(isNaN(L)){
-      alert("LSM-Tree Level="+L+" is invalid.")
-      console.log("LSM-Tree level is invalid: "+L);
-      var tmpN;
-      if(lsm_tree_type == 0){
-        tmpN = obsolete_coefficient*((1 - 1/lsm_tree_T)/(1 - 1/(Math.pow(lsm_tree_T, L)))*N*(Math.floor(lsm_tree_T)-1) - N)+N;
-      }else{
-        tmpN = obsolete_coefficient*((1 - 1/lsm_tree_T)/(1 - 1/(Math.pow(lsm_tree_T, L)))*N - N) + N;
-      }
-      L = Math.ceil(Math.log(tmpN*E*(lsm_tree_T-1)/lsm_tree_mbuffer+1/lsm_tree_T)/Math.log(lsm_tree_T))
-      document.getElementById("lsm_tree_L").value = L;
-      lsm_tree_L = L;
-    }
-    lsm_tree_L = parseInt(L);
-    if(lsm_tree_L < 1){
-      alert("Level="+lsm_tree_L+" is too small in LSM-Tree.");
-      document.getElementById("lsm_tree_L").value = 6;
-      lsm_tree_L = 6;
-    }
-    var lsm_tree_mbuffer = document.getElementById("lsm_tree_mbuffer").value;
-    if(isNaN(lsm_tree_mbuffer)){
-      alert("LSM-Tree buffer="+lsm_tree_mbuffer+" MB is invalid.")
-      console.log("LSM-Tree buffer is invalid: "+lsm_tree_mbuffer);
-      document.getElementById("lsm_tree_mbuffer").value = 2;
-      lsm_tree_mbuffer = 2;
-    }
-    lsm_tree_mbuffer = parseFloat(lsm_tree_mbuffer);
-    if (lsm_tree_mbuffer<0){
-
-        alert("Buffer="+lsm_tree_mbuffer+" is too small in LSM-Tree.");
-        document.getElementById("lsm_tree_mbuffer").value = 2;
-        lsm_tree_mbuffer = 2;
-    }
-    lsm_tree_mbuffer *= 1048576;
-    var lsm_tree_T = document.getElementById("lsm_tree_T").value;
-    if(isNaN(lsm_tree_T)){
-      alert("LSM-Tree T="+lsm_tree_T+" is invalid.")
-      console.log("LSM-Tree size ratio is invalid: "+lsm_tree_T);
-      lsm_tree_T = getLSMTreeT(lsm_tree_type);
-      document.getElementById("lsm_tree_T").value = lsm_tree_T;
-    }
-    lsm_tree_T = parseFloat(lsm_tree_T);
-    if (lsm_tree_T<2){
-
-        alert("Size Ratio="+lsm_tree_T+" is too small in LSM-Tree.");
-        document.getElementById("lsm_tree_T").value = 2;
-        lsm_tree_T = 2;
-    }
-    // else if(lsm_tree_T > P/E){
-    //   alert("Size Ratio="+lsm_tree_T+" is too large in LSM-Tree.");
-    //   document.getElementById("lsm_tree_T").value = P/E;
-    //   lsm_tree_T = P/E;
-    // }
-    var lsm_tree_type=getBoldButtonByName("lsm_tree_type");
-    update_lsm_tree(event.target.id, lsm_tree_type, lsm_tree_L, lsm_tree_T, lsm_tree_mbuffer, N, E, obsolete_coefficient);
-
-    //B_epsilon tree
-    var level = document.getElementById("B_epsilon_tree_level").value;
-    var max_b_epsilon_tree_level = Math.ceil(Math.log((N+1)/2)/Math.log(2) - 1);
-    if(isNaN(level)){
-      alert("Level ="+level+" is invalid.")
-      console.log("Level is invalid: "+level);
-      level = Math.round((max_b_epsilon_tree_level+1)/3);
-    }
-
-    if (level<1){
-        alert("Level="+level+" is too small in B Tree.");
-        level = Math.round((max_b_epsilon_tree_level+1)/3);
-    }else if(level > max_b_epsilon_tree_level){
-        alert("Level="+level+" is larger than the maximum level (" + max_b_epsilon_tree_level + ") in B Tree because the fanout should at least be 2.");
-        level = Math.round((max_b_epsilon_tree_level+1)/3);
-    }
-    document.getElementById("B_epsilon_tree_level").value = level;
-
-    scenario3();
-
-
-
-    // design continuum
-    var design_continuum_T = parseFloat(document.getElementById("design_continuum_T").value);
-    var design_continuum_mbuffer = document.getElementById("design_continuum_mbuffer").value;
-    if(isNaN(design_continuum_mbuffer)){
-      alert("Design Continuum's buffer="+design_continuum_mbuffer+" MB is invalid.")
-      console.log("Design Continuum's buffer is invalid: "+design_continuum_mbuffer);
-      document.getElementById("design_continuum_mbuffer").value = 2;
-      design_continuum_mbuffer = 2;
-    }
-    design_continuum_mbuffer = parseFloat(design_continuum_mbuffer);
-    if (design_continuum_mbuffer<0){
-        alert("Buffer="+design_continuum_mbuffer+" is too small in design continuum.");
-        document.getElementById("design_continuum_mbuffer").value = 2;
-        design_continuum_mbuffer = 2;
-    }
-    design_continuum_mbuffer *= 1048576;
-
-    var max_partitions = Math.floor(design_continuum_T) - 1;
-    var design_continuum_K=document.getElementById("design_continuum_K").value;
-    if(isNaN(design_continuum_K)){
-      alert("Design Continuum's K="+design_continuum_K+" is invalid.")
-      console.log("Design Continuum's K is invalid: "+design_continuum_K);
-      document.getElementById("design_continuum_K").value = 2;
-      design_continuum_K = 2;
-    }else if(design_continuum_K < 1 || design_continuum_K > max_partitions){
-      alert("Design Continuum's K="+design_continuum_K+" should locate in ["+ 1+ "," + max_partitions+"].")
-      console.log("Design Continuum's K is invalid: "+design_continuum_K);
-      document.getElementById("design_continuum_K").value = 2;
-      design_continuum_K = 2;
-    }
-
-    var design_continuum_Z=document.getElementById("design_continuum_Z").value;
-    if(isNaN(design_continuum_Z)){
-      alert("Design Continuum's Z="+design_continuum_Z+" is invalid.")
-      console.log("Design Continuum's Z is invalid: "+design_continuum_Z);
-      document.getElementById("design_continuum_Z").value = 1;
-      design_continuum_Z = 1;
-    }else if(design_continuum_Z < 1 || design_continuum_Z > max_partitions){
-      alert("Design Continuum's Z="+design_continuum_Z+" should locate in ["+ 1+ "," + max_partitions+"].")
-      console.log("Design Continuum's Z is invalid: "+design_continuum_Z);
-      document.getElementById("design_continuum_Z").value = 1;
-      design_continuum_Z = 1;
-    }
-
-    var design_continuum_L = document.getElementById("design_continuum_L").value;
-    if(isNaN(design_continuum_L)){
-      alert("Design Continuum's Level="+design_continuum_L+" is invalid.")
-      console.log("Design Continuum's Level is invalid: "+design_continuum_L);
-      document.getElementById("design_continuum_L").value = 6;
-      design_continuum_L = 7;
-    }
-
-
-    var design_continuum_T = document.getElementById("design_continuum_T").value;
-    if(isNaN(design_continuum_T)){
-      alert("Design Continuum's T="+design_continuum_T+" is invalid.")
-      console.log("Design Continuum's grow factor is invalid: "+design_continuum_T);
-      design_continuum_T = getLSMTreeT(3, "design_continuum")[0];
-      document.getElementById("design_continuum_T").value = design_continuum_T;
-    }
-    design_continuum_T = parseFloat(design_continuum_T);
-    if (design_continuum_T<2){
-
-        alert("Grow factor="+design_continuum_T+" is too small in design continuum.");
-        document.getElementById("design_continuum_T").value = 2;
-        design_continuum_T = 2;
-    }
-
-    var max_max_node_size = N/(P/E);
-    var design_continuum_D = document.getElementById("design_continuum_D").value;
-    if(isNaN(design_continuum_D)){
-      alert("Design Continuum's D="+design_continuum_D+" is invalid.")
-      console.log("Design Continuum's Max Node Size is invalid: "+design_continuum_D);
-      design_continuum_D = 1;
-      document.getElementById("design_continuum_D").value = design_continuum_D;
-    }
-    if (design_continuum_D<1 || design_continuum_D > max_max_node_size){
-
-        alert("Max Node Size D="+design_continuum_D+" should locate in ["+ 1+ "," + max_max_node_size+"].")
-        document.getElementById("design_continuum_D").value = 1;
-        design_continuum_D = 1;
-    }
-
-    if(event.target.id == "design_continuum_L" || event.target.id == "design_continuum_Z" || event.target.id == "N"){
-      var design_continuum_T = getLSMTreeT(3, "design_continuum")[0];
-      if(design_continuum_T <= 2){
-        document.getElementById("design_continuum_T").value = 2;
-        design_continuum_T = 2;
-      }else{
-        document.getElementById("design_continuum_T").value = design_continuum_T;
-      }
-      max_partitions = Math.floor(design_continuum_T) - 1;
-      if(design_continuum_K > max_partitions){
-        alert("Hot Merge Threshold changes into " + max_partitions + " automatically.");
-        document.getElementById("design_continuum_K").value = max_partitions;
-      }
-
-      if(design_continuum_Z > max_partitions){
-        alert("Cold Merge Threshold changes into " + max_partitions + " automatically.");
-        document.getElementById("design_continuum_Z").value = max_partitions;
-      }
-
-    }
-    draw_lsm_graph("design_continuum");
-
-    re_run_now();
+        $( window ).resize(function() {
+            console.log($( window ).width());
+            if($( window ).width()<1400)
+                $("#demo_body").css('transform','scale('+$( window ).width()/1500+') translateX('+((1400-$( window ).width())*(-1)/2)+'px)');
+            else
+                $("#demo_body").css('transform','');
+        });
     */
+    window.scrollTo(0, 1390);
+
+    $(".rotate").click(function () {
+        $(this).toggleClass("down");
+    })
+
+    $(".rotate_2").click(function () {
+        $(this).toggleClass("down");
+        console.log($(".SLA-tab").css("color"))
+        if($(".SLA-tab").css("color")=="rgb(0, 0, 0)"){
+            setTimeout('$(".SLA-tab").toggleClass("down")',1000);
+        }else {
+            $(".SLA-tab").toggleClass("down");
+        }
+    })
+
+    $("#switch_1").click(function () {
+        $(this).toggleClass("down");
+        $("#switchbar_1").toggleClass("down");
+    })
+
+    $("#switch_2").click(function () {
+        $(this).toggleClass("down");
+        $("#switchbar_2").toggleClass("down");
+    })
+
+    $("#switch_3").click(function () {
+        $(this).toggleClass("down");
+        $("#switchbar_3").toggleClass("down");
+    })
+
+    var e=event;
+
+    var redraw=true;
+    $('#myForm_1 input').on('change', function() {
+        if($('input[name=radio_1]:checked', '#myForm_1').val()=="skew")
+            $("#myForm_2").animate({height: '168px',opacity:'1',margin:'7px 6px 6px 6px',padding:'5px',borderWidth:'0px'}, "slow");
+        else{
+            $("#myForm_2").animate({height: '0px',opacity:'0',margin:'0px',padding:'0px',borderWidth:'0px'}, "slow");
+            workload_type = 0;
+            U_1 = 10000;
+            U_2=100000000000;
+            p_get = 0.7;
+            p_put=0.0001;
+            //navigateDesignSpace();
+            drawContinuumsMultithread();
+        }
+    });
+
+    $('#myForm_2 input').on('change', function() {
+        redraw=true;
+        workload_type = 1;
+        U_1 = 10000;
+        U_2 = 10000000000;
+        if($('input[name=radio_2]:checked', '#myForm_2').val()=="1"){
+            //$("#check_mark_1").animate({top: "3px", left: "3px", width: "12px",height: "12px",opacity: 1}, {speed:"slow",quene:false});
+            p_get=0.8;
+            p_put=0.0001;
+        }
+        if($('input[name=radio_2]:checked', '#myForm_2').val()=="2"){
+            p_get=0.0001;
+            p_put=0.8;
+        }
+        if($('input[name=radio_2]:checked', '#myForm_2').val()=="3"){
+            p_get=0.2;
+            p_put=0.2;
+        }
+        if($('input[name=radio_2]:checked', '#myForm_2').val()=="4"){
+            p_get=0.5;
+            p_put=0.5;
+        }
+        //navigateDesignSpace();
+        //$("#loading_canvas").animate({opacity:1}, 'fast');
+        //setTimeout('$("#loading_canvas").animate({opacity:0}, \'fast\').css(\'z-index\',0)',5000);
+        //$(document.body).css({'cursor' : 'wait'});
+        //setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
+        var check_boxes=$('span[name="skew_check_mark"]');
+        check_boxes.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+            function(e) {
+                if(redraw) {
+                    if(if_display) {
+                        drawContinuumsMultithread();
+                        redraw = false;
+                    }
+                }
+            });
+    });
+
+
+    /*
+        $('[name=cp_tab]').on('click',function(){
+            if(!$(this).hasClass("down")){
+                $('[name=cp_tab]').removeClass('down');
+                $(this).addClass('down');
+                //displayRocks();
+                setTimeout('drawContinuums();',400);
+            }
+        })
+    */
+    $('[name=exsys_tab]').on('click',function(){
+        if(!$(this).hasClass("down")){
+            $('[name=exsys_tab]').removeClass('down');
+            $(this).addClass('down');
+            displayRocks();
+        }
+    })
+
+    $('[name=interactive_tab]').on('click',function(){
+        if(!$(this).hasClass("down")){
+            $('[name=interactive_tab]').removeClass('down');
+            $(this).addClass('down');
+            switchText($(this).attr('id'));
+        }
+    })
+
+    $('[name=explore_tab]').on('click',function(){
+        if(!$(this).hasClass("down")){
+            $('[name=explore_tab]').removeClass('down');
+            $(this).addClass('down');
+            displayContinuums();
+        }
+    })
+
+    $("#guide_7").hover(function(){
+        $("#exsys_tab").css("-webkit-animation",'shinebox 1.5s infinite linear');
+    },function(){
+        $("#exsys_tab").css("-webkit-animation",'shinebox 1.5s 1 linear');
+    });
+
+    $('input').attr('autocomplete','off');
+
+    $("#cost_conscious_checkbox").change(function() {
+        if(this.checked) {
+            $("#performance_conscious_checkbox").prop( "checked", false );
+            if(if_display)
+                setTimeout('drawContinuumsMultithread()',300);
+        }
+    });
+
+    $("#performance_conscious_checkbox").change(function() {
+        if(this.checked) {
+            $("#cost_conscious_checkbox").prop( "checked", false );
+            if(if_display)
+                setTimeout('drawContinuumsMultithread()',300);
+        }
+    });
+
+    $("#cloud-provider").change(function() {
+        prune_cloud_provider();
+    });
+
+    $("#title_fonts").change(function () {
+        console.log($(this).val())
+        $("#title_explanation").css("font-family",$(this).val())
+    })
+    /*
+    $(window).scroll(function(){
+        $(".navbar").css({opacity:Math.max(0,(500-$(document).scrollTop()+1000))/500});
+        console.log($(".navbar").css("opacity"));
+        if($(".navbar").css("opacity")==0)
+            $(".navbar").css('transform','scale(0)');
+        else
+            $(".navbar").css('transform','scale(1)');
+    });*/
+
+    //navigateDesignSpace();
+    //analyzeTKZ();
+    //drawCharts();
+    //drawChart2();
+    //$("#loading_canvas").animate({opacity:1}, 'slow').css('z-index',20);
+    //setTimeout('$("#loading_canvas").animate({opacity:0}, \'slow\').css(\'z-index\',0)',5000);
+    //$(document.body).css({'cursor' : 'wait'});
+    //setTimeout('drawContinuums()',200);
+    //setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
+    //document.getElementById("Optimal-FPR").style.fontWeight='bold';
+    //document.getElementById("Optimal-FPR").style.fontSize='16px';
+
+    //initScenario1();
+    //initScenario2();
+    //initScenario3();
+    //initScenario4();
 }
 
 
-function re_run_now() {
+function LoadCharts() {
 
-    var inputParameters = parseInputTextBoxes();
+    if_display=1;
+    drawContinuumsMultithread();
+    //setTimeout('drawContinuumsMultithread()',200);
 
-    var N=inputParameters.N;
-    var E=inputParameters.E;
-    var P=inputParameters.P;
+}
 
-    var read_latency=inputParameters.read_latency;
-    var write_latency=inputParameters.write_latency;
-    var s=inputParameters.s;
-    var w=inputParameters.w;
-    var r=inputParameters.r;
-    var v=inputParameters.v;
-    var qL=inputParameters.qL;
+function displayCharts(){
+    if(if_display) {
+        document.getElementById("charts").style.display = '';
+        document.getElementById("interactive_mode_tab").style.display = '';
+        document.getElementById("guide_4").style.display = '';
+        document.getElementById("guide_5").style.display = '';
+        document.getElementById("guide_6").style.display = '';
+        document.getElementById("guide_7").style.display = '';
+        document.getElementById("guide_8").style.display = '';
+        document.getElementById("guide_9").style.display = '';
+        $("html,body").animate({scrollTop: $("#interactive_mode_tab").offset().top - 100}, 500);
+    }
+    $("#loading_canvas_2").css('opacity', '0');
+}
 
-    if (!isNaN(N))
-        document.getElementById("N").value=numberWithCommas(N);
-    if (!isNaN(E))
-        document.getElementById("E").value=E;
-    if (!isNaN(P))
-        document.getElementById("P").value=P;
-    if (!isNaN(read_latency))
-        document.getElementById("read-latency").value=read_latency;
-    if (!isNaN(write_latency))
-        document.getElementById("write-latency").value=write_latency;
-    if (!isNaN(s)){
-      document.getElementById("s").value=s;
+function displayContinuums() {
+    if(document.getElementById("explore_text").innerHTML=="Explore More Designs: Off") {
+
+        document.getElementById("continuums_chart").style.display = 'inline-block';
+        $("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
+        if(!using_compression)
+            $("#split_1").animate({height: "633px"}, "slow");
+        else
+            $("#split_1").animate({height: "686px"}, "slow");
+    }
+    else {
+        $("#continuums_chart").animate({height: '0px',opacity: '0'}, "slow");
+        $("#split_1").animate({height: "0px"}, "slow");
+        //document.getElementById("continuums_chart").style.display = 'none';
+    }
+    //$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
+    if(document.getElementById("explore_text").innerHTML=="Explore More Designs: Off")
+        document.getElementById("explore_text").innerHTML="Explore More Designs: On";
+    else
+        document.getElementById("explore_text").innerHTML="Explore More Designs: Off";
+}
+
+function switchText(id) {
+    if(using_compression){
+        $("#interactive-panel").height(640);
+        $("#questions_block").height(638);
+    }
+    $("#stat").css("height","0px");
+    $("#stat").css("opacity","0");
+    $("#stat").css("z-index","0");
+    if(id=="interactive_tab_3") {
+        $("#charts").animate({opacity:"1"}, "slow");
+        document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
+        $("#questions_block").animate({width: '240px',opacity:'1'}, "slow");
+        //$("#rocks,#WT").animate({width: '0px',opacity:'0'}, "slow");
+        $("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
+        $("#interactive-panel").animate({width: '1136px',borderWidth:1,borderOpacity:1}, "slow");
+        $("#charts").css('left','calc(50% - 620px)');
+        $("#charts").css('transform','scale(0.9) translateY(-40px)');
+        $("#interactive-content").css('transform','scale(0.9) translateX(-40px) translateY(-12px)');
+        //$("#interactive-panel").css({border:"0px solid #7379DE"}).animate({borderWidth:1},"slow");
+        $("#interactive_banner").animate({height: "35px", opacity:"1", borderWidth:1}, "slow");
+        $("#explore_switch").css('transform','translateY(-50px) ');
+        $("#explore_switch").animate({opacity:"1"}, "slow");
+        $("#exsys_switch").animate({opacity:"0"}, "slow");
+        $("#split_1").animate({opacity:"1"}, "slow");
+        if(document.getElementById("explore_text").innerHTML=="Explore More Designs: On") {
+            $("#continuums_chart").animate({height: '360px',opacity:'1'}, "slow");
+        }
+        $("#guide").animate({opacity:"0"}, "slow");
+
+        $("#WT,#rocks,#faster,#faster_h").css("width","0");
+        $("#WT,#rocks,#faster,#faster_h").css("opacity","0");
+        $("#exist_panel").animate({width: '0', opacity: '0'}, "slow");
+        $("#exist_panel").css("margin-left","0px");
+        $("#cost_result_p1_1").css("opacity","0");
+    }
+    else if (id=="interactive_tab_1"){
+        $("#charts").animate({opacity:"1"}, "slow");
+        document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: Off";
+        $("#questions_block").animate({width: '0px',opacity:'0'}, "slow");
+        /*
+        if(document.getElementById("exsys_text").innerHTML=="Compare with existing systems: On") {
+            $("#rocks,#WT").animate({width: '255px', opacity: '1'}, "slow");
+            $("#exist_title").animate({width: '30%', opacity: '1'}, "slow");
+        }
+        else {
+            $("#rocks,#WT").animate({width: '255px', opacity: '0'}, "slow");
+            $("#exist_title").animate({width: '30%', opacity: '0'}, "slow");
+        }
+        */
+        //$("#interactive-panel").css({border:"1px solid #7379DE"}).animate({borderWidth:0},"slow");
+        $("#interactive-panel").animate({width: '1392px',borderWidth:0,borderOpacity:0}, "slow");
+        $("#charts").css('left','calc(50% - 480px)');
+        $("#charts").css('transform','scale(1) translateY(0px)');
+        $("#interactive-content").css('transform','scale(1)');
+        $("#interactive_banner").animate({height: "0px", opacity:"0", borderWidth:0}, "slow");
+        $("#explore_switch").css('transform','translateY(0px)');
+        $("#split_1").animate({opacity:"0"}, "slow");
+        $("#explore_switch").animate({opacity:"0"}, "slow");
+        $("#exsys_switch").animate({opacity:"1"}, "slow");
+
+        $("#continuums_chart").animate({height: '0px',opacity:'0'}, "slow");
+        $("#guide").animate({opacity:"1"}, "slow");
+        $("#exist_panel").animate({width: '50px', opacity: '1'}, "slow");
+        if($("#rocks_button").hasClass("show-design")){
+            $("#rocks").animate({width: '255px',opacity:'1'}, "fast");
+        }
+        if($("#wt_button").hasClass("show-design")){
+            $("#WT").animate({width: '255px',opacity:'1'}, "fast");
+        }
+        if($("#fast_button").hasClass("show-design")){
+            $("#faster").animate({width: '255px',opacity:'1'}, "fast");
+        }
+        if($("#fasterh_button").hasClass("show-design")){
+            $("#faster_h").animate({width: '255px',opacity:'1'}, "fast");
+        }
+        $("#exist_panel").css("margin-left","25px");
+        $("#cost_result_p1_1").css("opacity","1");
     }else{
-      document.getElementById("s").value=8192;
+        $("#charts").animate({opacity:"0"}, "slow");
+        $("#guide").animate({opacity:"0"}, "slow");
+        $("#stat").animate({height:"650px", opacity:"1"}, "slow");
+        $("#stat").css("z-index","2");
     }
 
-    if (!isNaN(w)){
-      document.getElementById("w").value=w;
+}
+
+function checkInput(input){
+    if(isNaN(parseFloat(input.value))){
+        alert("Invalid input!");
+        return false;
+    }else
+        return true
+}
+
+function checkInput2(input){
+    if(isNaN(parseFloat(input.value))||parseFloat(input.value)<0||parseFloat(input.value)>100){
+        alert("Invalid input!");
+        return false;
+    }else
+        return true
+}
+
+function switchQuestion() {
+    document.getElementById("question0").style.display="none";
+    document.getElementById("question1").style.display="none";
+    document.getElementById("question2").style.display="none";
+    document.getElementById("question3").style.display="none";
+    document.getElementById("question4").style.display="none";
+    document.getElementById("question5").style.display="none";
+    if(document.getElementById("questions").value=="1") {
+        document.getElementById("question1").style.display = "";
+        var input = document.getElementById("question1_input");
+        input.addEventListener("keydown", function (e) {
+            if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
+                if(checkInput(input)) {
+                    document.getElementById("question0").style.display="";
+                    document.getElementById("question0").innerHTML="Previous input value: "+ parseFloat(document.getElementById("cost").value);
+                    //document.getElementById("cost").value = parseFloat(document.getElementById("cost").value) + parseFloat(input.value);
+                    budget_change=parseFloat(input.value);
+                    re_run(e,false);
+                }
+            }
+        });
+    }
+    if(document.getElementById("questions").value=="2") {
+        document.getElementById("question2").style.display = "";
+        var input = document.getElementById("question2_input");
+        input.addEventListener("change", function (e) {
+            if(input.value=="Any"){
+                user_cloud_provider_enable=[1,1,1];
+            }
+            if(input.value=="AWS"){
+                user_cloud_provider_enable=[1,0,0]
+            }
+            if(input.value=="GCP"){
+                user_cloud_provider_enable=[0,1,0]
+            }
+            if(input.value=="Azure"){
+                user_cloud_provider_enable=[0,0,1]
+            }
+            prune_cloud_provider();
+            re_run(e);
+        });
+    }
+    if(document.getElementById("questions").value=="3") {
+        document.getElementById("question3").style.display = "";
+        var input = document.getElementById("question3_input");
+        input.addEventListener("keydown", function (e) {
+            if (e.keyCode == 13) {
+                if(checkInput(input)) {
+                    var cost = parseFloat(document.getElementById("cost").value);
+                    var result_array = global_continuums_array;
+                    result_array.sort(function (a, b) {
+                        return a[0] - b[0];
+                    });
+                    result_array = getBestDesignEverArray(result_array);
+                    var index;
+                    for (var i = 0; i < result_array.length; i++) {
+                        if (cost < result_array[i][0]) {
+                            console.log(cost, i, result_array[i][0])
+                            if ((cost - result_array[i - 1][0]) > (result_array[i][0] - cost))
+                                index = i;
+                            else
+                                index = i - 1;
+                            break;
+                        }
+                        if (i == result_array.length - 1)
+                            alert("Design not exist!");
+                    }
+                    for (var i = index + 1; i < result_array.length; i++) {
+                        if (result_array[i][1] < result_array[index][1] * (1 - input.value / 100)) {
+                            document.getElementById("cost").value = Math.ceil(result_array[i][0]);
+                            console.log("rerun");
+                            re_run(e,false);
+                            break;
+                        }
+                        if (i == result_array.length - 1)
+                            alert("Design not exist!");
+                    }
+                }
+            }
+        });
+    }
+    if(document.getElementById("questions").value=="4") {
+        document.getElementById("question4").style.display = "";
+        var input = document.getElementById("question4_input");
+        input.addEventListener("change", function (e) {
+            if(checkInput2(input)) {
+                document.getElementById("question0").style.display="";
+                document.getElementById("question0").innerHTML="Previous input value: "+ (document.getElementById("v").value*100).toFixed(2)+"%";
+                document.getElementById("v").value = (input.value / 100).toFixed(4);
+                document.getElementById("w").value = (1 - (input.value / 100).toFixed(4));
+                re_run(e);
+            }
+        });
+    }
+    if(document.getElementById("questions").value=="5") {
+        document.getElementById("question5").style.display = "";
+        var input = document.getElementById("question5_input");
+        input.addEventListener("change", function (e) {
+            if(checkInput2(input)) {
+                document.getElementById("question0").style.display="";
+                document.getElementById("question0").innerHTML="Previous input value: "+ (document.getElementById("w").value*100).toFixed(2)+"%";
+                document.getElementById("w").value = (input.value / 100).toFixed(4);
+                document.getElementById("v").value = (1 - (input.value / 100).toFixed(4));
+                re_run(e);
+            }
+        });
+    }
+    if(document.getElementById("questions").value=="6") {
+        var result_array = global_continuums_array;
+        result_array.sort(function (a, b) {
+            return a[0] - b[0];
+        });
+        var index=0;
+        for(var i=0;i<result_array.length;i++){
+            if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]&&result_array[i][5].L!=0){
+                index=i;
+            }
+        }
+
+        document.getElementById("cost").value = Math.floor(result_array[index][0]);
+        re_run(event);
+    }
+}
+
+function switchStatistics() {
+    removeAllChildren(document.getElementById("statistics_result"));
+    document.getElementById("statistic1").style.display="none";
+    if(document.getElementById("statistics").value=="1") {
+        var old_length=[0,0,0];
+        document.getElementById("statistic1").style.display = "";
+        var input = document.getElementById("statistic1_input");
+        input.addEventListener("keydown", function (e) {
+            if (e.keyCode == 13) {  //checks whether the pressed key is "Enter"
+                if(checkInput2(input)) {
+
+                    removeAllChildren(document.getElementById("statistics_result"));
+                    var result_array = global_continuums_array;
+                    result_array.sort(function (a, b) {
+                        return a[1] - b[1];
+                    });
+                    var cloud_provider_num = [0, 0, 0];
+                    for (var i = 0; i < Math.ceil(result_array.length * input.value / 100); i++) {
+                        for (var j = 0; j < 3; j++) {
+                            if (result_array[i][3] == cloud_array[j]) {
+                                cloud_provider_num[j]++;
+                            }
+                        }
+                    }
+                    var max_num = Math.max(cloud_provider_num[0], cloud_provider_num[1], cloud_provider_num[2]);
+                    var width = 100;
+                    console.log(max_num);
+                    var div_result = document.getElementById("statistics_result");
+                    for (var i = 0; i < 3; i++) {
+                        var div_temp = document.createElement("div");
+                        div_temp.setAttribute("style", "width:98%;text-align:left");
+                        div_temp.setAttribute("class", "myinput2")
+                        var text = document.createElement("div");
+                        text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 3px;");
+                        text.innerHTML = cloud_array[i];
+                        div_temp.appendChild(text);
+                        var bar = document.createElement("div");
+                        bar.setAttribute("class", "color_bar");
+                        bar.setAttribute("style", "width:" + old_length[i] + "px;background-color:#83"+(9-i)+"BFF; height:15px; margin-top:3px");
+                        old_length[i]=width * cloud_provider_num[i] / max_num;
+                        div_temp.appendChild(bar);
+                        var percent = document.createElement("div");
+                        percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 0px;;opacity:0");
+                        percent.innerHTML = ((cloud_provider_num[i] / result_array.length) * 100).toFixed(1) + "%";
+                        div_temp.appendChild(percent);
+                        div_result.appendChild(div_temp);
+
+                        $(bar).animate({width:old_length[i]+"px"},{speed:"slow",quene:false});
+                        $(percent).animate({opacity:1},"slow");
+                    }
+                }
+            }
+        });
+    }
+
+    if(document.getElementById("statistics").value=="2"){
+        var div_result = document.getElementById("statistics_result");
+        var result_array = (global_continuums_array);
+        var old_length_3=[0,0,0,0,0];
+        result_array.sort(function (a, b) {
+            return a[0] - b[0];
+        });
+        var result_array = getBestDesignEverArray(result_array);
+        for (var i = 0; i < 5; i++) {
+            var div_temp = document.createElement("div");
+            div_temp.setAttribute("class", "myinput2");
+            div_temp.setAttribute("style", "display:inline-block;width:100%;text-align:left");
+            var text = document.createElement("div");
+            text.setAttribute("style", "display:inline-block;width:70px;font-size:12px;text-align:left;vertical-align: top;padding: 1px;");
+            text.innerHTML = "$"+result_array[i][0] ;
+            div_temp.append(text);
+            var bar = document.createElement("div");
+            bar.setAttribute("class", "color_bar");
+            bar.setAttribute("style", "width:" + old_length_3[i] + "px;background-color:#83"+(9-i)+"BFF; height:15px; margin-top:2px");
+            old_length_3[i]=120 * result_array[i][0] / result_array[4][0];
+            div_temp.append(bar);
+            div_result.appendChild(div_temp);
+            console.log(old_length_3)
+            $(bar).animate({width:old_length_3[i]+"px"},{speed:"slow"});
+        }
+    }
+
+    if(document.getElementById("statistics").value=="3"){
+        removeAllChildren(document.getElementById("statistics_result"));
+        var div_result = document.getElementById("statistics_result");
+        var old_length_2=[[0,0],[0,0]]
+        for (var j=1;j<=2;j++) {
+            var div_temp = document.createElement("div");
+            div_temp.setAttribute("class", "myinput2");
+            div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
+            div_temp.innerHTML = "Key-value store "+j+":";
+            div_result.appendChild(div_temp);
+
+            var result_array = global_continuums_array;
+            result_array.sort(function (a, b) {
+                return a[1] - b[1];
+            });
+
+            var query_IO = [result_array[global_index+j-1][5].read_cost * result_array[global_index+j-1][5].v, result_array[global_index+j-1][5].update_cost * result_array[global_index+j-1][5].w];
+            var query_type = ["Read", "Write"];
+            var colors_2 = ["#837BFF", "#83DEFF"];
+
+
+            for (var i = 0; i < 2; i++) {
+                var div_temp = document.createElement("div");
+                div_temp.setAttribute("style", "width:98%;text-align:left");
+                div_temp.setAttribute("class", "myinput2")
+                var text = document.createElement("div");
+                text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+                text.innerHTML = query_type[i];
+                div_temp.appendChild(text);
+                var bar = document.createElement("div");
+                bar.setAttribute("class", "color_bar");
+                bar.setAttribute("style", "width:" + old_length_2[j-1][i] + "px;background-color:" + colors_2[i] + "; height:15px");
+                old_length_2[j-1][i]=90 * query_IO[i] / (query_IO[1] + query_IO[0]);
+                div_temp.appendChild(bar);
+                var percent = document.createElement("div");
+                percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+                percent.innerHTML = ((query_IO[i] / (query_IO[1] + query_IO[0])) * 100).toFixed(1) + "%";
+                div_temp.appendChild(percent);
+                div_result.appendChild(div_temp);
+                $(bar).animate({width:old_length_2[j-1][i]+"px"},{speed:"slow",quene:false});
+            }
+
+
+        }
+        /*
+        var div_temp = document.createElement("div");
+        div_temp.setAttribute("class", "myinput");
+        div_temp.setAttribute("style", "width:98%;text-align:left;margin-top:15px");
+        div_temp.innerHTML = "All Design:" ;
+        div_result.appendChild(div_temp);
+
+        query_IO=[0,0];
+        for (var i=0; i<result_array.length;i++){
+            query_IO[0]+=result_array[i][5].read_cost*result_array[i][5].v;
+            query_IO[1]+=result_array[i][5].update_cost*result_array[i][5].w;
+        }
+
+        for (var i = 0; i < 2; i++) {
+            var div_temp = document.createElement("div");
+            div_temp.setAttribute("style", "width:98%;text-align:left");
+            div_temp.setAttribute("class", "myinput")
+            var text = document.createElement("div");
+            text.setAttribute("style", "display:inline-block;width:50px;font-size:12px;text-align:left;vertical-align: top;padding: 2px;");
+            text.innerHTML = query_type[i];
+            div_temp.appendChild(text);
+            var bar = document.createElement("div");
+            bar.setAttribute("class", "color_bar");
+            bar.setAttribute("style", "width:" + 90 * query_IO[i] / (query_IO[1]+query_IO[0]) + "px;background-color:" + colors[i] + "; height:20px");
+            div_temp.appendChild(bar);
+            var percent = document.createElement("div");
+            percent.setAttribute("style", "display:inline-block;font-size:12px;vertical-align: top;padding: 2px;");
+            percent.innerHTML = ((query_IO[i] / (query_IO[1]+query_IO[0])) * 100).toFixed(1) + "%";
+            div_temp.appendChild(percent);
+            div_result.appendChild(div_temp);
+        }
+        */
+
+    }
+    if(document.getElementById("statistics").value=="4"){
+        var div_result = document.getElementById("statistics_result");
+        var result_array = global_continuums_array;
+        result_array.sort(function (a, b) {
+            return a[0] - b[0];
+        });
+        var index=0;
+        var index_2=0;
+        for(var i=0;i<result_array.length;i++){
+            if(result_array[i][5].throughput/result_array[i][0]>result_array[index][5].throughput/result_array[index][0]&&result_array[i][5].L!=0){
+                index_2=index;
+                index=i;
+            }
+        }
+        var div_temp = document.createElement("div");
+        div_temp.setAttribute("class", "myinput");
+        div_temp.setAttribute("style", "width:98%;text-align:left;height:auto;margin-top:15px");
+        div_temp.innerHTML = "Best Cost Performance Design:<br>"+"Cost: $"+result_array[index][0]+"<br>Throughput: "+result_array[index][5].throughput.toFixed(0)+" queries/s<br>"+"Cost Performance: "+(result_array[index][5].throughput/result_array[index][0]).toFixed(1);
+        div_result.appendChild(div_temp);
+
+        var div_temp = document.createElement("div");
+        div_temp.setAttribute("class", "myinput");
+        div_temp.setAttribute("style", "width:98%;text-align:left;height:auto;margin-top:15px");
+        div_temp.innerHTML = "Second Best Cost Performance Design:<br>"+"Cost: $"+result_array[index_2][0]+"<br>Throughput: "+result_array[index_2][5].throughput.toFixed(0)+" queries/s<br>"+"Cost Performance: "+(result_array[index_2][5].throughput/result_array[index_2][0]).toFixed(1);
+        div_result.appendChild(div_temp);
+
+    }
+}
+
+function displayRocks() {
+    //$("html,body").animate({scrollTop: $("#cost_result_p1").offset().top-140}, 500);
+    if(document.getElementById("exsys_text").innerHTML=="Compare with existing systems: Off") {
+        document.getElementById("exsys_text").innerHTML = "Compare with existing systems: On";
+        $("#WT,#rocks").animate({opacity:"1"}, "slow");
+    }
+    else {
+        document.getElementById("exsys_text").innerHTML = "Compare with existing systems: Off";
+        $("#WT,#rocks").animate({opacity:"0"}, "slow");
+    }
+}
+
+function adjustGuide() {
+    setTimeout('$("#guide_3").animate({height:$("#input").height()-31+48},"fast")',100);
+    setTimeout('$("#guide_3").animate({height:$("#input").height()-31+48},"normal")',300);
+    setTimeout('$("#guide_3").animate({height:$("#input").height()-31+48},"normal")',500);
+    //setTimeout('$("#guide").animate({height:$("#input").height()-15+80,top:($("#input").height()*(-1)+15-30)+"px"},"slow")',500);
+}
+
+function switch_SLA() {
+    $('body').toggleClass("blur-body");
+    $('#demo_body').toggleClass("blur");
+    if($("#SLA-setting").css('opacity')==0){
+        $("#SLA-tab").animate(({width:1300+"px"}),"fast");
+        $("#SLA-tab").animate(({height:365+"px"}),"fast");
+        $("#SLA-setting").css("height","85%");
+        setTimeout('$("#SLA-setting,#SLA-title").animate(({opacity:1}),"normal")', 500);
+        //$("#SLA-setting").animate(({width:200+"px"}),"normal");
     }else{
-      document.getElementById("w").value=1;
-      w = 1;
+        $("#SLA-setting,#SLA-title").animate(({opacity:0}),"fast");
+        //$("#SLA-setting").animate(({width:0}),"normal");
+        $("#SLA-tab").animate(({width:315+"px"}),"fast");
+        $("#SLA-tab").animate(({height:50+"px"}),"fast");
+        $("#SLA-setting").css("height","0%");
+        prune_cloud_provider();
     }
+}
 
-    if (!isNaN(r)){
-      document.getElementById("r").value=r;
+function hideNavigation(){
+    $("#question_navigation").animate({opacity:"0"}, "slow");
+    setTimeout('$("#question_navigation").css(\'display\',\'none\')',1000);
+}
+
+function initializeSLACheckboxes() {
+    $("#SLA_radio_1").prop("checked", enable_DB_migration);
+    $("#SLA_radio_2").prop("checked", enable_dev_ops);
+    $("#SLA_radio_3").prop("checked", enable_backup);
+
+
+    $("#SLA_radio_1").on('click', function() {
+        if(enable_DB_migration==true) {
+            enable_DB_migration = false;
+            $(this).prop("checked", false);
+        }else{
+            enable_DB_migration = true;
+            $(this).prop("checked", true);
+        }
+        if(if_display)
+            drawContinuumsMultithread();
+    });
+
+    $("#SLA_radio_2").on('click', function() {
+        if(enable_dev_ops==true) {
+            enable_dev_ops = false;
+            $(this).prop("checked", false);
+        }else{
+            enable_dev_ops = true;
+            $(this).prop("checked", true);
+        }
+        if(if_display)
+            drawContinuumsMultithread();
+    });
+
+    $("#SLA_radio_3").on('click', function() {
+        if(enable_backup==true) {
+            enable_backup = false;
+            $(this).prop("checked", false);
+        }else{
+            enable_backup = true;
+            $(this).prop("checked", true);
+        }
+        if(if_display)
+            drawContinuumsMultithread();
+    });
+
+    $("#SLA_radio_4").on('click', function() {
+        if(enable_availability==true) {
+            enable_availability = false;
+            $(this).prop("checked", false);
+        }else{
+            enable_availability = true;
+            $(this).prop("checked", true);
+        }
+        prune_cloud_provider()
+        if(if_display)
+            drawContinuumsMultithread();
+    });
+
+    $("#SLA_radio_5").on('click', function() {
+        if(enable_durability==true) {
+            enable_durability = false;
+            $(this).prop("checked", false);
+        }else{
+            enable_durability = true;
+            $(this).prop("checked", true);
+        }
+        prune_cloud_provider()
+        if(if_display)
+            drawContinuumsMultithread();
+    });
+
+    $("#availability_checkbox_1,#availability_checkbox_2").on('click', function() {
+        if($(this).prop("checked")) {
+            $("#availability_checkbox_1").prop("checked", false);
+            $("#availability_checkbox_2").prop("checked", false);
+            $(this).prop("checked", true);
+            enable_availability=true;
+            $("#SLA_radio_4").prop("checked",true);
+        }else{
+            enable_availability=false;
+            $("#SLA_radio_4").prop("checked",false);
+        }
+        if(if_display)
+            drawContinuumsMultithread();
+    });
+
+
+    $("#durability_checkbox_1,#durability_checkbox_2,#durability_checkbox_3").on('click', function() {
+        if($(this).prop("checked")) {
+            $("#durability_checkbox_1").prop("checked", false);
+            $("#durability_checkbox_2").prop("checked", false);
+            $("#durability_checkbox_3").prop("checked", false);
+            $(this).prop("checked", true);
+            enable_durability=true;
+            $("#SLA_radio_5").prop("checked",true);
+        }else{
+            enable_durability=false;
+            $("#SLA_radio_5").prop("checked",false);
+        }
+        if(if_display)
+            drawContinuumsMultithread();
+    });
+}
+
+function prune_cloud_provider(){
+    //var cloud_provider=document.getElementById("cloud-provider").selectedIndex;
+    /*
+    if(cloud_provider==0){
+        cloud_provider_enable=[1,1,1];
+    }else if(cloud_provider==1){
+        cloud_provider_enable=[1,0,0];
+    }else if(cloud_provider==2){
+        cloud_provider_enable=[0,1,0];
+    }else if(cloud_provider==3){
+        cloud_provider_enable=[0,0,1];
+    }
+    */
+    $("#AWS_checkbox").prop("checked", user_cloud_provider_enable[0]);
+    $("#GCP_checkbox").prop("checked", user_cloud_provider_enable[1]);
+    $("#Azure_checkbox").prop("checked", user_cloud_provider_enable[2]);
+    cloud_provider_enable[0]=user_cloud_provider_enable[0];
+    cloud_provider_enable[1]=user_cloud_provider_enable[1];
+    cloud_provider_enable[2]=user_cloud_provider_enable[2];
+    $("#AWS_checkbox").prop("disabled", "");
+    $("#GCP_checkbox").prop("disabled", "");
+    $("#Azure_checkbox").prop("disabled", "");
+    if(enable_availability) {
+        if ($("#availability_checkbox_1").prop("checked")) {
+        }
+        if ($("#availability_checkbox_2").prop("checked")) {
+            cloud_provider_enable[1] = 0;
+            $("#GCP_checkbox").prop("checked", false);
+            $("#GCP_checkbox").prop("disabled", "true");
+        }
+    }
+    if(enable_durability) {
+        if ($("#durability_checkbox_2").prop("checked")) {
+            cloud_provider_enable[0] = 0;
+
+            $("#AWS_checkbox").prop("checked", false);
+            $("#AWS_checkbox").prop("disabled", "true");
+        }
+        if ($("#durability_checkbox_3").prop("checked")) {
+            cloud_provider_enable[0] = 0;
+            cloud_provider_enable[1] = 0;
+            $("#AWS_checkbox").prop("checked", false);
+            $("#AWS_checkbox").prop("disabled", "true");
+            $("#GCP_checkbox").prop("checked", false);
+            $("#GCP_checkbox").prop("disabled", "true");
+            console.log(1);
+        }
+    }
+    var flag=0;
+    for(i=0;i<cloud_provider_num;i++){
+        if(cloud_provider_enable[i])
+            flag=1;
+    }
+    if(!flag)
+        alert("No available cloud provider");
+}
+
+function initializeCloudCheckboxes() {
+    $("#AWS_checkbox").prop("checked", true);
+    $("#GCP_checkbox").prop("checked", true);
+    $("#Azure_checkbox").prop("checked", true);
+
+    $("#AWS_checkbox,#GCP_checkbox,#Azure_checkbox").on('click', function() {
+        if($(this).prop("disabled")!="true") {
+
+            user_cloud_provider_enable[$(this).prop("value")]=$(this).prop("checked");
+            prune_cloud_provider();
+            if (if_display)
+                drawContinuumsMultithread();
+            console.log("click");
+        }
+    });
+}
+
+function initializeExistDesignPanel() {
+    $("#WT,#rocks,#faster,#faster_h").css("width", "0");
+    $("#WT,#rocks,#faster,#faster_h").css("opacity", "0");
+    exist_1="rocks_button";
+    $("#rocks_button").addClass("show-design");
+    $("#rocks").animate({width: '255px',opacity:'1'}, "fast");
+    exist_2="wt_button";
+    $("#wt_button").addClass("show-design");
+    $("#WT").animate({width: '255px',opacity:'1'}, "fast");
+    $("#rocks_button,#wt_button,#fast_button,#fasterh_button").on('click', function() {
+        if(exist_2!=$(this).attr("id")) {
+            $("#"+exist_1).removeClass("show-design");
+            $(this).addClass("show-design");
+            exist_1=exist_2;
+            exist_2=$(this).attr("id");
+            $("#WT,#rocks,#faster,#faster_h").css("width", "0");
+            $("#WT,#rocks,#faster,#faster_h").css("opacity", "0");
+            if ($(this).attr("id") == "rocks_button" || exist_1== "rocks_button") {
+                $("#rocks").css("width", "255px");
+                $("#rocks").animate({width: '255px', opacity: '1'}, "fast");
+            }
+            if ($(this).attr("id") == "wt_button" || exist_1== "wt_button") {
+                $("#WT").css("width", "255px");
+                $("#WT").animate({width: '255px', opacity: '1'}, "fast");
+            }
+            if ($(this).attr("id") == "fast_button" || exist_1== "fast_button") {
+                $("#faster").css("width", "255px");
+                $("#faster").animate({width: '255px', opacity: '1'}, "fast");
+            }
+            if ($(this).attr("id") == "fasterh_button" || exist_1== "fasterh_button") {
+                $("#faster_h").css("width", "255px");
+                $("#faster_h").animate({width: '255px', opacity: '1'}, "fast");
+            }
+        }
+    });
+
+}
+
+function reverseColor() {
+    if(document.getElementById("title").style.backgroundColor=="white"){
+        console.log(document.getElementById("title").style.backgroundColor)
+        document.getElementById("title").style.backgroundColor="#222222";
+        document.getElementById("title").style.color="white";
+        clearInterval(interval)
+        interval=setInterval("drawCanvas(\"#FFFFFF\")",40);
     }else{
-      document.getElementById("r").value=1;
-      r = 1;
+        document.getElementById("title").style.backgroundColor="white";
+        document.getElementById("title").style.color="black";
+        clearInterval(interval)
+        interval=setInterval("drawCanvas(\"#000000\")",40);
     }
-
-    if (!isNaN(v)){
-      document.getElementById("v").value=v;
-    }else{
-      document.getElementById("v").value=1;
-      v = 1;
-    }
-
-    if (!isNaN(qL)){
-      document.getElementById("qL").value=qL;
-    }else{
-      document.getElementById("qL").value=1;
-      qL = 1;
-    }
-
-
-
-    if(N >= Number.MAX_SAFE_INTEGER){
-      alert("Too large N can't be supported!");
-      document.getElementById("N").value=68719476736;
-      return;
-    }
-
-
-    //clickbloomTuningButton(false)
-
 }

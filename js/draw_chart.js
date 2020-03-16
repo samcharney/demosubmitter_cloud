@@ -1229,7 +1229,7 @@ function drawContinuumsMultithread(if_regenerate=true) {
                 global_continuums_array = ContinuumArray;
                 drawContinuumsNew(ContinuumArray);
                 displayCharts();
-                displayStats();
+                drawStats();
                 worker_running=false;
             }
 
@@ -1287,19 +1287,6 @@ function drawContinuumsNew(ContinuumArray){
             }
         }
     }
-
-    var data=[{
-        x: cost_array,
-        y: latency_array,
-        //marker: { size: 7, symbol: 'circle', color: 'steelblue'},
-        //mode: 'markers',
-        showlegend: false,
-        text: info_array,
-        //line: {width: 2, color:'lightblue'},
-        hovertemplate:
-            "<b>%{text}</b><br><br>",
-        type: 'scatter'
-    }];
 
     best_array=getBestDesignEverArray(ContinuumArray);
 
@@ -1551,251 +1538,10 @@ function drawContinuumsNew(ContinuumArray){
     */
 
     console.log(best_array);
-    var cost_result_text=new Array();
-    var chart_start_index;
-    var chart_end_index;
-    var l1,l2;
-    var design_1_index;
-    var design_2_index;
-    var max_mem;
-    var switch_option;
-    if(cost<best_array[0][0]) {
-        cost_result_text[0] = "Sorry, you have insufficient budget. The minimum budget to run the workload is $"+best_array[0][0]+".<br>";
-        chart_start_index=0;
-        chart_end_index=Math.ceil(best_array/5);
-        removeAllChildren(document.getElementById("cost_result_p2"));
-        removeAllChildren(document.getElementById("cost_result_p3"));
-        removeAllChildren(document.getElementById("cost_result_p4"));
-        removeAllChildren(document.getElementById("cost_result_p5"));
-        removeAllChildren(document.getElementById("cost_result_p6"));
-        removeAllChildren(document.getElementById("cost_result_p7"));
-        removeAllChildren(document.getElementById("cost_result_p8"));
-        removeAllChildren(document.getElementById("cost_result_p9"));
-        document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
-    }
-    else{
 
-        if(best_array[best_array.length-1][0]<cost) {
-            design_1_index=best_array.length-2;
-            cost_result_text[0]=("We found 1 storage engine design for you at "+cost+".<br><br>");
-            console.log(cost_result_text[0],cost);
-            //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
-            cost_result_text[1]="<b>Our Option:</b>"
-            cost_result_text[2] = best_array[best_array.length - 1][5];
-            chart_start_index=Math.floor(best_array.length*4/5);
-            chart_end_index=best_array.length-1;
-            l1=1;
-            l2=-1;
-        }else {
-            for (var i = 1; i < best_array.length; i++) {
-                console.log(latency);
-                if (best_array[i][0] >= cost||(best_array[i][1]*24<latency&&!isNaN(latency))) {
-                    //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
-                    //drawDiagram(best_array[i][5], 'cost_result_diagram2');
-                    design_1_index = i - 1;
-                    design_2_index = i;
-                    if(!isNaN(latency)) {
-                        if (best_array[i][1] * 24 < latency)
-                            cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + " with latency less than " + fixTime(latency / 24) + ".</i><br><br>");
-                        else {
-                            for (var j = 1; j < best_array.length; j++) {
-                                if (best_array[j][1]*24 < latency){
-                                    design_2_index=j;
-                                    break;
-                                }
-                            }
-                            cost_result_text[0] = ("<i>The budget $" + cost + " is too low to achieve " + fixTime(latency / 24) + " latency. However, we found the following two storage engines for you.</i><br><br>");
-                        }
-                    }else{
-                        cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + ".</i><br><br>");
-                    }
-                    cost_result_text[1] = "<b>Cosine configuration 1<br>saves money</b>"
-                    cost_result_text[2] = best_array[i - 1][5];
-                    cost_result_text[3] = "<b>Cosine configuration 2<br>saves time</b>";
-                    cost_result_text[4] = best_array[design_2_index][5];
-                    chart_start_index = Math.floor(i - best_array.length / 5);
-                    if (chart_start_index < 0)
-                        chart_start_index = 0;
-                    chart_end_index = Math.ceil(i + best_array.length / 5);
-                    if (chart_end_index > best_array.length - 1)
-                        chart_end_index = best_array.length - 1;
-
-                    if (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num > cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num) {
-                        //max_mem=cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num;
-                        l1 = 1;
-                        l2 = (cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num) / (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num);
-                    } else {
-                        //max_mem=cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num;
-                        l2 = 1;
-                        l1 = (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num) / (cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num);
-                    }
-
-                    if ((cost - best_array[i - 1][0]) > (best_array[i][0] - cost))
-                        switch_option = true;
-                    break;
-                }/* else if (best_array[i][0] == cost) {
-                    design_1_index = i;
-                    cost_result_text[0] = ("We found the key-value stores for you at $" + cost + ".<br><br>");
-                    //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
-                    cost_result_text[1] = "<b>Our Option:</b>"
-                    cost_result_text[2] = best_array[i][5];
-                    chart_start_index = Math.floor(best_array.length * 4 / 5);
-                    chart_end_index = best_array.length - 1;
-                    l1 = 1;
-                    l2 = -1;
-                    break;
-                }*/
-            }
-        }
-        document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
-
-        document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
-        outputParameters(cost_result_text[2],"cost_result_p3", l1);
-
-        if(l2!=-1) {
-            //if(switch_option==true){
-            if(document.getElementById('performance_conscious_checkbox').checked){
-                document.getElementById("cost_result_p4").innerHTML= "<b>Cosine configuration 2<br>saves money</b>";
-                outputParameters(cost_result_text[2],"cost_result_p5", l1);
-                document.getElementById("cost_result_p2").innerHTML = "<b>Cosine configuration 1<br> saves time</b>";
-                outputParameters(cost_result_text[4], "cost_result_p3", l2);
-            }else {
-                document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
-                outputParameters(cost_result_text[4], "cost_result_p5", l2);
-            }
-        }else{
-            removeAllChildren(document.getElementById("cost_result_p4"));
-            removeAllChildren(document.getElementById("cost_result_p5"));
-        }
-
-        if( cost_result_text[0] != "Cost is too little"){
-
-            //document.getElementById("cost_result_p6").setAttribute("style","position:relative;top:0px");
-            if(best_array[design_1_index][7]!=-1) {
-                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB<br><br></b>";
-                if((cost-best_array[design_1_index][7].cost)>(best_array[design_1_index+1][7].cost-cost)) {
-                    outputParameters(best_array[design_1_index+1][7], "cost_result_p7", l2);
-                    outputNote(best_array[design_1_index][7], "cost_result_p7");
-                }else{
-                    outputParameters(best_array[design_1_index][7], "cost_result_p7", l1);
-                    outputNote(best_array[design_1_index+1][7], "cost_result_p7");
-                }
-            }else{
-                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory<br><br></b>";
-                removeAllChildren(document.getElementById("cost_result_p7"));
-            }
-            document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger<br><br></b>";
-            //console.log(best_array[design_1_index][8])
-            if((cost-best_array[design_1_index][8].cost)>(best_array[design_1_index+1][8].cost-cost)) {
-                outputParameters(best_array[design_1_index+1][8], "cost_result_p9", l2);
-                outputNote(best_array[design_1_index][8], "cost_result_p9");
-            }else{
-                outputParameters(best_array[design_1_index][8], "cost_result_p9", l1);
-                outputNote(best_array[design_1_index+1][8], "cost_result_p9");
-            }
-            document.getElementById("cost_result_p10").innerHTML = "<b>FASTER <br>(hybrid logs)<br></b>";
-            //console.log(best_array[design_1_index][8])
-            if((cost-best_array[design_1_index][9].cost)>(best_array[design_1_index+1][9].cost-cost)) {
-                outputParameters(best_array[design_1_index+1][9], "cost_result_p11", l2);
-                outputNote(best_array[design_1_index][9], "cost_result_p11");
-            }else{
-                outputParameters(best_array[design_1_index][9], "cost_result_p11", l1);
-                outputNote(best_array[design_1_index+1][9], "cost_result_p11");
-            }
-            document.getElementById("cost_result_p12").innerHTML = "<b>FASTER <br>(append-only logs)<br></b>";
-            //console.log(best_array[design_1_index][8])
-            if((cost-best_array[design_1_index][10].cost)>(best_array[design_1_index+1][10].cost-cost)) {
-                outputParameters(best_array[design_1_index+1][10], "cost_result_p13", l2);
-                outputNote(best_array[design_1_index][10], "cost_result_p13");
-            }else{
-                outputParameters(best_array[design_1_index][10], "cost_result_p13", l1);
-                outputNote(best_array[design_1_index+1][10], "cost_result_p13");
-            }
-        }
-    }
-    global_index=design_1_index;
-    console.log(best_array,chart_start_index,chart_end_index);
-    var chart_array=cutArray(best_array,chart_start_index,chart_end_index);
+    var chart_array=drawDesigns(best_array,cost);
 
 
-
-/*
-    var layout =
-        {
-            xaxis: {
-                title: 'Cost ($/month)',
-                //range: [ best_array[chart_start_index][0], best_array[chart_end_index][0] ],
-                showline: true,
-                zeroline: false
-            },
-            yaxis: {
-                title: 'Latency (day)',
-                //range: [ best_array[chart_end_index][1], best_array[chart_start_index][1] ],
-                showline: true,
-                zeroline: false
-            },
-            legend: {
-                "orientation": "h",
-                x: 0.1,
-                y: 1
-            },
-            autosize: true,
-            hovermode: "closest",
-            width: 400,
-            height: 300,
-            margin: {
-                l: 60,
-                r: 20,
-                b: 50,
-                t: 20,
-                pad: 5
-            }, title: ''
-        };
-
-    var layout_ad =
-        {
-            xaxis: {
-                title: 'Latency (day)',
-                autorange: true
-            },
-            yaxis: {
-                title: 'Cost ($/month)',
-                range: [ 0, cost*2+100 ]
-            },
-            legend: {
-                "orientation": "h",
-                x: 0.66,
-                y: 1
-            },
-            autosize: true,
-            hovermode: "closest",
-            width: 750,
-            height: 500,
-            margin: {
-                l: 60,
-                r: 20,
-                b: 50,
-                t: 20,
-                pad: 5
-            }, title: ''
-        };
-    //Plotly.newPlot('tester5', data_ad, layout_ad);
-    //Plotly.newPlot('tester', data_ever, layout);
-    //Plotly.newPlot('tester', data_compare, layout);
-
-    //Plotly.newPlot('tester3', data3, layout_ad);
-    layout.width=375;
-    layout_ad.width=375;
-    //layout.title="Sub-space of configurations tailored to your inputs";
-    Plotly.newPlot('tester6', data_ever, layout);
-    layout.yaxis.title="Throughput/Cost ";
-    layout.width=750;
-    //Plotly.newPlot('tester', data_compare, layout);
-    layout.yaxis.title="Throughput per buck ";
-    //Plotly.newPlot('tester3', data_gradient, layout);
-
-
-*/
 
 
 
@@ -2010,7 +1756,7 @@ function drawline(ctx, start, end) {
     ctx.stroke()
 }
 
-function displayStats() {
+function drawStats() {
     var height=168;
     var width=266;
 
@@ -2156,4 +1902,803 @@ function displayStats() {
     layout.yaxis.title="data structure (%))"
     Plotly.newPlot('stat_graph_4', data4, layout);
 
+}
+
+function drawDesigns(best_array, cost) {
+    var cost_result_text=new Array();
+    var chart_start_index;
+    var chart_end_index;
+    var l1,l2;
+    var design_1_index;
+    var design_2_index;
+    var max_mem;
+    var switch_option;
+    if(cost<best_array[0][0]) {
+        cost_result_text[0] = "Sorry, you have insufficient budget. The minimum budget to run the workload is $"+best_array[0][0]+".<br>";
+        chart_start_index=0;
+        chart_end_index=Math.ceil(best_array/5);
+        removeAllChildren(document.getElementById("cost_result_p2"));
+        removeAllChildren(document.getElementById("cost_result_p3"));
+        removeAllChildren(document.getElementById("cost_result_p4"));
+        removeAllChildren(document.getElementById("cost_result_p5"));
+        removeAllChildren(document.getElementById("cost_result_p6"));
+        removeAllChildren(document.getElementById("cost_result_p7"));
+        removeAllChildren(document.getElementById("cost_result_p8"));
+        removeAllChildren(document.getElementById("cost_result_p9"));
+        document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
+    }
+    else{
+
+        if(best_array[best_array.length-1][0]<cost) {
+            design_1_index=best_array.length-2;
+            cost_result_text[0]=("We found 1 storage engine design for you at "+cost+".<br><br>");
+            console.log(cost_result_text[0],cost);
+            //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
+            cost_result_text[1]="<b>Our Option:</b>"
+            cost_result_text[2] = best_array[best_array.length - 1][5];
+            chart_start_index=Math.floor(best_array.length*4/5);
+            chart_end_index=best_array.length-1;
+            l1=1;
+            l2=-1;
+        }else {
+            for (var i = 1; i < best_array.length; i++) {
+                console.log(latency);
+                if (best_array[i][0] >= cost||(best_array[i][1]*24<latency&&!isNaN(latency))) {
+                    //drawDiagram(best_array[i-1][5], 'cost_result_diagram1');
+                    //drawDiagram(best_array[i][5], 'cost_result_diagram2');
+                    design_1_index = i - 1;
+                    design_2_index = i;
+                    if(!isNaN(latency)) {
+                        if (best_array[i][1] * 24 < latency)
+                            cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + " with latency less than " + fixTime(latency / 24) + ".</i><br><br>");
+                        else {
+                            for (var j = 1; j < best_array.length; j++) {
+                                if (best_array[j][1]*24 < latency){
+                                    design_2_index=j;
+                                    break;
+                                }
+                            }
+                            cost_result_text[0] = ("<i>The budget $" + cost + " is too low to achieve " + fixTime(latency / 24) + " latency. However, we found the following two storage engines for you.</i><br><br>");
+                        }
+                    }else{
+                        cost_result_text[0] = ("<i>We found 2 storage engine designs for you at $" + cost + ".</i><br><br>");
+                    }
+                    cost_result_text[1] = "<b>Cosine configuration 1<br>saves money</b>"
+                    cost_result_text[2] = best_array[i - 1][5];
+                    cost_result_text[3] = "<b>Cosine configuration 2<br>saves time</b>";
+                    cost_result_text[4] = best_array[design_2_index][5];
+                    chart_start_index = Math.floor(i - best_array.length / 5);
+                    if (chart_start_index < 0)
+                        chart_start_index = 0;
+                    chart_end_index = Math.ceil(i + best_array.length / 5);
+                    if (chart_end_index > best_array.length - 1)
+                        chart_end_index = best_array.length - 1;
+
+                    if (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num > cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num) {
+                        //max_mem=cost_result_text[2].memory_footprint/cost_result_text[2].VM_instance_num;
+                        l1 = 1;
+                        l2 = (cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num) / (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num);
+                    } else {
+                        //max_mem=cost_result_text[4].memory_footprint/cost_result_text[4].VM_instance_num;
+                        l2 = 1;
+                        l1 = (cost_result_text[2].memory_footprint / cost_result_text[2].VM_instance_num) / (cost_result_text[4].memory_footprint / cost_result_text[4].VM_instance_num);
+                    }
+
+                    if ((cost - best_array[i - 1][0]) > (best_array[i][0] - cost))
+                        switch_option = true;
+                    break;
+                }/* else if (best_array[i][0] == cost) {
+                    design_1_index = i;
+                    cost_result_text[0] = ("We found the key-value stores for you at $" + cost + ".<br><br>");
+                    //drawDiagram(best_array[best_array.length-1][5], 'cost_result_diagram1');
+                    cost_result_text[1] = "<b>Our Option:</b>"
+                    cost_result_text[2] = best_array[i][5];
+                    chart_start_index = Math.floor(best_array.length * 4 / 5);
+                    chart_end_index = best_array.length - 1;
+                    l1 = 1;
+                    l2 = -1;
+                    break;
+                }*/
+            }
+        }
+        document.getElementById("cost_result_p1").innerHTML=cost_result_text[0];
+
+        document.getElementById("cost_result_p2").innerHTML= cost_result_text[1];
+        outputParameters(cost_result_text[2],"cost_result_p3", l1);
+
+        if(l2!=-1) {
+            //if(switch_option==true){
+            if(document.getElementById('performance_conscious_checkbox').checked){
+                document.getElementById("cost_result_p4").innerHTML= "<b>Cosine configuration 2<br>saves money</b>";
+                outputParameters(cost_result_text[2],"cost_result_p5", l1);
+                document.getElementById("cost_result_p2").innerHTML = "<b>Cosine configuration 1<br> saves time</b>";
+                outputParameters(cost_result_text[4], "cost_result_p3", l2);
+            }else {
+                document.getElementById("cost_result_p4").innerHTML = cost_result_text[3];
+                outputParameters(cost_result_text[4], "cost_result_p5", l2);
+            }
+        }else{
+            removeAllChildren(document.getElementById("cost_result_p4"));
+            removeAllChildren(document.getElementById("cost_result_p5"));
+        }
+
+        if( cost_result_text[0] != "Cost is too little"){
+
+            //document.getElementById("cost_result_p6").setAttribute("style","position:relative;top:0px");
+            if(best_array[design_1_index][7]!=-1) {
+                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB<br><br></b>";
+                if((cost-best_array[design_1_index][7].cost)>(best_array[design_1_index+1][7].cost-cost)) {
+                    outputParameters(best_array[design_1_index+1][7], "cost_result_p7", l2);
+                    outputNote(best_array[design_1_index][7], "cost_result_p7");
+                }else{
+                    outputParameters(best_array[design_1_index][7], "cost_result_p7", l1);
+                    outputNote(best_array[design_1_index+1][7], "cost_result_p7");
+                }
+            }else{
+                document.getElementById("cost_result_p6").innerHTML = "<b>RocksDB: Not Enough Memory<br><br></b>";
+                removeAllChildren(document.getElementById("cost_result_p7"));
+            }
+            document.getElementById("cost_result_p8").innerHTML = "<b>WiredTiger<br><br></b>";
+            //console.log(best_array[design_1_index][8])
+            if((cost-best_array[design_1_index][8].cost)>(best_array[design_1_index+1][8].cost-cost)) {
+                outputParameters(best_array[design_1_index+1][8], "cost_result_p9", l2);
+                outputNote(best_array[design_1_index][8], "cost_result_p9");
+            }else{
+                outputParameters(best_array[design_1_index][8], "cost_result_p9", l1);
+                outputNote(best_array[design_1_index+1][8], "cost_result_p9");
+            }
+            document.getElementById("cost_result_p10").innerHTML = "<b>FASTER <br>(hybrid logs)<br></b>";
+            //console.log(best_array[design_1_index][8])
+            if((cost-best_array[design_1_index][9].cost)>(best_array[design_1_index+1][9].cost-cost)) {
+                outputParameters(best_array[design_1_index+1][9], "cost_result_p11", l2);
+                outputNote(best_array[design_1_index][9], "cost_result_p11");
+            }else{
+                outputParameters(best_array[design_1_index][9], "cost_result_p11", l1);
+                outputNote(best_array[design_1_index+1][9], "cost_result_p11");
+            }
+            document.getElementById("cost_result_p12").innerHTML = "<b>FASTER <br>(append-only logs)<br></b>";
+            //console.log(best_array[design_1_index][8])
+            if((cost-best_array[design_1_index][10].cost)>(best_array[design_1_index+1][10].cost-cost)) {
+                outputParameters(best_array[design_1_index+1][10], "cost_result_p13", l2);
+                outputNote(best_array[design_1_index][10], "cost_result_p13");
+            }else{
+                outputParameters(best_array[design_1_index][10], "cost_result_p13", l1);
+                outputNote(best_array[design_1_index+1][10], "cost_result_p13");
+            }
+        }
+    }
+    global_index=design_1_index;
+
+    var chart_array=cutArray(best_array,chart_start_index,chart_end_index);
+    return chart_array;
+}
+
+
+function drawDiagram(Variables, id){
+    var result_div=document.getElementById(id)
+    if(result_div==null)
+        result_div=id;
+    //console.log(result_div);
+    removeAllChildren(result_div);
+    var L=Variables.L;
+    var K=Variables.K;
+    var Z=Variables.Z;
+    var T=Variables.T;
+    var Y=Variables.Y;
+
+    var max_button_size=120;
+    if (screen.width<=1200)
+    {
+        max_button_size=Math.max(screen.width-700,350);
+    }
+    var lsm_button_size_ratio=(max_button_size-70)/L;
+    var cur_length=70;
+    cur_length+=lsm_button_size_ratio;
+
+    var height=18;
+    if(L>5){
+        height=96/L;
+    }
+    for (var i=0;i<L;i++){
+        var div_new_row=document.createElement("div");
+        div_new_row.setAttribute("class","row");
+
+        var div_lsm_runs=document.createElement("div");
+        div_lsm_runs.setAttribute("style","text-align: center;height:"+height+"px");
+        div_new_row.appendChild(div_lsm_runs);
+
+        var levelcss=i+1;
+        if (L<5)
+            levelcss=5-L+1+i;
+        // console.log(i+":"+levelcss)
+        var n;
+        if (i >= L-Y-1) {
+            var maxRuns = Z;
+            //n = Math.min(Z, 7);
+            n=Z;
+            if(L != 1 && i >= L-Y && Y != 0){
+                // draw arrows
+                var div_tmp_row=document.createElement("div");
+                div_tmp_row.setAttribute("class","row");
+                var margin_left = (max_button_size-cur_length+lsm_button_size_ratio)/2;
+                div_tmp_row.setAttribute("style","text-align: center;font-weight:bold;margin-top:-"+(height-3)+"px;width:100%;z-index:2;position:absolute;left:15px");
+                var div_tmp_lsm_runs=document.createElement("div");
+                div_tmp_lsm_runs.setAttribute("style","text-align: center;height:25px;width:"+cur_length+"px;margin:auto auto");
+                var tmp = Math.ceil((i-1)/3);
+                var length_percent = 100/(2*tmp+2);
+                for(j = 0; j <= tmp; j++){
+                    var div_col = document.createElement("div");
+                    div_col.setAttribute("class","");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:"+(height+2)+"px;padding:unset;display:inline-block");
+                    div_col.innerHTML="&#8601;"
+                    div_tmp_lsm_runs.appendChild(div_col);
+                }
+
+
+
+                // var div_col = document.createElement("div");
+                // div_col.setAttribute("class","col-sm-3");
+                // div_col.setAttribute("style","width:"+length_percent+"%;font-size:25px;padding:unset");
+                //
+                // div_col.innerHTML="&#8595;"
+                // div_tmp_lsm_runs.appendChild(div_col);
+
+                for(j = 0; j <= tmp; j++){
+                    var div_col = document.createElement("div");
+                    div_col.setAttribute("style","width:"+length_percent+"%;font-size:"+(height+2)+"px;padding:unset;display:inline-block");
+                    div_col.setAttribute("class","");
+                    div_col.innerHTML="&#8600;"
+                    div_tmp_lsm_runs.appendChild(div_col);
+                }
+                div_tmp_row.appendChild(div_tmp_lsm_runs);
+                result_div.appendChild(div_tmp_row);
+            }
+
+        } else {
+            maxRuns = K;
+            n=K;
+            //n = Math.min(K, 7);
+        }
+
+        for (var j = 0; j < n; j++) {
+            if (maxRuns > 8 && j == 7) {
+                var span =document.createElement("span");
+                //var message="This level contains "+maxRuns+" runs";
+                //span.setAttribute("data-tooltip", message);
+                //span.setAttribute("data-tooltip-position", "left");
+                span.setAttribute("style", "width:19.27px; font-size: 20px; color: #777;");
+                span.id = i + "span";
+                span.textContent=" ...";
+                div_lsm_runs.appendChild(span);
+            } else {
+                if(j>8)
+                    break;
+                var button=document.createElement("button");
+                //button.setAttribute("class","lsm_button lsm_button"+(levelcss));
+
+                button.setAttribute("class","lsm_button");
+
+                var full_flag=true;
+                // when some buttons are not full
+                // if(leveltier < 4){
+                // 		if((j+1)*tmp_previous_entries > filters[i].nokeys || (j == n-1 && previous_entries > filters[i].nokeys)){
+                // 			full_flag = false;
+                // 			button.setAttribute("class","lsm_button_not_solid");
+                // 		}
+                // }else{
+                //
+                // 	if(filters[i].nokeys == 0){
+                // 		full_flag = false;
+                // 		button.setAttribute("class","lsm_button_empty");
+                // 	}else if(((j+1)*tmp_previous_entries > filters[i].nokeys) || (j == n-1 && previous_entries > filters[i].nokeys)){
+                // 		full_flag = false;
+                // 		button.setAttribute("class","lsm_button_not_solid");
+                // 	}
+                // }
+
+                //console.log(cur_length);
+                if(maxRuns > 8){
+                    button.setAttribute("style","width: "+cur_length/8+"px; height:"+height*2/3+"px; padding: 1px 0px 2px 0px");
+                }else{
+                    button.setAttribute("style","width: "+cur_length/n+"px; height: "+height*2/3+"px; background-color: white; padding: 1px 0px 2px 0px");
+                }
+                div_lsm_runs.appendChild(button);
+            }
+        }
+        cur_length+=lsm_button_size_ratio;
+
+        result_div.appendChild(div_new_row);
+    }
+}
+
+function outputParameters(Variables, id, l) {
+    if(l<0.2)
+        l=0.2;
+    var result_div = document.getElementById(id);
+    removeAllChildren(result_div);
+    //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    outputParameter(result_div,Variables.Vcpu_num+" vCPUs","./images/cpu.png");
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("style"," background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
+    var text_tmp= document.createElement("div");
+    text_tmp.setAttribute("style", "background-color:white; display:inline-block; position:relative; bottom: 2px; padding-left:2px; padding-right:2px");
+    text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
+    div_tmp.appendChild(text_tmp);
+    result_div.appendChild(div_tmp);
+    if(id=="cost_result_p11"){
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.9, "Mutable"], [(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)*0.1, "Read-only"],[(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
+    }else if(id=="cost_result_p13"){
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_F / 1024 / 1024 / 1024).toFixed(2), "Hash index"]], l);
+    }else {
+        drawBar(result_div, [[(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2), "Buffer"], [(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2), "Bloom filter"], [(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2), "Fence pointer"]], l);
+    }
+
+    if(result_div.id=="cost_result_p3") {
+
+        if(using_compression==false) {
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Cloud",226);
+            outputText(result_div,"Cost",280);
+            outputText(result_div,"Latency",330);
+            outputText(result_div,"Throughput",382);
+            outputText(result_div,"Detailed Storage Engine Design Description",424);
+        }else{
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Compression",226);
+            outputText(result_div,"Cloud",280);
+            outputText(result_div,"Cost",330);
+            outputText(result_div,"Latency",382);
+            outputText(result_div,"Throughput",427);
+            outputText(result_div,"Detailed Storage Engine Design Description",473);
+        }
+    }
+
+    var div_tmp = document.createElement("div");
+    drawDiagram(Variables, div_tmp);
+    div_tmp.setAttribute("style", "height:100px;");
+    if(Variables.L==0)
+        div_tmp.innerHTML="<span style='font-size: 12px'><i>The data fits in "+Variables.memory_footprint/Variables.VM_instance_num+" GB of memory (no I/Os).</i></span>";
+    else {
+        div_tmp.setAttribute("class", "tooltip1");
+        var span_tmp = document.createElement("span");
+        span_tmp.setAttribute("class", "tooltiptext");
+        span_tmp.innerHTML = "<i>Growth Factor (T)=" + Variables.T + ", Hot Merge Threshold (K)=" + Variables.K + "<br>Cold Merge Threshold (Z)=" + Variables.Z+"</i>";
+        div_tmp.appendChild(span_tmp);
+
+    }
+    result_div.appendChild(div_tmp);
+    if(using_compression){
+        outputParameter(result_div, Variables.compression_name, "./images/compression.png")
+    }
+    outputParameter(result_div,cloud_array[Variables.cloud_provider],"./images/cloud.png");
+    outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"./images/dollar.png");
+    if(Variables.L==0){
+        outputParameter(result_div,"No Latency","./images/performance.png");
+        outputParameter(result_div,"","./images/throughput.png");
+    }else {
+        outputParameter(result_div, fixTime(Variables.latency), "./images/performance.png");
+        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " queries/s", "./images/throughput.png");
+    }
+
+    // outputParameter(result_div,Variables.T,"Growth Factor (T)");
+    // outputParameter(result_div,Variables.K,"Hot merge threshold (K)");
+    // outputParameter(result_div,Variables.Z,"Cold merge threshold (Z)");
+    // outputParameter(result_div,Variables.VM_instance+" x "+Variables.VM_instance_num,"VM type");
+    console.log(Variables);
+    generateDownload(Variables, result_div, id);
+}
+
+function outputText(result_div,text,top){
+    if(text=="Detailed Storage Engine Design Description"){
+        var div_text = document.createElement("div");
+        div_text.setAttribute("style", "position:absolute; font-size:16px; left: -90px; top:" + top + "px; text-align:right; ");
+        div_text.innerHTML = "Description";
+        div_text.setAttribute("class", "tooltip2");
+        var span_tmp = document.createElement("span");
+        span_tmp.setAttribute("class", "tooltiptext_mode");
+        span_tmp.setAttribute("style", "position:absolute; width:140px; height:50px; padding:5px; left: -20px")
+        span_tmp.innerHTML = "Detailed Storage Engine Design Description ";
+        div_text.appendChild(span_tmp);
+        result_div.appendChild(div_text);
+    }else {
+        var div_text = document.createElement("div");
+        div_text.setAttribute("style", "position:absolute; font-size:16px; left: -90px; top:" + top + "px; text-align:right");
+        div_text.innerHTML = text;
+        result_div.appendChild(div_text);
+    }
+}
+
+function outputNote(Variables, id){
+    var result_div = document.getElementById(id);
+    var text = document.createElement("div");
+    if(!using_compression)
+        text.setAttribute("style", "width:90%; position:absolute; top:462px; font-size:12px");
+    else
+        text.setAttribute("style", "width:90%; position:absolute; top:511px; font-size:12px");
+    text.innerHTML="<i>The next configuration &#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160&#160  closer to the requirement takes $"+Variables.cost+".</i>"
+    result_div.appendChild(text);
+    var div_tmp = document.createElement("div");
+    var popup_id=id+"_popup"
+    div_tmp.setAttribute("class","download_icon");
+    div_tmp.setAttribute("id",popup_id);
+    if(!using_compression)
+        div_tmp.setAttribute("style","position:absolute; top:457px; left:122px")
+    else
+        div_tmp.setAttribute("style","position:absolute; top:506px; left:122px")
+    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/popup.png\"/>"
+    result_div.appendChild(div_tmp);
+    $("#"+popup_id).click(function(){
+        createPopup(Variables);
+        console.log("____");
+    });
+}
+
+function createPopup(Variables){
+    var popup = open("", "Popup", "width=300,height=600");
+    popup.document.head.innerHTML=" <meta charset=\"utf-8\">\n" +
+
+        "    <title>X</title>\n" +
+        "\n" +
+        "    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+        "\n" +
+        "    <!-- Custom CSS -->\n" +
+        "        <link href=\"https://volatill.github.io/demosubmitter_cloud/css/lsm_button.css\" rel=\"stylesheet\">\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/tooltip.css\" rel=\"stylesheet\">\n" +
+
+        "\n" +
+        "    <!-- Font Awesome -->\n" +
+        "    <script src=\"https://use.fontawesome.com/3227f266ec.js\"></script>\n" +
+        "\n" +
+        "    <!-- Custom Fonts -->\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker|Reenie+Beanie|Rock+Salt|Indie+Flower' rel='stylesheet' type='text/css'>\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Raleway|Source+Sans+Pro\" rel=\"stylesheet\">\n" +
+        "      <!--[if lt IE 9]>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js\"></script>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js\"></script>\n" +
+        "    <![endif]-->"
+    var result_div = popup.document.createElement("div");
+    result_div.setAttribute("id","popup");
+    result_div.setAttribute("class","col-lg-1 col-md-1 col-sm-1")
+    result_div.setAttribute("style","width: 260px;  border-radius: 8px; font-size: 10px; padding-top:20px;");
+    var l=1;
+
+    removeAllChildren(result_div);
+    //outputParameter(result_div,Variables.memory_footprint/Variables.VM_instance_num,"M (GB)");
+    outputParameter(result_div,Variables.Vcpu_num+" vCPUs","https://volatill.github.io/demosubmitter_cloud//images/cpu.png");
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("style"," background-size:100% 100%; text-align: center; width:"+230*l+"px; height: 17px; padding-bottom:3px");
+    var text_tmp= document.createElement("div");
+    text_tmp.setAttribute("style", "background-color:white; display:inline-block; position:relative; bottom: 2px; padding-left:2px; padding-right:2px");
+    text_tmp.innerHTML=Variables.memory_footprint/Variables.VM_instance_num+" GB";
+    div_tmp.appendChild(text_tmp);
+    result_div.appendChild(div_tmp);
+    drawBar(result_div,[[(Variables.Buffer/1024/1024/1024).toFixed(2),"Buffer"],[(Variables.M_BF/1024/1024/1024).toFixed(2),"Bloom filter"],[(Variables.M_FP/1024/1024/1024).toFixed(2),"Fence pointer"]],l);
+
+    if(result_div.id=="cost_result_p3") {
+
+        if(using_compression==false) {
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Cloud",226);
+            outputText(result_div,"Cost",280);
+            outputText(result_div,"Latency",330);
+            outputText(result_div,"Throughput",382);
+            outputText(result_div,"Explanation",427);
+        }else{
+            outputText(result_div,"Processor",8);
+            outputText(result_div,"On-disk",150);
+            outputText(result_div,"Cloud",226);
+            outputText(result_div,"Compression",280);
+            outputText(result_div,"Cost",330);
+            outputText(result_div,"Latency",382);
+            outputText(result_div,"Throughput",427);
+            outputText(result_div,"Explanation",476);
+        }
+    }
+
+    var div_tmp = document.createElement("div");
+    drawDiagram(Variables, div_tmp);
+    div_tmp.setAttribute("style", "height:100px;");
+    if(Variables.L==0)
+        div_tmp.innerHTML="<span style='font-size: 12px'><i>The data fits in "+Variables.memory_footprint/Variables.VM_instance_num+" GB of memory (no I/Os).</i></span>";
+    else {
+        div_tmp.setAttribute("class", "tooltip1");
+        var span_tmp = document.createElement("span");
+        span_tmp.setAttribute("class", "tooltiptext");
+        span_tmp.innerHTML = "T=" + Variables.T + "<br>K=" + Variables.K + "<br>Z=" + Variables.Z;
+        div_tmp.appendChild(span_tmp);
+
+    }
+    result_div.appendChild(div_tmp);
+    outputParameter(result_div,cloud_array[Variables.cloud_provider],"https://volatill.github.io/demosubmitter_cloud/images/cloud.png");
+    outputParameter(result_div,"$"+parseFloat(Variables.cost).toFixed(1),"https://volatill.github.io/demosubmitter_cloud//images/dollar.png");
+    if(Variables.L==0){
+        outputParameter(result_div,"No Latency","https://volatill.github.io/demosubmitter_cloud//images/performance.png");
+        outputParameter(result_div,"","https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
+    }else {
+        outputParameter(result_div, fixTime(Variables.latency), "https://volatill.github.io/demosubmitter_cloud//images/performance.png");
+        outputParameter(result_div, parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60)) + " queries/s", "https://volatill.github.io/demosubmitter_cloud//images/throughput.png");
+    }
+    if(using_compression){
+        outputParameter(result_div, Variables.compression_name, "https://volatill.github.io/demosubmitter_cloud//images/compression.png")
+    }
+    removeAllChildren(popup.document.body);
+    popup.document.body.appendChild(result_div);
+}
+
+function createExplanationPopup(Variables){
+    var popup = open("", "Popup", "width=600,height=800");
+    popup.document.head.innerHTML=" <meta charset=\"utf-8\">\n" +
+
+        "    <title>X</title>\n" +
+        "    <script src=\"https://volatill.github.io/demosubmitter_cloud/js/jquery.js\"></script>\n" +
+        "<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js\"></script>\n"+
+        "\n" +
+        "    <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/bootstrap.min.css\" rel=\"stylesheet\">\n" +
+        "\n" +
+        "    <!-- Custom CSS -->\n" +
+        "        <link href=\"https://volatill.github.io/demosubmitter_cloud/css/lsm_button.css\" rel=\"stylesheet\">\n" +
+        "    <link href=\"https://volatill.github.io/demosubmitter_cloud/css/tooltip.css\" rel=\"stylesheet\">\n" +
+
+        "\n" +
+        "    <!-- Font Awesome -->\n" +
+        "\n" +
+        "    <!-- Custom Fonts -->\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Montserrat:400,700\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic\" rel=\"stylesheet\" type=\"text/css\">\n" +
+        "    <link href='https://fonts.googleapis.com/css?family=Permanent+Marker|Reenie+Beanie|Rock+Salt|Indie+Flower' rel='stylesheet' type='text/css'>\n" +
+        "    <link href=\"https://fonts.googleapis.com/css?family=Raleway|Source+Sans+Pro\" rel=\"stylesheet\">\n" +
+        "      <!--[if lt IE 9]>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js\"></script>\n" +
+        "        <script src=\"https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js\"></script>\n" +
+        "    <![endif]-->"
+    var result_div = popup.document.createElement("div");
+    result_div.setAttribute("id","popup");
+    result_div.setAttribute("class","col-lg-1 col-md-1 col-sm-1")
+    result_div.setAttribute("style","width: 600px;   font-size: 16px; padding-top:10px;");
+
+    var w=Variables.w;
+    var v=Variables.v;
+    var r=Variables.r;
+    //transform the format of N
+    var N=Variables.N;
+    if(N>=10000){
+        var power=0;
+        while(N>=10){
+            N/=10;
+            power++;
+        }
+        N=N.toFixed(2)+"E+"+power;
+    }
+
+    var query=Variables.query_count;
+    if(query>=10000){
+        var power=0;
+        while(query>=10){
+            query/=10;
+            power++;
+        }
+        query=query.toFixed(2)+"E+"+power;
+    }
+
+    var FPR=Variables.FPR;
+    var sum=w+v+r;
+    var a_or_an;
+    var E=parseInt(document.getElementById("E").value.replace(/\D/g,''));
+    var F=parseInt(document.getElementById("F").value.replace(/\D/g,''));
+    if(Variables.cloud_provider==1)
+        a_or_an="a";
+    else
+        a_or_an="an";
+
+    var bits_per_entry_text=" ";
+    var fpr_text=" ";
+    for(var i=1;i<=Variables.L;i++){
+        if(i!=Variables.L){
+            if(Variables.L!=2) {
+                fpr_text += (FPR[i] * 100).toFixed(2) + "%, ";
+                bits_per_entry_text += ((-1) * Math.log(FPR[i]) / (Math.pow(Math.log(2), 2))).toFixed(2) + ", ";
+            }else{
+                fpr_text += (FPR[i] * 100).toFixed(2) + "% ";
+                bits_per_entry_text += ((-1) * Math.log(FPR[i]) / (Math.pow(Math.log(2), 2))).toFixed(2) + " ";
+            }
+        }else{
+            fpr_text+="and "+(FPR[i]*100).toFixed(2)+"%, respectively. ";
+            bits_per_entry_text+="and "+((-1)*Math.log(FPR[i])/(Math.pow(Math.log(2),2))).toFixed(2)+" bits/entry, respectively, offering FPR of ";
+        }
+    }
+
+    if(document.getElementById('performance_conscious_checkbox').checked){
+        var text_div = document.createElement("div");
+        text_div.innerHTML+="This key-value storage configuration is tailored to a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+N+" entries each of size "+E+" bytes (key size is "+F+" bytes and value size is "+(E-F)+" bytes). To execute a workload at scale of "+query+" queries, this configuration takes "+fixTime(Variables.latency)+" with an average throughput of "+parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60))+" queries/sec. The expected cost for this configuration is $"+Variables.cost+" per month which is slightly more than your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month as a cost-conscious user!<br><br>";
+        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instance"+((Variables.VM_instance_num>1)?"s":"")+" of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint/Variables.VM_instance_num+" GB of memory for your workload. For expected memory usage, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" for which capacity grows by a factor of "+Variables.T+" across adjacent levels. Within each level, there will be a maximum of "+Variables.K+" run"+((Variables.K>1)?"s":"")+" for the first "+(((Variables.L-Variables.Y-1)==1)?"":(Variables.L-Variables.Y-1))+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" run"+((Variables.Z>1)?"s":"")+" for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
+
+    }else{
+        var text_div = document.createElement("div");
+        text_div.innerHTML+="This key-value storage configuration is tailored to a workload comprising of "+v*100/sum+"% single-result lookups, "+r*100/sum+"% no-result lookups, and "+w*100/sum+"% writes on a base data of "+N+" entries each of size "+E+" bytes (key size is "+F+" bytes and value size is "+(E-F)+" bytes). To execute a workload at scale of "+query+" queries, this configuration takes "+fixTime(Variables.latency)+" with an average throughput of "+parseInt(Variables.query_count / (Variables.latency * 24 * 60 * 60))+" queries/sec. The expected cost for this configuration is $"+Variables.cost+" per month which is within your budget of $"+parseInt(document.getElementById("cost").value.replace(/\D/g,''), 10)+" per month as a cost-conscious user!<br><br>";
+        text_div.innerHTML+="This is "+a_or_an+" "+cloud_array[Variables.cloud_provider]+" configuration that will be deployed on "+Variables.VM_instance_num+" instance"+((Variables.VM_instance_num>1)?"s":"")+" of VMs of type "+Variables.VM_instance+". Within each VM, you can use "+Variables.Vcpu_num+" CPU cores and "+Variables.memory_footprint/Variables.VM_instance_num+" GB of memory for your workload. For expected memory usage, "+(Variables.M_BF / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing bloom filters. For each level in sequence, we reserve"+bits_per_entry_text+fpr_text+(Variables.M_FP / 1024 / 1024 / 1024).toFixed(2)+" GB of memory will be reserved for storing fence pointers and "+(Variables.Buffer / 1024 / 1024 / 1024).toFixed(2)+" GB will be the size of the in-memory buffer. Within disk, the data structure will be organised into "+Variables.L+" level"+((Variables.L>1)?"s":"")+" for which capacity grows by a factor of "+Variables.T+" across adjacent levels. Within each level, there will be a maximum of "+Variables.K+" run"+((Variables.K>1)?"s":"")+" for the first "+(((Variables.L-Variables.Y-1)==1)?"":(Variables.L-Variables.Y-1))+" level"+(((Variables.L-Variables.Y-1)>1)?"s":"")+" and "+Variables.Z+" run"+((Variables.Z>1)?"s":"")+" for the next "+(Variables.Y+1)+" level"+(((Variables.Y+1)>1)?"s":"")+". Disk-resident data will be compressed using "+Variables.compression_name+" compression scheme. For each lookup and write, the I/O cost is "+Variables.read_cost.toFixed(3)+" and "+Variables.update_cost.toFixed(3)+", respectively."
+    }
+
+    result_div.append(text_div);
+
+    var text_div_download=document.createElement("div");
+    text_div_download.innerHTML="<br>Download:<br>";
+    result_div.append(text_div_download);
+
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("class","download_icon");
+    div_tmp.setAttribute("onclick","createAndDownloadFile()");
+    var download_id="download";
+    div_tmp.setAttribute("id",download_id);
+    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"https://volatill.github.io/demosubmitter_cloud/images/download.png\"/>"
+    result_div.appendChild(div_tmp);
+    var src=document.createElement("script");
+    src.setAttribute("type","text/javascript");
+    src.innerHTML="function createAndDownloadFile() {\n" +
+        "    var aTag = document.createElement('a');\n" +
+        "    var blob = new Blob(['"+text_div.innerText+"']);\n" +
+        "    aTag.download = 'explanation';\n" +
+        "    aTag.href = URL.createObjectURL(blob);\n" +
+        "    aTag.click();\n" +
+        "    URL.revokeObjectURL(blob);\n" +
+        "}"
+
+    result_div.append(src);
+    removeAllChildren(popup.document.body);
+    popup.document.body.append(result_div);
+}
+
+function outputParameter(result_div,value,text){
+    var div_tmp = document.createElement("div");
+    div_tmp.setAttribute("class", "input-group");
+    var span_tmp = document.createElement("span");
+    span_tmp.setAttribute("class","input-group-addon");
+    //span_tmp.innerHTML=text;
+    var icon_tmp=document.createElement("div");
+    var img_tmp=document.createElement("img");
+    img_tmp.setAttribute("src",text);
+    img_tmp.setAttribute("class","img-responsive img-centered");
+    img_tmp.setAttribute("style", "width:30px")
+    icon_tmp.appendChild(img_tmp);
+    icon_tmp.setAttribute("style","width:44px; height:44px; position:absolute; bottom: -3px; left:-3px; background-color:white; border-radius:30px; border: 2px solid black; padding:7px; z-index:10")
+    div_tmp.appendChild(icon_tmp);
+    div_tmp.appendChild(span_tmp);
+    var input_tmp = document.createElement("input");
+    input_tmp.setAttribute("class","form-control")
+    input_tmp.setAttribute("readonly","true");
+    input_tmp.setAttribute("style","text-align:right");
+    if(text=="VM type")
+        input_tmp.setAttribute("style","text-align:right; font-size:10px");
+    input_tmp.value=value;
+    div_tmp.appendChild(input_tmp);
+    div_tmp.setAttribute("style","margin-bottom:15px")
+    result_div.appendChild(div_tmp);
+}
+
+function drawBar(result_div,value,l,mode,w=230,h=15) {
+    /*
+    var div_tmp = document.createElement("div");
+    var length=value.length;
+    var data=new Array();
+    for(var i=0;i<length;i++){
+        console.log(value[i][0])
+        data.push({
+            x:[parseFloat(value[i][0])],
+            name:value[i][1],
+            orientation: 'h',
+            width: [0.8],
+            hovertemplate:
+                "%{x} GB<br><br>",
+            type:"bar"
+        })
+    }
+    var layout = {
+        width: 245,
+        height: 60,
+        barmode: 'stack',
+        hovermode: false,
+        xaxis: {
+            side: 'top',
+        },
+        legend: {
+            "orientation": "h",
+            x: 0,
+            y: 0,
+            font: {
+                size:10
+            }
+        },
+        modebar: {
+          display: "none"
+        },
+        margin: {
+            l: 0,
+            r: 0,
+            b: 0,
+            t: 0,
+            pad: 0
+        }, title: ''
+    };
+    Plotly.newPlot(div_tmp, data, layout, {displayModeBar: false});
+    result_div.appendChild(div_tmp);*/
+    var div_tmp = document.createElement("div");
+    var width = w*l;
+    var length=value.length;
+    if(length==3) {
+        var colors = [
+            "#837BFF",
+            "#83AAFF",
+            "#83DEFF"
+        ]
+    }
+
+    if(length==2) {
+        var colors = [
+            "#837BFF",
+            "#83DEFF"
+        ]
+    }
+    var data=new Array();
+    var memory_sum=0;
+    for(var i=0;i<length;i++)
+        memory_sum+=parseFloat(value[i][0]);
+
+    if(result_div.id=="cost_result_p3") {
+        outputText(result_div,"In-memory",75);
+
+    }
+
+    for(var i=0;i<length;i++){
+        var bar=document.createElement("div");
+        bar.setAttribute("class","color_bar");
+        bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]+"; height:"+h+"px");
+        div_tmp.append(bar);
+    }
+    result_div.appendChild(div_tmp);
+    if(mode!="no_legend") {
+        div_tmp = document.createElement("div");
+        for (var i = 0; i < length; i++) {
+            var legend = document.createElement("div");
+            legend.setAttribute("class", "color_bar");
+            legend.setAttribute("style", "width: 10px;height: 10px;background-color:" + colors[i]);
+            div_tmp.append(legend);
+            var text = document.createElement("div");
+            text.setAttribute("style", "display: inline-block;font-size:10px ; padding:4px 7px 8px 3px");
+            text.innerHTML = value[i][1];
+            div_tmp.append(text);
+        }
+        result_div.appendChild(div_tmp);
+    }
+}
+
+function createAndDownloadFile(fileName, content) {
+    var aTag = document.createElement('a');
+    var blob = new Blob([content]);
+    aTag.download = fileName;
+    aTag.href = URL.createObjectURL(blob);
+    aTag.click();
+    URL.revokeObjectURL(blob);
+}
+
+function generateDownload(Variables, result_div, id) {
+    var div_tmp = document.createElement("div");
+    var download_id=id+"_download"
+    div_tmp.setAttribute("class","download_icon");
+    div_tmp.setAttribute("id",download_id);
+    div_tmp.innerHTML="<img class=\"img-responsive img-centered\" style=\"width:25px;\" src=\"./images/explain.png\"/>"
+    result_div.appendChild(div_tmp);
+    var download_content=("Cloud provider: "+ cloud_array[Variables.cloud_provider] +"\nCost="+Variables.cost+", Latency=" + fixTime(Variables.latency) +  "\nT=" + Variables.T + ", K=" + Variables.K + ", Z=" + Variables.Z + ", L=" + Variables.L +"\nMemory="+ Variables.memory_footprint/Variables.VM_instance_num+ " GB\nBuffer=" + (Variables.Buffer / 1024 / 1024 / 1024).toFixed(2) + " GB\nBloom filter=" + (Variables.M_BF / 1024 / 1024 / 1024).toFixed(2) + " GB\nFence Pointer=" + (Variables.M_FP / 1024 / 1024 / 1024).toFixed(2) + " GB\nVM instance: " + Variables.VM_info);
+    if(using_compression){
+        download_content+="\nCompression: "+Variables.compression_name;
+    }
+    $("#"+download_id).click(function(){
+        //createAndDownloadFile(("design_"+Variables.cost+".txt"),download_content);
+        createExplanationPopup(Variables);
+    });
 }
