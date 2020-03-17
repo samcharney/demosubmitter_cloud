@@ -1,4 +1,4 @@
-/*function InputTextBoxes()
+function InputTextBoxes()
 {
 	var N;
 	var E;
@@ -3085,4 +3085,3 @@ function hideCloudProvider(){
 	document.getElementById("cloud-provider-setting").style.display='none';
 }
 
-*/
