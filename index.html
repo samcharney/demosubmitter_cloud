@@ -65,12 +65,6 @@
                     <li class="page-scroll">
                         <a href="#overview" style="font-family: Helvetica;">Overview</a>
                     </li>
-<!--                     <li class="page-scroll">
-                        <a href="#research">Research</a>
-                    </li> -->
-<!--                     <li class="page-scroll">
-                        <a href="#people">People</a>
-                    </li> -->
                      <li class="page-scroll">
                         <a href="#interactiveDemo" style="font-family: Helvetica;">Cosine in Action</a>
                     </li>
@@ -80,12 +74,7 @@
         </div>
         <!-- /.container-fluid -->
     </nav>
-<!--
-    <div id="loading_canvas" style="background-color: black; width: 0%; height: 0%; position: fixed; z-index: 0; padding-left: 48%; padding-top: 30%; display: none">
-        <div style="color: white; font-size: 18px; font-weight: lighter; font-family: Helvetica">Loading</div>
-        <div class="lds-roller" style="z-index: 20"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-    </div>
--->
+
     <header class="viewport" style="height: 850px">
         <div class="container">
             <div class="row">
@@ -121,13 +110,6 @@
             </div>
             <br>
             <div class="row">
-                <!--
-                <div class="col-sm-3 text-center">
-
-                    <i class="fas fa-balance-scale-left fa-5x" aria-hidden="true"></i>
-                    <p class="text-center">Tradeoff</p>
-                </div>
-                -->
                 <div class="col-sm-12" >
                     We present a key-value storage engine, Cosine, that guarantees an optimal balance in both cloud-cost and performance for any workload. Cosine creates a massive search space comprising of the entire data structure design and hardware-space of (LSM-tree/B-tree) key-value stores over diverse cloud pricing policies for the top three cloud providers – AWS, GCP, and Azure. This creates a trilateral tradeoff of design, cost, and performance.
                 </div>
@@ -136,13 +118,7 @@
             <br>
 
             <div class="row">
-                <!--
-                <div class="col-sm-3 text-center">
 
-                    <i class="fa fa-tachometer fa-5x" aria-hidden="true"></i>
-                    <p class="text-center">Performance</p>
-                </div>
-                -->
                 <div class="col-sm-12">
                     We present distribution-aware cost models that precisely estimate the CPU and I/O costs of each possible data structure design, which in turn, helps in comparing pairs of designs. Given a budget and desired performance, Cosine prunes the massive dimensionality of the search space by using the cost models to rank designs and collapse the design dimensions into a Pareto frontier that creates a continuum of holistically optimal configurations (for a budget) of data structure design, hardware, and cloud pricing policies. We demonstrate that using the continuum, Cosine can search through the massive space of designs in seconds and it can automatically generate (through templates) storage engine instances that outperform state-of-the-art key-value storage engines (RocksDB and WiredTiger) by picking the appropriate configurations that optimizes cloud-cost and performance.
                 </div>
@@ -152,13 +128,6 @@
             <br>
 
             <div class="row">
-                <!--
-                <div class="col-sm-3 text-center">
-
-                    <i class="fab fa-react fa-5x" aria-hidden="true"></i>
-                    <p class="text-center">Interactive</p>
-                </div>
-                -->
                 <div class="col-sm-12">
                     Finally, Cosine enables decision makers in applications to quickly answer rich what-if questions e.g., what would be the impact on cloud cost if we introduce a particular new feature, or what would be the impact on performance if we decide to cut the cloud costs by 3%, or what-if we switch to storage-engine X or cloud provider Y?
                 </div>
@@ -168,71 +137,6 @@
         </div>
     </section>
 
-    <!-- Research -->
-<!--     <section class="alternate"  id="research">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>Research</h2>
-                </div>
-            </div>
-            <div class="row">
-
-            </div>
-        </div>
-    </section> -->
-
-    <!-- People Section -->
-<!--     <section  id="people">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>People</h2>
-                        <br/>
-                        <br/>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="team-member">
-                        <a href="http://people.seas.harvard.edu/~manos/" target="_blank" title="Manos' Website">
-                            <img src="../images/team/manos.jpg" class="img-responsive img-circle" alt="">
-                            <h4>Manos Athanassoulis</h4>
-                            <p class="text-muted">Postdoctoral Researcher</p>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="team-member">
-                        <a href="http://scholar.harvard.edu/msk/" target="_blank" title="Mike' Website">
-                            <img src="../images/team/michael.jpg" class="img-responsive img-circle" alt="">
-                            <h4>Michael S. Kester</h4>
-                            <p class="text-muted">Graduate Researcher</p>
-                        </a>
-                    </div>
-                </div>
-	            <div class="col-sm-3">
-                    <div class="team-member">
-                   		<a href="http://scholar.harvard.edu/maas/" target="_blank" title="Lukas' Website">
-                        	<img src="../images/team/lukas.jpg" class="img-responsive img-circle" alt="">
-							<h4>Lukas Maas</h4>
-							<p class="text-muted">Graduate Researcher</p>
-                        </a>
-                    </div>
-                </div>
-	            <div class="col-sm-3">
-                    <div class="team-member">
-                   		<a href="http://stratos.seas.harvard.edu/" target="_blank" title="Stratos' Website">
-                        	<img src="../images/team/stratos.jpg" class="img-responsive img-circle" alt="">
-							<h4>Stratos Idreos</h4>
-							<p class="text-muted">Assistant Professor of Computer Science</p>
-                        </a>
-                    </div>
-                </div>
-			</div>
-        </div>
-    </section> -->
-    <!--Bad+Script|Caveat|Dancing+Script|Great+Vibes|Sacramento|Satisfy|Simonetta|Tangerine-->
     <div id="title" style="width: 100%; height: 100%; background-color: white; color: black; text-shadow: 0 0 4px #DDD;">
         <div style="position: relative; top: -20px; display: none">
             <select id="title_fonts" name="" style="width:200px;  height: 30px ; text-align: center">
@@ -669,8 +573,6 @@
             </div>
 -->
 
-
-
             <br>
             <br>
             <!-- Configuration for each architecture -->
@@ -825,15 +727,16 @@
              </div>
                 <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:19%; width: 76%; font-size: 16px; margin-bottom: 60px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
-                    <div class="tab_l down tooltip2" id="interactive_tab_1" name="interactive_tab" style="border-bottom-right-radius: 0px;border-top-right-radius: 0px;width:33% ;border-right: 0px;">
-                        <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:15">
+                    <div class="tab_l down tooltip2" id="interactive_tab_1" name="interactive_tab" style="width:33% ;border-right: 0px; ">
+                        <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:15;  ">
                             <img style="width:50px" class="img-responsive img-centered" src="images//normal.png">
-                        </div>Basic Mode<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span>
-                    </div><div class="tab_l tooltip2" id="interactive_tab_2" name="interactive_tab" style="border-radius: 0px; width:34% ;border-right: 1px;">
-                    <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:10; display: none">
-                    </div>Statistic Analysis
-                    </div><div name="interactive_tab" id="interactive_tab_3" class="tab_l tooltip2" style="border-bottom-left-radius: 0px;border-top-left-radius: 0px;width:33%;border-left-color: #7F89FF">Interactive Mode
-                    <div style="width:60px; height:60px; position:absolute; bottom: -10px; right:-10px;  border-radius:30px; padding:8px; z-index:10">
+                        </div>Cosine Config vs Existing Systems<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span>
+                    </div><div class="tab_l tooltip2" id="interactive_tab_2" name="interactive_tab" style="width:34% ;border-right: 1px;">
+                    <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:calc(33% - 10px);  border-radius:30px; padding:8px; z-index:10;">
+                        <img style="width:44px" class="img-responsive img-centered" src="images//stat.png">
+                    </div>Interactive What-If Design
+                    </div><div name="interactive_tab" id="interactive_tab_3" class="tab_l tooltip2" style="width:33%;border-left-color: #7F89FF">Statistic Analysis
+                    <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:calc(67% - 10px);  border-radius:30px; padding:8px; z-index:10">
                         <img style="width:44px" class="img-responsive img-centered" src="images//hand.png">
                     </div>
                     <span class="tooltiptext_mode" style="width: 400px; left: calc(75% - 200px)">The interactive mode enables users to ask diverse what-if questions and check resulting configurations on the fly. It also supports analysis of statistics over the entire search space of the input workload.</span>
@@ -842,13 +745,13 @@
 
                 <div id="stat" style="position: absolute; opacity: 0; width: 80%; height: 0px; left: 15%; text-align: center; z-index: 0">
                     <div class="stat-block">
-                        <input class="stat-input" id="stat_input_1" style=" top: 7px; left: calc(17% - 65px);" value="50" onchange="drawStats()"/>
-                        <span style="width: 100%;">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% &nbsp;cloud provider</span>
+                        <input class="stat-input" id="stat_input_1" style=" top: 7px; left: calc(17% - 63px);" value="50" onchange="drawStats()"/>
+                        <span style="width: 100%;">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% &nbsp;cloud provider</span>
                         <div class="stat-graph" id="stat_graph_1"></div>
                     </div>
                     <div class="stat-block">
-                        <input class="stat-input" id="stat_input_2" style="top: 7px; left: calc(50% - 5px); font-size: 16px; text-align: center" value="5" onchange="drawStats()">
-                        <span style="width: 100%;">Cheapest &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; budget</span>
+                        <input class="stat-input" id="stat_input_2" style="top: 7px; left: calc(50% - 7px); font-size: 16px; text-align: center" value="5" onchange="drawStats()">
+                        <span style="width: 100%;">Cheapest &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; budget</span>
                         <div class="stat-graph" id="stat_graph_2"></div>
                     </div>
                     <div class="stat-block">
@@ -856,7 +759,7 @@
                         <div class="stat-graph" id="stat_graph_3"></div>
                     </div>
                     <div class="stat-block">
-                        <span style="width: 100%;">Data Structure</span>
+                        <span style="width: 100%;">Data structure participation</span>
                         <div class="stat-graph" id="stat_graph_4"></div>
                     </div>
                     <div class="stat-block">
@@ -942,8 +845,10 @@
                                 <option value="1">What if I change my budget</option>
                                 <option value="2">What if I change my cloud provider</option>
                                 <option value="3">What if I increase my performance</option>
+                                <!--
                                 <option value="4">What if I change the proportion of reads</option>
                                 <option value="5">What if I change the proportion of writes</option>
+                                -->
                                 <option value="6">What-if I switch to the best trade-off configurations</option>
                             </select>
                             <div class="myinput" id="question0" style="display: none;width: 98%;font-size: 12px;font-style:italic;border-width: 0px;background-color: white;text-align: left"></div>
@@ -968,7 +873,7 @@
                                 <div class="myinput" style="width:51px; ">to</div><input class="myinput" type="number" id="question5_input" style="width:100px; background-color: white"/><div class="myinput" style="width:20px; ">%</div>
                             </div>
                             <div class="myinput" style="width:100%;background-color:white; color: black; margin:40px 0px 2px 0px; border: 0; text-align: left"><b>Statistical queries</b></div>
-                            <select  class="myinput myselect" onchange="switchStatistics()" id="statistics" style="width:98%; border-radius: 0; " >
+                            <select  class="myinput myselect" onchange="switchStatistics()" id="statistics" style="width:98%; border-radius: 0; display: none" >
                                 <option value="0">Check out statistics! </option>
                                 <option value="1">Top performance cloud providers</option>
                                 <option value="2">Top 5 cheapest budgets</option>
@@ -1185,54 +1090,6 @@
 
 
 
-            <!-- <div class="row text-center">
-              <div class="col-lg-6 col-md-6 col-sm-6  ">
-                  <div class="input-group input-group-lg text-center">
-                      <span class="input-group-btn">
-                          <a style="width:100%" id="Build" class="btn btn-default btn-params" type="button" onclick="clickbloomTuningButton(false)"><span data-tooltip="Automatically build the tree and calculate the cost according to the specified configuration." data-tooltip-position="bottom" style="font-size:14px">Build And Evaluate</span></a>
-                      </span>
-                  </div>
-                  <br>
-              </div> -->
-                <!-- <div class="col-lg-3 col-md-3 col-sm-3">
-                    <div class="input-group input-group-lg text-center">
-                        <span class="input-group-btn">
-                            <a style="width:100%" id="AutoTune1" class="btn btn-default btn-params" type="button" onclick="AutoTune1(event)"><span data-tooltip="Automatically find the best size ratio within a fixed tree structure." data-tooltip-position="bottom" style="font-size:14px">Autotune in Fixed Structure</span></a>
-                        </span>
-                    </div>
-                    <br>
-                </div>-->
-                <!-- <div class="col-lg-6 col-md-6 col-sm-6">
-                    <div class="input-group input-group-lg text-center">
-                        <span class="input-group-btn">
-                            <a style="width:100%" id="AutoTune2" class="btn btn-default btn-params" type="button" onclick="AutoTune2(event)" ><span data-tooltip="Automatically find the best architecture." data-tooltip-position="bottom" style="font-size:14px">Autotune Across Structures</span></a>
-                        </span>
-                    </div>
-                    <br>
-                </div> -->
-                <!--
-                <div class="col-lg-3 col-md-3 col-sm-3">
-                    <div class="input-group input-group-lg text-center">
-                        <span class="input-group-btn">
-                            <a style="width:100%" id="Autotune3" class="btn btn-default btn-params" type="button" onclick="AutoTune3(event)"><span data-tooltip="Automatically find the best size ratio, K, Z in Fluid LSM-Tree." data-tooltip-position="bottom" style="font-size:14px">Autotune in Fluid LSM-Tree</span></a>
-                        </span>
-                    </div>
-                    <br>
-                </div> -->
-            <!-- </div>
-            <br> -->
-
-
-
-
-            <!-- Plotly chart will be drawn inside this DIV -->
-            <!-- <div class="row text-center">
-
-                <div id="myDiv" class="col-sm-12"></div>
-
-            </div> -->
-
-
 
             <hr>
 
@@ -1240,28 +1097,6 @@
     </section>
 
 
-     <!-- About Section -->
-<!--     <section id="about">
-	    <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2>About</h2>
-                        <br/>
-                        <br/>
-                </div>
-            </div>
-        <div class="container">
-	        <div class="row">
-                <div class="col-lg-12 col-md-12 acknowledgement">
-
-                </div>
-            </div>
-        </div>
-    </section> -->
-
-    <!-- Footer -->
-
-
-    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
     <div class="scroll-top page-scroll visible-xs visble-sm">
         <a class="btn btn-primary" href="#page-top">
             <i class="fa fa-chevron-up"></i>

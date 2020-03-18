@@ -346,7 +346,7 @@ function switchText(id) {
     $("#stat").css("height","0px");
     $("#stat").css("opacity","0");
     $("#stat").css("z-index","0");
-    if(id=="interactive_tab_3") {
+    if(id=="interactive_tab_2") {
         $("#charts").animate({opacity:"1"}, "slow");
         document.getElementById("interactive_mode_text").innerHTML = "Interactive Mode: On";
         $("#questions_block").animate({width: '240px',opacity:'1'}, "slow");

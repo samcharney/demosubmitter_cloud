@@ -1762,7 +1762,7 @@ function drawStats() {
 
     var layout={
         height:163,
-        width:300,
+        width:320,
         margin: {
             l: 55,
             r: 20,
@@ -1775,7 +1775,8 @@ function drawStats() {
         },
         xaxis: {
             title:'',
-        }
+        },
+        hovermode: false
     }
 
     var layout_2={
@@ -1793,14 +1794,15 @@ function drawStats() {
         },
         xaxis: {
             title:'',
-            dtick:10,
+            dtick:5000,
             tick0:0
         },
         legend: {
             "orientation": "h",
             x: 0.3,
             y: 1
-        }
+        },
+        hovermode: false
     }
 
     var result_array = global_continuums_array;
@@ -1846,12 +1848,7 @@ function drawStats() {
         return a[1] - b[1];
     });
 
-    var query_IO = [result_array[global_index][5].read_cost * result_array[global_index][5].v, result_array[global_index][5].update_cost * result_array[global_index][5].w];
 
-    var improvement_array=new Array();
-    for(var i=0;i<4;i++) {
-        improvement_array.push(result_array[global_index][7+i].latency / result_array[global_index][1]);
-    }
 
     var data_structure_array=[0,0,0];
 
@@ -1876,8 +1873,8 @@ function drawStats() {
     var count_array_5=new Array();
     var width_array_5=new Array();
     for(var i=0; i < fastestNum; i++){
-        top_performance.push(result_array[i][1]);
-        color_array_5.push('rgb(130,'+(205-150/cheapestNum*i)+',245)');
+        top_performance.push(result_array[i][1]*60);
+        color_array_5.push('rgb(130,'+(205-150/fastestNum*i)+',245)');
         count_array_5.push(i+1);
         width_array_5.push(0.2);
     }
@@ -1891,7 +1888,7 @@ function drawStats() {
     });
     var best_array=getBestDesignEverArray(result_array);
     for(var i=0; i<best_array.length; i++) {
-        budget_array_6.push(parseFloat(best_array[i][0]/1000).toFixed(2));
+        budget_array_6.push(parseFloat(best_array[i][0]).toFixed(2));
         latency_array_6.push(best_array[i][1]);
         if(best_array[i][5].if_classic==true){
             color_array_6.push('rgb(130,195,245)')
@@ -1899,22 +1896,27 @@ function drawStats() {
             color_array_6.push('rgb(130,135,245)')
         }
     }
+    var query_IO = [best_array[global_index][5].read_cost, best_array[global_index][5].update_cost];
 
-    var classic_legend={x: [null],
+    var improvement_array=new Array();
+    for(var i=0;i<4;i++) {
+        improvement_array.push(best_array[global_index][7+i].latency / best_array[global_index][1]);
+    }
+    var hybrid_legend={x: [null],
         y: [null],
         marker: { size: 7, symbol: 'circle', color: 'rgb(130,195,245)'},
         showlegend: true,
         mode: 'markers',
-        name: "classic",
+        name: "hybrid",
         type: 'scatter'
     };
 
-    var hybrid_legend={x: [null],
+    var classic_legend={x: [null],
         y: [null],
         marker: { size: 7, symbol: 'circle', color: 'rgb(130,135,245)'},
         showlegend: true,
         mode: 'markers',
-        name: "hybrid",
+        name: "classic",
         type: 'scatter'
     };
 
@@ -1927,7 +1929,7 @@ function drawStats() {
             color: ['rgb(130,195,245)','rgb(130,165,245)','rgb(130,135,245)']
         },
         hovertemplate:
-            "%{y:.2f}%",
+            "%{y:.2f}%<extra></extra>",
     };
 
     var trace2 = {
@@ -1944,14 +1946,14 @@ function drawStats() {
 
     var trace3 = {
         x: ['read','write'],
-        y: [query_IO[0]/(query_IO[0]+query_IO[1])*100,query_IO[1]/(query_IO[0]+query_IO[1])*100],
+        y: [query_IO[0],query_IO[1]],
         width: [0.5,0.5],
         type: 'bar',
         marker: {
             color: ['rgb(130,195,245)','rgb(130,135,245)']
         },
         hovertemplate:
-            "%{y:.3f}%",
+            "%{y:.3f}",
     };
 
     var trace4 = {
@@ -1975,7 +1977,7 @@ function drawStats() {
             color: color_array_5
         },
         hovertemplate:
-            "%{y:.2f}h",
+            "%{y:.2f}min",
     };
 
     var trace6 = {
@@ -2039,39 +2041,39 @@ function drawStats() {
 
     layout.yaxis.title="contribution to<br>design space (%)";
     layout.xaxis.title="cloud providers";
-    Plotly.newPlot('stat_graph_1', data1, layout);
+    Plotly.newPlot('stat_graph_1', data1, layout, {displayModeBar: false});
 
     layout.yaxis.title="budget ($)"
     layout.xaxis.title="rank (lower is better)";
-    Plotly.newPlot('stat_graph_2', data2, layout);
+    Plotly.newPlot('stat_graph_2', data2, layout, {displayModeBar: false});
 
     layout.yaxis.title="I/O cost <br>per operation"
     layout.xaxis.title="operation type";
-    Plotly.newPlot('stat_graph_3', data3, layout);
+    Plotly.newPlot('stat_graph_3', data3, layout, {displayModeBar: false});
 
     layout.yaxis.title="contribution to <br>design space (%)"
-    layout.xaxis.title="class of space";
-    Plotly.newPlot('stat_graph_4', data4, layout);
+    layout.xaxis.title=" class of designs";
+    Plotly.newPlot('stat_graph_4', data4, layout, {displayModeBar: false});
 
-    layout.yaxis.title="Latency (hour)"
+    layout.yaxis.title="latency (min)"
     layout.xaxis.title="rank (lower is better)";
-    Plotly.newPlot('stat_graph_5', data5, layout);
+    Plotly.newPlot('stat_graph_5', data5, layout, {displayModeBar: false});
 
-    layout_2.yaxis.title="Latency (hour)"
-    layout_2.xaxis.title=" budget (k)";
-    Plotly.newPlot('stat_graph_6', data6, layout_2);
+    layout_2.yaxis.title="latency (hour)"
+    layout_2.xaxis.title=" budget ($)";
+    Plotly.newPlot('stat_graph_6', data6, layout_2, {displayModeBar: false});
 
-    layout.yaxis.title="x times improved"
+    layout.yaxis.title=" performance<br>improvement (x times)"
     layout.xaxis.title="Existing storage engines";
-    Plotly.newPlot('stat_graph_7', data7, layout);
+    Plotly.newPlot('stat_graph_7', data7, layout, {displayModeBar: false});
 
     layout.yaxis.title="cost ($)"
     layout.xaxis.title="<br>";
-    Plotly.newPlot('stat_graph_8', data8, layout);
+    Plotly.newPlot('stat_graph_8', data8, layout, {displayModeBar: false});
 
     layout.yaxis.title="latency (hour)"
     layout.xaxis.title="<br>";
-    Plotly.newPlot('stat_graph_9', data9, layout);
+    Plotly.newPlot('stat_graph_9', data9, layout, {displayModeBar: false});
 
 }
 
@@ -2753,51 +2755,6 @@ function outputParameter(result_div,value,text){
 }
 
 function drawBar(result_div,value,l,mode,w=230,h=15) {
-    /*
-    var div_tmp = document.createElement("div");
-    var length=value.length;
-    var data=new Array();
-    for(var i=0;i<length;i++){
-        console.log(value[i][0])
-        data.push({
-            x:[parseFloat(value[i][0])],
-            name:value[i][1],
-            orientation: 'h',
-            width: [0.8],
-            hovertemplate:
-                "%{x} GB<br><br>",
-            type:"bar"
-        })
-    }
-    var layout = {
-        width: 245,
-        height: 60,
-        barmode: 'stack',
-        hovermode: false,
-        xaxis: {
-            side: 'top',
-        },
-        legend: {
-            "orientation": "h",
-            x: 0,
-            y: 0,
-            font: {
-                size:10
-            }
-        },
-        modebar: {
-          display: "none"
-        },
-        margin: {
-            l: 0,
-            r: 0,
-            b: 0,
-            t: 0,
-            pad: 0
-        }, title: ''
-    };
-    Plotly.newPlot(div_tmp, data, layout, {displayModeBar: false});
-    result_div.appendChild(div_tmp);*/
     var div_tmp = document.createElement("div");
     var width = w*l;
     var length=value.length;
@@ -2827,8 +2784,12 @@ function drawBar(result_div,value,l,mode,w=230,h=15) {
 
     for(var i=0;i<length;i++){
         var bar=document.createElement("div");
-        bar.setAttribute("class","color_bar");
+        bar.setAttribute("class","color_bar tooltip3");
         bar.setAttribute("style","width:"+width*parseFloat(value[i][0])/memory_sum+"px;background-color:"+colors[i]+"; height:"+h+"px");
+        var hover_text=document.createElement("div");
+        hover_text.setAttribute("class","tooltiptext_mode");
+        hover_text.innerText=value[i][0]+"GB";
+        bar.append(hover_text)
         div_tmp.append(bar);
     }
     result_div.appendChild(div_tmp);
