@@ -117,6 +117,8 @@ function Variables()
 
     var compression_name;
 
+    var is_classical;
+
 }
 
 function VM_library()
@@ -764,6 +766,15 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
         }
     }
 
+    Variables.if_classic=false;
+    if(Variables.K==1&&Variables.Z==1)
+        Variables.if_classic=true;
+    if(Variables.K==(Variables.T-1)&&Variables.Z==(Variables.T-1))
+        Variables.if_classic=true;
+    if(Variables.K==(Variables.T-1)&&Variables.Z==1)
+        Variables.if_classic=true;
+    if(Variables.data_structure=="LSH"||Variables.data_structure=="B-tree")
+        Variables.if_classic=true;
     return Variables;
 }
 

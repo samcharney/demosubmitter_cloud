@@ -1761,23 +1761,52 @@ function drawStats() {
     var width=266;
 
     var layout={
-        height:168,
+        height:163,
         width:300,
         margin: {
-            l: 45,
+            l: 55,
             r: 20,
-            b: 25,
+            b: 34,
             t: 0,
             pad: 0
         },
         yaxis: {
             title: ''
+        },
+        xaxis: {
+            title:'',
+        }
+    }
+
+    var layout_2={
+        height:163,
+        width:300,
+        margin: {
+            l: 55,
+            r: 20,
+            b: 34,
+            t: 0,
+            pad: 0
+        },
+        yaxis: {
+            title: ''
+        },
+        xaxis: {
+            title:'',
+            dtick:10,
+            tick0:0
+        },
+        legend: {
+            "orientation": "h",
+            x: 0.3,
+            y: 1
         }
     }
 
     var result_array = global_continuums_array;
     var input=parseFloat(document.getElementById("stat_input_1").value);
     var cheapestNum=parseInt(document.getElementById("stat_input_2").value);
+    var fastestNum=parseInt(document.getElementById("stat_input_5").value);
     result_array.sort(function (a, b) {
         return a[1] - b[1];
     });
@@ -1817,7 +1846,12 @@ function drawStats() {
         return a[1] - b[1];
     });
 
-    var query_IO = [result_array[global_index+j-1][5].read_cost * result_array[global_index+j-1][5].v, result_array[global_index+j-1][5].update_cost * result_array[global_index+j-1][5].w];
+    var query_IO = [result_array[global_index][5].read_cost * result_array[global_index][5].v, result_array[global_index][5].update_cost * result_array[global_index][5].w];
+
+    var improvement_array=new Array();
+    for(var i=0;i<4;i++) {
+        improvement_array.push(result_array[global_index][7+i].latency / result_array[global_index][1]);
+    }
 
     var data_structure_array=[0,0,0];
 
@@ -1837,6 +1871,52 @@ function drawStats() {
         data_structure_array[j]=((data_structure_array[j]/result_array.length)*100);
     }
 
+    var top_performance=new Array();
+    var color_array_5=new Array();
+    var count_array_5=new Array();
+    var width_array_5=new Array();
+    for(var i=0; i < fastestNum; i++){
+        top_performance.push(result_array[i][1]);
+        color_array_5.push('rgb(130,'+(205-150/cheapestNum*i)+',245)');
+        count_array_5.push(i+1);
+        width_array_5.push(0.2);
+    }
+
+
+    var budget_array_6=new Array();
+    var latency_array_6=new Array();
+    var color_array_6=new Array();
+    result_array.sort(function (a, b) {
+        return a[0] - b[0];
+    });
+    var best_array=getBestDesignEverArray(result_array);
+    for(var i=0; i<best_array.length; i++) {
+        budget_array_6.push(parseFloat(best_array[i][0]/1000).toFixed(2));
+        latency_array_6.push(best_array[i][1]);
+        if(best_array[i][5].if_classic==true){
+            color_array_6.push('rgb(130,195,245)')
+        }else {
+            color_array_6.push('rgb(130,135,245)')
+        }
+    }
+
+    var classic_legend={x: [null],
+        y: [null],
+        marker: { size: 7, symbol: 'circle', color: 'rgb(130,195,245)'},
+        showlegend: true,
+        mode: 'markers',
+        name: "classic",
+        type: 'scatter'
+    };
+
+    var hybrid_legend={x: [null],
+        y: [null],
+        marker: { size: 7, symbol: 'circle', color: 'rgb(130,135,245)'},
+        showlegend: true,
+        mode: 'markers',
+        name: "hybrid",
+        type: 'scatter'
+    };
 
     var trace1 = {
         x: ['AWS', 'GCP', 'Azure'],
@@ -1863,12 +1943,12 @@ function drawStats() {
     };
 
     var trace3 = {
-        x: ['Read','Write'],
+        x: ['read','write'],
         y: [query_IO[0]/(query_IO[0]+query_IO[1])*100,query_IO[1]/(query_IO[0]+query_IO[1])*100],
-        width: ['rgb(130,195,245)','rgb(130,135,245)'],
+        width: [0.5,0.5],
         type: 'bar',
         marker: {
-            color: color_array
+            color: ['rgb(130,195,245)','rgb(130,135,245)']
         },
         hovertemplate:
             "%{y:.3f}%",
@@ -1886,21 +1966,112 @@ function drawStats() {
             "%{y:.2f}%",
     };
 
+    var trace5 = {
+        x: count_array_5,
+        y: top_performance,
+        width: width_array_5,
+        type: 'bar',
+        marker: {
+            color: color_array_5
+        },
+        hovertemplate:
+            "%{y:.2f}h",
+    };
+
+    var trace6 = {
+        x: budget_array_6,
+        y: latency_array_6,
+        marker: { size: 5 ,opacity:0.8 ,symbol: 'circle', color: color_array_6},
+        mode: 'lines+markers',
+        line: {color: 'grey', width: 1},
+        showlegend: false,
+        hovertemplate:
+            "%{y:.2f}h",
+        type: 'scatter'
+    }
+
+    var trace7 = {
+        x: ['RocksDB', 'Wiredtiger', 'Faster-A','Faster-H'],
+        y: improvement_array,
+        width: [0.3,0.3,0.3,0.3],
+        type: 'bar',
+        marker: {
+            color: ['rgb(130,195,245)','rgb(130,175,245)','rgb(130,155,245)','rgb(130,135,245)']
+        },
+        hovertemplate:
+            "%{y:.2f}x",
+    };
+
+    var trace8 = {
+        x: ['min','max'],
+        y: [best_array[0][0],best_array[best_array.length-1][0]],
+        width: [0.5,0.5],
+        type: 'bar',
+        marker: {
+            color: ['rgb(130,195,245)','rgb(130,135,245)']
+        },
+        hovertemplate:
+            "$%{y:.3f}",
+    };
+
+    var trace9 = {
+        x: ['min','max'],
+        y: [best_array[best_array.length-1][1],best_array[0][1]],
+        width: [0.5,0.5],
+        type: 'bar',
+        marker: {
+            color: ['rgb(130,195,245)','rgb(130,135,245)']
+        },
+        hovertemplate:
+            "%{y:.3f}h",
+    };
     var data1 = [trace1];
-    var  data2 = [trace2];
-    var  data3 = [trace3];
-    var  data4 = [trace4];
+    var data2 = [trace2];
+    var data3 = [trace3];
+    var data4 = [trace4];
+    var data5 = [trace5];
+    var data6 = [trace6, classic_legend, hybrid_legend];
+    var data7 = [trace7];
+    var data8 = [trace8];
+    var data9 = [trace9];
 
 
 
-    layout.yaxis.title="design space (%)"
+    layout.yaxis.title="contribution to<br>design space (%)";
+    layout.xaxis.title="cloud providers";
     Plotly.newPlot('stat_graph_1', data1, layout);
+
     layout.yaxis.title="budget ($)"
+    layout.xaxis.title="rank (lower is better)";
     Plotly.newPlot('stat_graph_2', data2, layout);
-    layout.yaxis.title="cost (I/O))"
+
+    layout.yaxis.title="I/O cost <br>per operation"
+    layout.xaxis.title="operation type";
     Plotly.newPlot('stat_graph_3', data3, layout);
-    layout.yaxis.title="data structure (%))"
+
+    layout.yaxis.title="contribution to <br>design space (%)"
+    layout.xaxis.title="class of space";
     Plotly.newPlot('stat_graph_4', data4, layout);
+
+    layout.yaxis.title="Latency (hour)"
+    layout.xaxis.title="rank (lower is better)";
+    Plotly.newPlot('stat_graph_5', data5, layout);
+
+    layout_2.yaxis.title="Latency (hour)"
+    layout_2.xaxis.title=" budget (k)";
+    Plotly.newPlot('stat_graph_6', data6, layout_2);
+
+    layout.yaxis.title="x times improved"
+    layout.xaxis.title="Existing storage engines";
+    Plotly.newPlot('stat_graph_7', data7, layout);
+
+    layout.yaxis.title="cost ($)"
+    layout.xaxis.title="<br>";
+    Plotly.newPlot('stat_graph_8', data8, layout);
+
+    layout.yaxis.title="latency (hour)"
+    layout.xaxis.title="<br>";
+    Plotly.newPlot('stat_graph_9', data9, layout);
 
 }
 

@@ -842,12 +842,12 @@
 
                 <div id="stat" style="position: absolute; opacity: 0; width: 80%; height: 0px; left: 15%; text-align: center; z-index: 0">
                     <div class="stat-block">
-                        <input id="stat_input_1" style="position: absolute; height: 24px; width: 36px; transform: scale(0.7); transform-origin: top left; top: 8px; left: calc(17% - 60px); font-size: 16px; text-align: center" value="50" onchange="drawStats()"/>
+                        <input class="stat-input" id="stat_input_1" style=" top: 7px; left: calc(17% - 65px);" value="50" onchange="drawStats()"/>
                         <span style="width: 100%;">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% &nbsp;cloud provider</span>
                         <div class="stat-graph" id="stat_graph_1"></div>
                     </div>
                     <div class="stat-block">
-                        <input id="stat_input_2" style="position: absolute; height: 24px; width: 36px; transform: scale(0.7); transform-origin: top left; top: 8px; left: calc(17% - 60px); font-size: 16px; text-align: center" value="5" onchange="drawStats()">
+                        <input class="stat-input" id="stat_input_2" style="top: 7px; left: calc(50% - 5px); font-size: 16px; text-align: center" value="5" onchange="drawStats()">
                         <span style="width: 100%;">Cheapest &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; budget</span>
                         <div class="stat-graph" id="stat_graph_2"></div>
                     </div>
@@ -859,11 +859,28 @@
                         <span style="width: 100%;">Data Structure</span>
                         <div class="stat-graph" id="stat_graph_4"></div>
                     </div>
-                    <div class="stat-block"></div>
-                    <div class="stat-block"></div>
-                    <div class="stat-block"></div>
-                    <div class="stat-block"></div>
-                    <div class="stat-block"></div>
+                    <div class="stat-block">
+                        <input class="stat-input" id="stat_input_5" style="top: calc(33% + 10px); left: calc(50% - 45px); font-size: 16px; text-align: center" value="50" onchange="drawStats()">
+                        <span style="width: 100%;">Top &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; performance</span>
+                        <div class="stat-graph" id="stat_graph_5"></div>
+                    </div>
+                    <div class="stat-block">
+                        <span style="width: 100%;">Discovery of hybrid designs</span>
+                        <div class="stat-graph" id="stat_graph_6"></div>
+                    </div>
+                    <div class="stat-block">
+                        <span style="width: 100%;">Performance improvement over existing engines</span>
+                        <div class="stat-graph" id="stat_graph_7"></div>
+                    </div>
+                    <div class="stat-block">
+                        <span style="width: 100%;">Cost Coverage</span>
+                        <div class="stat-graph" id="stat_graph_8"></div>
+                    </div>
+                    <div class="stat-block">
+                        <span style="width: 100%;">Latency Coverage</span>
+                        <div class="stat-graph" id="stat_graph_9"></div>
+                    </div>
+
 
                 </div>
 

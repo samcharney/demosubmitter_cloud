@@ -1124,16 +1124,16 @@
 }
 
 .stat-block {
-    display: inline-block;
-    margin-bottom: 4px;
-    padding-top: 4px;
-    width: 33%;
-    height: 33%;
-    border: #6699CC solid 0.5px;
-    border-radius: 12px;
-    background-color: white;
-    vertical-align: top;
-}
+     display: inline-block;
+     margin-bottom: 4px;
+     padding-top: 4px;
+     width: 33%;
+     height: 33%;
+     border: #6699CC solid 0.5px;
+     border-radius: 12px;
+     background-color: white;
+     vertical-align: top;
+ }
 
 
 .stat-graph{
@@ -1141,5 +1141,15 @@
     padding: 2px;
     width: 310px;
     height: calc( 80% );
-    margin-left: calc(50% - 155px);
+    margin-left: calc(50% - 170px);
+}
+
+.stat-input{
+    position: absolute;
+    height: 24px;
+    width: 36px;
+    transform: scale(0.8);
+    transform-origin: top left;
+    font-size: 16px;
+    text-align: center
 }
