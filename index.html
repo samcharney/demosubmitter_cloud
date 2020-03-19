@@ -482,7 +482,7 @@
                     </div>
                     <div id="performance-setting" class="collapse multi-collapse">
 
-                        <form  style=" text-align: left; height:40px; width:200px;position: relative; left:-20px;padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 0px 6px" ">
+                        <form  style=" text-align: left; height:40px; width:200px;position: relative; left:-20px;padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 0px 6px">
                             <label class="radiobutton" style=""><input id="performance_conscious_checkbox" type="radio" name="radio_3" value="performance-conscious" />performance-conscious
                                 <span class="check_mark"></span>
                             </label>
@@ -730,28 +730,28 @@
                     <div class="tab_l down tooltip2" id="interactive_tab_1" name="interactive_tab" style="width:33% ;border-right: 0px; ">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:15;  ">
                             <img style="width:50px" class="img-responsive img-centered" src="images//normal.png">
-                        </div>Cosine Config vs Existing Systems<span class="tooltiptext_mode">The basic mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span>
+                        </div>Cosine Configuration vs Existing Systems<span class="tooltiptext_mode">This mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span>
                     </div><div class="tab_l tooltip2" id="interactive_tab_2" name="interactive_tab" style="width:34% ;border-right: 1px;">
                     <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:calc(33% - 10px);  border-radius:30px; padding:8px; z-index:10;">
                         <img style="width:44px" class="img-responsive img-centered" src="images//hand.png">
                     </div>Interactive What-If Design
-                    </div><div name="interactive_tab" id="interactive_tab_3" class="tab_l tooltip2" style="width:33%;border-left-color: #7F89FF">Statistic Analysis
+                    </div><div name="interactive_tab" id="interactive_tab_3" class="tab_l tooltip2" style="width:33%;border-left-color: #7F89FF">Statistical Analysis
                     <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:calc(67% - 10px);  border-radius:30px; padding:8px; z-index:10">
                         <img style="width:44px" class="img-responsive img-centered" src="images//stat.png">
                     </div>
-                    <span class="tooltiptext_mode" style="width: 400px; left: calc(75% - 200px)">The interactive mode enables users to ask diverse what-if questions and check resulting configurations on the fly. It also supports analysis of statistics over the entire search space of the input workload.</span>
+                    <span class="tooltiptext_mode" style="width: 400px; left: calc(67%)">This mode enables users to ask diverse what-if questions and check resulting configurations on the fly. It also supports analysis of statistics over the entire search space of the input workload.</span>
                 </div>
                 </div>
 
                 <div id="stat" style="position: absolute; opacity: 0; width: 80%; height: 0px; left: 15%; text-align: center; z-index: 0">
                     <div class="stat-block">
-                        <input class="stat-input" id="stat_input_1" style=" top: 7px; left: calc(17% - 63px);" value="50" onchange="drawStats()"/>
-                        <span style="width: 100%;">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% &nbsp;cloud provider</span>
+                        <input class="stat-input" id="stat_input_1" style=" top: 7px; left: calc(17% - 65px);" value="50" onchange="drawStats()"/>
+                        <span style="width: 100%;">Top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;% &nbsp;cloud provider</span>
                         <div class="stat-graph" id="stat_graph_1"></div>
                     </div>
                     <div class="stat-block">
-                        <input class="stat-input" id="stat_input_2" style="top: 7px; left: calc(50% - 7px); font-size: 16px; text-align: center" value="5" onchange="drawStats()">
-                        <span style="width: 100%;">Cheapest &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; budget</span>
+                        <input class="stat-input" id="stat_input_2" style="top: 7px; left: calc(50% - 70px); font-size: 16px; text-align: center" value="5" onchange="drawStats()">
+                        <span style="width: 100%;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cheapest  budget</span>
                         <div class="stat-graph" id="stat_graph_2"></div>
                     </div>
                     <div class="stat-block">
@@ -776,11 +776,11 @@
                         <div class="stat-graph" id="stat_graph_7"></div>
                     </div>
                     <div class="stat-block">
-                        <span style="width: 100%;">Cost Coverage</span>
+                        <span style="width: 100%;">Cost coverage</span>
                         <div class="stat-graph" id="stat_graph_8"></div>
                     </div>
                     <div class="stat-block">
-                        <span style="width: 100%;">Latency Coverage</span>
+                        <span style="width: 100%;">Latency coverage</span>
                         <div class="stat-graph" id="stat_graph_9"></div>
                     </div>
 
@@ -825,7 +825,7 @@
                             </div>
                             <div id="question_navigation" style="width:29px; height:1px; top:45px; left:-160px; background-color:white; color: black; position:absolute; padding: 0px; ">
                                 <div style="position: absolute; top: -30px; left:-5px; font-size: 14px; width: 160px"><b>Design Steps</b></div>
-                                <div class="guide" style="">1<div class="guide_text_wider" style="">Select a what-if question or a statistical query from the question panel</div></div>
+                                <div class="guide" style="">1<div class="guide_text_wider" style="">Select a what-if question from the question panel</div></div>
                                 <div  style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
                                 <div class="guide" style="">2<div class="guide_text_wider" style="">Click the button<br>Check out the new results in the interaction panel</div></div>
                                 <div  style="height:100px; width:1px ;background-color: #7379DE; margin-left: 49%; "></div>
