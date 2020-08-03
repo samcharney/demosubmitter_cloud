@@ -23,6 +23,8 @@
     <!-- Custom JS -->
     <script src="js/lsm_bush_in_action.js"></script>
     <script src="js/autoRerun.js"></script>
+    <script src="js/uploadDataFile.js"></script>
+    <script src="js/uploadWorkloadFile.js"></script>
 
     <!-- Font Awesome -->
     <script src="https://use.fontawesome.com/3227f266ec.js"></script>
@@ -210,7 +212,7 @@
                 <div style="position: absolute; top: -46px; left:-5px; font-size: 14px; width: 160px"><b>Design Steps</b></div>
                 <div class="guide" style="">1<div class="guide_text" style="">Set inputs</div></div>
                 <div id="guide_2" style="height:48px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
-                <div class="guide" style="">2<div class="guide_text" style="">Check SLA Settings</div></div>
+                <div class="guide" style="">2<div class="guide_text" style="">Set SLA</div></div>
                 <div id="guide_3" style="height:48px; width:1px ;background-color: #7379DE; margin-left: 49%"></div>
                 <div class="guide" style="">3<div class="guide_text" style="">Click the button<br>to continue</div></div>
                 <div id="guide_4" style="height:310px; width:1px ;background-color: #7379DE; margin-left: 49%; display: none"></div>
@@ -342,6 +344,23 @@
                                 <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Key size in bytes (e.g., 8).</span>Key size (bytes) </span>
                                 <input id="F" type="text" class="form-control" aria-label="Key size (bytes)" placeholder="Key size in bytes (e.g., 8)" style="text-align:right" onchange="re_run(event, 'dataset_input')" autocomplete="false"/>
                             </div>
+                            <!-- Message -->
+                            <div class="guide_text_inputs" >
+                                You can manually enter data specifications or alternatively upload a data file. A sample file is <a href="data/dataSampleFile.txt" style="color: blue;" download>here</a>.
+                            </div>
+                            <!-- Upload data file -->
+                            <div class="input-group">
+                                <input type="file" id="data-input" class="visually-hidden" onchange="uploadDataFile(event)">
+                                <label for="data-input" class ="cloud_button_small">Upload data file</label>
+                                <label id="data-input-file-name"></label>
+                                <br>
+                                <label id="data-input-file-invalid" style="color: red;"></label>
+                            </div>
+                            <!-- Loading indicator -->
+                            <div id="loading_indicator_1" class="loading-indicator">
+                                <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                                <div id="loading_data_percentage" class="loading-indicator-percentage">0%</div>
+                            </div>
                     </div>
                 </div>
 
@@ -427,6 +446,23 @@
                         <div class="input-group" style="display: none">
                             <span class="input-group-addon"><span data-tooltip="The number of unique entries in the target key range" data-tooltip-position="bottom"> Target Range Size </span></span>
                             <input id="s" type="number" class="form-control" aria-label="Proportion" placeholder=" s (e.g., 2048)"  style="text-align:right;" onchange="re_run(event, 'input4')" onwheel="re_run(event, 'workload_input')"/>
+                        </div>
+                        <!-- Message -->
+                        <div class="guide_text_inputs" >
+                            You can manually enter workload specifications or alternatively upload a workload file. A sample file is <a href="data/workloadSampleFile.txt" style="color: blue;" download>here</a>.
+                        </div>
+                        <!-- Upload workload file -->
+                        <div class="input-group">
+                            <input type="file" id="workload-input" class="visually-hidden" onchange="uploadWorkloadFile(event)">
+                            <label for="workload-input" class ="cloud_button_small">Upload workload file</label>
+                            <label id="workload-input-file-name"></label>
+                            <br>
+                            <label id="workload-input-file-invalid" style="color: red;"></label>
+                        </div>
+                        <!-- Loading indicator -->
+                        <div id="loading_indicator_2" class="loading-indicator">
+                            <div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                            <div id="loading_workload_percentage" class="loading-indicator-percentage">0%</div>
                         </div>
                     </div>
                     <!--
@@ -725,21 +761,21 @@
 
 
              </div>
-                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left:19%; width: 76%; font-size: 16px; margin-bottom: 60px; display: none">
+                <div id="interactive_mode_tab" style="display:inline-block; position: relative; top: 0px; left: calc(50% - 490px); width: 1200px; font-size: 16px; margin-bottom: 60px; display: none">
                     <div id="interactive_mode_text" style="margin-bottom: 8px; position: relative;left: -20px; display: none">Interactive Mode: Off</div>
                     <div class="tab_l down tooltip2" id="interactive_tab_1" name="interactive_tab" style="width:33% ;border-right: 0px; ">
                         <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:-10px;  border-radius:30px; padding:5px; z-index:15;  ">
                             <img style="width:50px" class="img-responsive img-centered" src="images//normal.png">
-                        </div>Cosine Configuration vs Existing Systems<span class="tooltiptext_mode">This mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span>
+                        </div>Cosine Configuration vs Existing Systems<span class="tooltiptext_mode" style="left:40px">This mode only shows the optimal design configuration and enables comparison with existing storage engines. It does not allow interactive questioning.</span>
                     </div><div class="tab_l tooltip2" id="interactive_tab_2" name="interactive_tab" style="width:34% ;border-right: 1px;">
                     <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:calc(33% - 10px);  border-radius:30px; padding:8px; z-index:10;">
                         <img style="width:44px" class="img-responsive img-centered" src="images//hand.png">
-                    </div>Interactive What-If Design
+                    </div>Interactive What-If Design<span class="tooltiptext_mode" style="width: 230px; left: 480px">This mode enables users to ask diverse what-if questions and check resulting configurations on the fly. </span>
                     </div><div name="interactive_tab" id="interactive_tab_3" class="tab_l tooltip2" style="width:33%;border-left-color: #7F89FF">Statistical Analysis
                     <div style="width:60px; height:60px; position:absolute; bottom: -10px; left:calc(67% - 10px);  border-radius:30px; padding:8px; z-index:10">
                         <img style="width:44px" class="img-responsive img-centered" src="images//stat.png">
-                    </div>
-                    <span class="tooltiptext_mode" style="width: 400px; left: calc(67%)">This mode enables users to ask diverse what-if questions and check resulting configurations on the fly. It also supports analysis of statistics over the entire search space of the input workload.</span>
+                    </div><span class="tooltiptext_mode" style="width: 210px; left: calc(67% + 100px)">This mode supports analysis of statistics over the entire search space of the input workload.</span>
+
                 </div>
                 </div>
 

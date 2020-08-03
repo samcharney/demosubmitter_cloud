@@ -37,6 +37,7 @@
     margin:3px;
     padding: 3px;
     height:30px;
+    width: 98%;
 }
 
 .lsm_button {
@@ -247,6 +248,15 @@
     animation: 1s;
 }
 
+.visually-hidden {
+    position: absolute;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+}
+
+.cloud_button_small,
 .cloud_button {
     padding: 19px 15px;
     font-size: 22px;
@@ -267,11 +277,21 @@
     transition-duration: 0.2s;
 }
 
+.cloud_button_small {
+    padding: 10px 10px;
+    font-size: 13px;
+    font-weight: normal;
+    width: 80%;
+    height: 30px;  
+}
+
+.cloud_button_small:hover,
 .cloud_button:hover {
     background: #7379DE;
     color: white;
 }
 
+.cloud_button_small:active,
 .cloud_button:active {
     background-color: #7379DE; background-image: -webkit-gradient(linear, left top, left bottom, from(#7379DE), to(#7F89FF));
     background-image: -webkit-linear-gradient(top, #7379DE, #7F89FF);
@@ -893,6 +913,34 @@
     color: black;
     font-style: italic;
 //-webkit-animation: blin 0.2s infinite linear;
+}
+
+.guide_text_inputs{
+    position: relative;
+    left: 5%;
+    width: 90%;
+    font-size: 13px;
+    opacity: 0.45;
+    color: black;
+    font-style: italic;
+    //-webkit-animation: blin 0.2s infinite linear;
+}
+
+.loading-indicator {
+    position: relative; 
+    top: -40px; 
+    transform: scale(0.7); 
+    opacity: 0;
+}
+
+.loading-indicator-percentage {
+    width: 64px; 
+    height: 20px;
+    font-size: 15px;
+    position: relative;
+    bottom: 24px; 
+    text-align: center;
+    margin-left: calc(50% - 20px);
 }
 
 .lds-roller {
