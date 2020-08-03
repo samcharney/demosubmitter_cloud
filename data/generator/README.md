@@ -1,4 +1,3 @@
-# Subarna
 This file can be used both for generating data and workload of the demo. 
 
 You can compile with compile with g++ -O3 -o workload workload.cc 
