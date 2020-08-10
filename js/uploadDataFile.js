@@ -10,7 +10,7 @@ function uploadDataFile(event) {
     document.getElementById("data-input-file-name").innerHTML = "loading... " + selectedFile.name;
     
     document.getElementById("data-input-file-invalid").innerHTML = "";
-    document.getElementById("loading_data_percentage").innerHTML = "0%";
+    document.getElementById("loading_data_percentage").innerHTML = "0.1%";
 
     // Show indicator
     document.getElementById("loading_indicator_1").style.opacity = 1;
@@ -35,6 +35,7 @@ function clearData() {
 }
 
 function onUploadDataFileWorkerMessage(e) {
+    KeyHash = e.data.keyHash;
     switch (e.data.msg) {
         case 'percentage':
             displayDataPercentage(e.data);
