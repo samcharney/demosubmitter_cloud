@@ -29,23 +29,37 @@ function loadData(e, lines) {
 
             var entry = line.split(" ");
 
-            if(entry.length != 2 || entry.some(isNaN)) {
+            if(!(entry.length == 2 && !entry.some(isNaN)) &&
+               !(entry.length == 3 && !(isNaN(entry[1]))  && !(isNaN(entry[2])))) {
                 entries = "";
                 isValid = false;
                 break;
             }
 
-            var key = Number(entry[0]);
-            var value = Number(entry[1]);
+            var key, value;
+
+            if(entry.length == 2) {
+                key = Number(entry[0]);
+                value = Number(entry[1]);
+            } else {
+                key = Number(entry[1]);
+                value = Number(entry[2]);
+            }
 
             maxKey = Math.max(maxKey, key);
             maxValue = Math.max(maxValue, value);
 
-            
-            keyHash["" + key] = true;
-        }          
+            keyHash["" + key] = 0;
+            // if(undefined !== keyHash["" + key]) {
+            //     keyHash["" + key] += 1;
+            // } else {
+            //     keyHash["" + key] = 0;
+            // }
+        }         
 
         var per = Math.ceil((i+1) / lines.length * 1000) / 10;
+        per = Math.max(0.1, per);
+        per = Math.min(99.7, per);
 
         if(per != percentage) {
             percentage = per;
@@ -62,7 +76,7 @@ function loadData(e, lines) {
     }
     
     // Update the inputs
-    postMessage({msg: "inputs", entries: entries, entrySize: entrySize, keySize: keySize, fileName: e.data.selectedFile.name});
+    postMessage({msg: "inputs", entries: entries, entrySize: entrySize, keySize: keySize, fileName: e.data.selectedFile.name, keyHash: keyHash});
 }
 
 onmessage = function(e) {

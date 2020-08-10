@@ -9,7 +9,7 @@ function uploadWorkloadFile(event) {
     document.getElementById("workload-input-file-name").innerHTML = "loading... " + selectedFile.name;
     
     document.getElementById("workload-input-file-invalid").innerHTML = "";
-    document.getElementById("loading_workload_percentage").innerHTML = "0%";
+    document.getElementById("loading_workload_percentage").innerHTML = "0.1%";
 
     // Show indicator
     document.getElementById("loading_indicator_2").style.opacity = 1;
