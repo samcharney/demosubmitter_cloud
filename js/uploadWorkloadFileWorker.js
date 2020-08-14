@@ -12,8 +12,6 @@ function loadWorkload(e, lines) {
     var pointLookups = 0;
     var zeroResultPointLookups = 0;
     var writes = 0;
-
-    var maxKey = -2147483648;
     
     var isValid = true;
     var pointLookupsPercent = "";
@@ -21,8 +19,6 @@ function loadWorkload(e, lines) {
     var writesPercent = "";
 
     var keyHash = Object.assign({}, e.data.keyHash);
-
-    var workloadKeyHash = new Object();
 
     var percentage = 0;
 
@@ -33,48 +29,22 @@ function loadWorkload(e, lines) {
             queries += 1;
 
             var query = line.split(" ");
-            
+
             if(query.length == 3 && query[0] == "p" && !isNaN(query[1]) && !isNaN(query[2])) {
                 var key = query[1];
-                if(undefined == keyHash["" + key]) {
-                    keyHash["" + key] = 0;
+                if (undefined == keyHash["" + key]) {
+                    keyHash["" + key] = 1;
+                } else {
+                    keyHash["" + key] += 1;
                 }
-                // if(undefined !== keyHash["" + key]) {
-                //     keyHash["" + key] += 1;
-                // } else {
-                //     keyHash["" + key] = 0;
-                // }
                 writes += 1;
-                maxKey = Math.max(maxKey, key);
             } else if(query.length == 2 && query[0] == "g" && !isNaN(query[1])) {
                 var key = query[1];
                 if(undefined !== keyHash["" + key]) {
                     pointLookups += 1;
-                    keyHash["" + key] += 1;
                 } else {
                     zeroResultPointLookups += 1;
-                    if(undefined !== workloadKeyHash["" + key]) {
-                        workloadKeyHash["" + key] += 1;
-                    } else {
-                        workloadKeyHash["" + key] = 1;
-                    }
                 }
-                maxKey = Math.max(maxKey, key);
-                // if(undefined !== keyHash["" + key] && undefined == workloadKeyHash["" + key]) {
-                //     pointLookups += 1;
-                //     workloadKeyHash["" + key] = keyHash["" + key] + 1;
-                // } 
-                // else if(undefined !== keyHash["" + key] && undefined !== workloadKeyHash["" + key]) {
-                //     pointLookups += 1;
-                //     workloadKeyHash["" + key] += 1;
-                // } 
-                // else if(undefined == keyHash["" + key] && undefined == workloadKeyHash["" + key]) {
-                //     zeroResultPointLookups += 1;
-                //     workloadKeyHash["" + key] = 1;
-                // } else {
-                //     zeroResultPointLookups += 1;
-                //     workloadKeyHash["" + key] += 1;
-                // }
             } else {
                 queries = "";
                 isValid = false;
@@ -100,52 +70,45 @@ function loadWorkload(e, lines) {
         postMessage({msg: "invalid"});
     }
 
-    U = maxKey * 100;
-    var workloadFrequency = calcFrequency(keyHash, workloadKeyHash);
-    U_1 = workloadFrequency.special.frequency;
-    U_2 = workloadFrequency.regular.frequency;
-
-    console.log(JSON.stringify(workloadFrequency));
-    console.log("U: " + U + " U_1: " + U_1 + " U_2: " + U_2)
-
     // Update the inputs
     postMessage({msg: "inputs", queries: queries, pointLookupsPercent: pointLookupsPercent, zeroResultPointLookupsPercent: zeroResultPointLookupsPercent, writesPercent: writesPercent, fileName: e.data.selectedFile.name});
-}
-
-function calcFrequency(keyHash, workloadKeyHash) {
-    var workloadFrequency = { 
-        regular: { frequency: 0, percent: 0 },
-        special: { frequency: 0, percent: 0 },
-        total: { frequency: 0, percent: 0 }
-    }
-    countFrequency(keyHash, workloadFrequency);
-    countFrequency(workloadKeyHash, workloadFrequency);
-    
-    percentFrequency(workloadFrequency, workloadFrequency.regular);
-    percentFrequency(workloadFrequency, workloadFrequency.special);
-    percentFrequency(workloadFrequency, workloadFrequency.total);
-
-    return workloadFrequency;
-}
-
-function countFrequency(keyHash, workloadFrequency) {
-    for (const property in keyHash) {
-        var frequency = keyHash[property];
-        workloadFrequency.total.frequency += frequency;
-        if(frequency == 1) {
-            workloadFrequency.regular.frequency += frequency;
-        } else if (frequency > 1) {
-            workloadFrequency.special.frequency += frequency;
-        } else {
-            workloadFrequency.total.frequency -= frequency;
-        }
-    }
-}
-
-function percentFrequency(workloadFrequency, row) {
-    row.percent = Math.round(row.frequency / workloadFrequency.total.frequency * 10000) / 100;
 }
 
 onmessage = function(e) {
     loadWorkloadFile(e);
 }
+
+// Functions that could be used in the future:
+// function calcFrequency(keyHash, workloadKeyHash) {
+//     var workloadFrequency = { 
+//         regular: { frequency: 0, percent: 0 },
+//         special: { frequency: 0, percent: 0 },
+//         total: { frequency: 0, percent: 0 }
+//     }
+//     countFrequency(keyHash, workloadFrequency);
+//     countFrequency(workloadKeyHash, workloadFrequency);
+    
+//     percentFrequency(workloadFrequency, workloadFrequency.regular);
+//     percentFrequency(workloadFrequency, workloadFrequency.special);
+//     percentFrequency(workloadFrequency, workloadFrequency.total);
+
+//     return workloadFrequency;
+// }
+
+// function countFrequency(keyHash, workloadFrequency) {
+//     for (const property in keyHash) {
+//         var frequency = keyHash[property];
+//         workloadFrequency.total.frequency += frequency;
+//         if(frequency == 1) {
+//             workloadFrequency.regular.frequency += frequency;
+//         } else if (frequency > 1) {
+//             workloadFrequency.special.frequency += frequency;
+//         } else {
+//             workloadFrequency.total.frequency -= frequency;
+//         }
+//     }
+// }
+
+// function percentFrequency(workloadFrequency, row) {
+//     row.percent = Math.round(row.frequency / workloadFrequency.total.frequency * 10000) / 100;
+// }
