@@ -1,5 +1,4 @@
-var KeyHash = new Object();
-var uploadDataFileWorker = new Worker('js/uploadDataFileWorker.js');
+var uploadDataWorkloadWorker = new Worker('js/uploadDataWorkloadWorker.js');
 
 function uploadDataFile(event) {
     // Clear data
@@ -15,14 +14,9 @@ function uploadDataFile(event) {
     // Show indicator
     document.getElementById("loading_indicator_1").style.opacity = 1;
     
-    // Clear hash
-    KeyHash = new Object(); 
+    uploadDataWorkloadWorker.addEventListener('message', onUploadDataFileWorkerMessage);
 
-    uploadDataFileWorker = new Worker('js/uploadDataFileWorker.js');
-
-    uploadDataFileWorker.addEventListener('message', onUploadDataFileWorkerMessage);
-
-    uploadDataFileWorker.postMessage({selectedFile: selectedFile, keyHash: KeyHash});
+    uploadDataWorkloadWorker.postMessage({from: "data", selectedFile: selectedFile});
 }
 
 function clearData() {
@@ -35,19 +29,20 @@ function clearData() {
 }
 
 function onUploadDataFileWorkerMessage(e) {
-    KeyHash = e.data.keyHash;
-    switch (e.data.msg) {
-        case 'percentage':
-            displayDataPercentage(e.data);
-            break;
-        case 'invalid':
-            displayDataError();
-            break;
-        case 'inputs':
-            displayDataInputs(e.data);
-            break;
-        default:
-            break;
+    if(e.data.to == "data") {
+        switch (e.data.msg) {
+            case 'percentage':
+                displayDataPercentage(e.data);
+                break;
+            case 'invalid':
+                displayDataError();
+                break;
+            case 'inputs':
+                displayDataInputs(e.data);
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -67,9 +62,15 @@ function displayDataInputs(data) {
     document.getElementById("E").value = data.entrySize;
     document.getElementById("F").value = data.keySize;
     document.getElementById("data-input-file-name").innerHTML = data.fileName;
+    
+    U = data.uParameters.U;
+    U_1 = data.uParameters.U_1;
+    U_2 = data.uParameters.U_2;
+    p_put = data.uParameters.p_put;
 
     // Hide indicator
     document.getElementById("loading_indicator_1").style.opacity = 0;
-
-    uploadDataFileWorker.terminate();
+    
+    // Clear input file
+    document.getElementById("data-input").value = "";
 }

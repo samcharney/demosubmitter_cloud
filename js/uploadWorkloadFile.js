@@ -1,5 +1,3 @@
-var uploadWorkloadFileWorker = new Worker('js/uploadWorkloadFileWorker.js');
-
 function uploadWorkloadFile(event) {
     // Clear workload
     clearWorkload();
@@ -14,11 +12,9 @@ function uploadWorkloadFile(event) {
     // Show indicator
     document.getElementById("loading_indicator_2").style.opacity = 1;
 
-    uploadWorkloadFileWorker = new Worker('js/uploadWorkloadFileWorker.js');
+    uploadDataWorkloadWorker.addEventListener('message', onUploadWorkloadFileWorkerMessage);
 
-    uploadWorkloadFileWorker.addEventListener('message', onUploadWorkloadFileWorkerMessage);
-
-    uploadWorkloadFileWorker.postMessage({selectedFile: selectedFile, keyHash: KeyHash});
+    uploadDataWorkloadWorker.postMessage({from: "workload", selectedFile: selectedFile});
 }
 
 function clearWorkload() {
@@ -33,18 +29,20 @@ function clearWorkload() {
 }
 
 function onUploadWorkloadFileWorkerMessage(e) {
-    switch (e.data.msg) {
-        case 'percentage':
-            displayWorkloadPercentage(e.data);
-            break;
-        case 'invalid':
-            displayWorkloadError();
-            break;
-        case 'inputs':
-            displayWorkloadInputs(e.data);
-            break;
-        default:
-            break;
+    if(e.data.to == "workload") {
+        switch (e.data.msg) {
+            case 'percentage':
+                displayWorkloadPercentage(e.data);
+                break;
+            case 'invalid':
+                displayWorkloadError();
+                break;
+            case 'inputs':
+                displayWorkloadInputs(e.data);
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -65,9 +63,12 @@ function displayWorkloadInputs(data) {
     document.getElementById("r").value = data.zeroResultPointLookupsPercent;
     document.getElementById("w").value = data.writesPercent;
     document.getElementById("workload-input-file-name").innerHTML = data.fileName;
+    
+    p_get = data.uParameters.p_get;
 
     // Hide indicator
     document.getElementById("loading_indicator_2").style.opacity = 0;
 
-    uploadWorkloadFileWorker.terminate();
+    // Clear input file
+    document.getElementById("workload-input").value = "";
 }
