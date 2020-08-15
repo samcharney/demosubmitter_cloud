@@ -83,6 +83,7 @@ function loadData(e, lines) {
         frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
     }
     frequencyKeys.sort(function(a,b){return a.key - b.key;});
+    
     var uParameters = highestFrequencyPartitions(frequencyKeys);
     uParameters['U'] = maxKey * 100;
 
@@ -116,8 +117,8 @@ function loadData(e, lines) {
 function highestFrequencyPartitions(entries) {
     var min = entries[0].key;
     var max = entries[entries.length - 1].key;
-    var partitionRange = 1000;
-    var M = (max - min)/partitionRange;
+    var PARTITION_RANGE = 1000;
+    var N = (max - min)/PARTITION_RANGE;
     var partitions = [];
     var entriesIndex = 0;
 
@@ -130,10 +131,10 @@ function highestFrequencyPartitions(entries) {
     const END_POINT = 1;
     const NUMBER_KEYS = 2;
     const TOTAL_FREQUENCY = 3;
-    for(var i = 0; i < M - 1; i++) {
+    for(var i = 0; i < N - 1; i++) {
         partitions[i] = [0, 0, 0, 0];
-        var startPoint = i * partitionRange + min;
-        var endPoint = (i + 1) * partitionRange + min;
+        var startPoint = i * PARTITION_RANGE + min;
+        var endPoint = (i + 1) * PARTITION_RANGE + min;
         var numberKeys = 0;
         var totalFrequency = 0;
         while(entriesIndex < entries.length && startPoint <= entries[entriesIndex].key && entries[entriesIndex].key  < endPoint) {
@@ -146,9 +147,9 @@ function highestFrequencyPartitions(entries) {
         partitions[i][NUMBER_KEYS] = numberKeys;
         partitions[i][TOTAL_FREQUENCY] = totalFrequency;
     }
-    partitions[M - 1] = [0, 0, 0, 0];
-    var startPoint = (M - 1) * partitionRange + min;
-    var endPoint = M * partitionRange + min;
+    partitions[N - 1] = [0, 0, 0, 0];
+    var startPoint = (N - 1) * PARTITION_RANGE + min;
+    var endPoint = N * PARTITION_RANGE + min;
     var numberKeys = 0;
     var totalFrequency = 0;
     while(entriesIndex < entries.length) {
@@ -156,29 +157,29 @@ function highestFrequencyPartitions(entries) {
         totalFrequency += entries[entriesIndex].frequency;
         entriesIndex++; 
     }
-    partitions[M - 1][START_POINT] = startPoint;
-    partitions[M - 1][END_POINT] = endPoint;
-    partitions[M - 1][NUMBER_KEYS] = numberKeys;
-    partitions[M - 1][TOTAL_FREQUENCY] = totalFrequency;
+    partitions[N - 1][START_POINT] = startPoint;
+    partitions[N - 1][END_POINT] = endPoint;
+    partitions[N - 1][NUMBER_KEYS] = numberKeys;
+    partitions[N - 1][TOTAL_FREQUENCY] = totalFrequency;
 
     partitions = removeEmptyPartitions(partitions);
 
     // Sort array by average frequencies
     partitions.sort(function(a,b){return (b[TOTAL_FREQUENCY] / b[NUMBER_KEYS]) - (a[TOTAL_FREQUENCY] / a[NUMBER_KEYS]);});
 
-    var avgAvg = 0;
+    var avgAvgFrequency = 0;
     for(var partition of partitions) {
         var avg = (partition[TOTAL_FREQUENCY] / partition[NUMBER_KEYS]);
-        avgAvg += avg;
+        avgAvgFrequency += avg;
     }
-    avgAvg /= M;
+    avgAvgFrequency /= N;
 
     var start = max;
     var end = min;
     var specialKeys = 0;
     var avgFrequency = partitions[0][TOTAL_FREQUENCY] / partitions[0][NUMBER_KEYS];
-    var minFrequency = 1.5 * avgAvg;
-    for(var i = 0; i < partitions.length && avgFrequency > minFrequency; i++) {
+    var thresholdFrequency = 1.5 * avgAvgFrequency;
+    for(var i = 0; i < partitions.length && avgFrequency > thresholdFrequency; i++) {
         start = Math.min(start, partitions[i][START_POINT]);
         end = Math.max(end, partitions[i][END_POINT]);
         specialKeys += partitions[i][TOTAL_FREQUENCY];
@@ -191,9 +192,10 @@ function highestFrequencyPartitions(entries) {
 }
 
 function removeEmptyPartitions(partitions) {
+    const NUMBER_KEYS = 2;
     var newPartitions = [];
     for(var partition of partitions) {
-        if(partition[2] != 0) {
+        if(partition[NUMBER_KEYS] != 0) {
             newPartitions.push(partition);
         }
     }
@@ -222,7 +224,6 @@ function loadWorkload(e, lines) {
     var writesPercent = "";
 
     var keyHash = KeyHash;
-
     var specialGets = 0;
     var totalGets = 0;
 
