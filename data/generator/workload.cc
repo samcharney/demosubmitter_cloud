@@ -29,7 +29,6 @@ using namespace std;
 unsigned long long min_U = -2147483648;
 unsigned long long max_U = 2147483647;
 unsigned long long N = 10000000;
-/// unsigned long long N = 1000000; ///
 FILE *fp_bulk = fopen("bulkwrite.txt", "w");
 FILE *fp_wl = fopen("workload.txt", "w");
 std::vector<unsigned long long> keys;
@@ -40,8 +39,6 @@ unsigned long long no_of_ranges = 0;
 unsigned long long range_length = 8000000;
 unsigned long long U1 = 100000;
 unsigned long long U2 = 100000000;
-/// unsigned long long U1 = 10000; ///
-/// unsigned long long U2 = 10000000; ///
 double pput = 0.5;
 double pget = 0.5;
 std::vector<unsigned long long>* special_keys_vec = new std::vector<unsigned long long>; 
@@ -168,9 +165,6 @@ void fill_skew_bulk_scattered_optimized(unsigned long long number_queries, unsig
     std::uniform_int_distribution<unsigned long long> unif_normal_distribution(U1,U2);
     std::binomial_distribution<unsigned long long> bern_distribution_pput(1,pput);
     std::pair<std::set<unsigned long long>::iterator,bool> ret;
-    /// std::cout << "U1: " << U1 << std::endl; ///
-    int specialIndex = 0; ///
-    int normalIndex = 0; ///
     for (int64_t i = 0; i < number_queries; i++) {
         unsigned long long key = 0;
         int type = bern_distribution_pput(bern_generator);
@@ -182,8 +176,6 @@ void fill_skew_bulk_scattered_optimized(unsigned long long number_queries, unsig
             if (ret.second == true) {
                 normal_keys_vec->push_back(key);
             }
-            /// std::cout << key << ": normal" << std::endl; ///
-            normalIndex++; ///
         }
         else {
             /// key = (unsigned long long) (scale_factor * ((int) unif_special_distribution(unif_generator)));
@@ -192,8 +184,6 @@ void fill_skew_bulk_scattered_optimized(unsigned long long number_queries, unsig
             if (ret.second == true) {
                 special_keys_vec->push_back(key);
             }
-            /// std::cout << key << ": special" << std::endl; ///
-            specialIndex++; ///
         }
         dist_keys[i] = key;
         if(print)
@@ -205,8 +195,6 @@ void fill_skew_bulk_scattered_optimized(unsigned long long number_queries, unsig
             fprintf (fp_bulk, "b %llu %llu\n",key, key);
         }
     }
-    std::cout << normalIndex << ": normal" << std::endl; ///
-    std::cout << specialIndex << ": special" << std::endl; ///
 }
 void fill_skew_put_scattered_optimized(unsigned long long number_queries, unsigned long long U1, unsigned long long U2, double pput, double pget, bool print, bool write_to_file) {
     unsigned long long* dist_keys = new unsigned long long[number_queries];
