@@ -1,5 +1,9 @@
 var uploadDataWorkloadWorker = new Worker('js/uploadDataWorkloadWorker.js');
 
+/**
+ * Get selected data file, show indicator, and call worker to calculate data inputs
+ * @param {*} event 
+ */
 function uploadDataFile(event) {
     // Clear data
     clearData();
@@ -14,11 +18,14 @@ function uploadDataFile(event) {
     // Show indicator
     document.getElementById("loading_indicator_1").style.opacity = 1;
     
+    // Call worker
     uploadDataWorkloadWorker.addEventListener('message', onUploadDataFileWorkerMessage);
-
     uploadDataWorkloadWorker.postMessage({from: "data", selectedFile: selectedFile});
 }
 
+/**
+ * Clear data inputs: N, E, F
+ */
 function clearData() {
     var entries = "";
     var keySize = "";
@@ -28,6 +35,10 @@ function clearData() {
     document.getElementById("F").value = keySize;
 }
 
+/**
+ * Recive data from worker and display data or error
+ * @param {*} e 
+ */
 function onUploadDataFileWorkerMessage(e) {
     if(e.data.to == "data") {
         switch (e.data.msg) {
@@ -63,10 +74,13 @@ function displayDataInputs(data) {
     document.getElementById("F").value = data.keySize;
     document.getElementById("data-input-file-name").innerHTML = data.fileName;
     
-    U = data.uParameters.U;
-    U_1 = data.uParameters.U_1;
-    U_2 = data.uParameters.U_2;
-    p_put = data.uParameters.p_put;
+    if(data.uParameters.p_put == 0) {
+        U = data.uParameters.U;
+    } else {
+        U_1 = data.uParameters.U_1;
+        U_2 = data.uParameters.U_2;
+        p_put = data.uParameters.p_put;
+    }
 
     // Hide indicator
     document.getElementById("loading_indicator_1").style.opacity = 0;

@@ -1,5 +1,7 @@
-g 749704996
-g -85347365
-p -1360378798 1997
-p 1565510461 6627
-g 1565510461
+// The format is <operation code><space><key><space><value if needed>
+// Examples:
+g 749704996 // get
+g -85347365 // get
+p -1360378798 1997 // put
+p 1565510461 6627 // put
+g 1565510461 // get

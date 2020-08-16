@@ -39,6 +39,7 @@ unsigned long long no_of_ranges = 0;
 unsigned long long range_length = 8000000;
 unsigned long long U1 = 100000;
 unsigned long long U2 = 100000000;
+int start = 1;
 double pput = 0.5;
 double pget = 0.5;
 std::vector<unsigned long long>* special_keys_vec = new std::vector<unsigned long long>; 
@@ -160,9 +161,10 @@ void fill_skew_bulk_scattered_optimized(unsigned long long number_queries, unsig
     if ((int64_t)U2 % (int64_t)U1 != 0) {
         scale_factor += 1;
     }
-    std::uniform_int_distribution<unsigned long long> unif_special_distribution(1,U1);
+    /// std::uniform_int_distribution<unsigned long long> unif_special_distribution(1,U1);
+    std::uniform_int_distribution<unsigned long long> unif_special_distribution(start,start - 1 + U1);
     /// std::uniform_int_distribution<unsigned long long> unif_normal_distribution(1,1+U2); 
-    std::uniform_int_distribution<unsigned long long> unif_normal_distribution(U1,U2);
+    std::uniform_int_distribution<unsigned long long> unif_normal_distribution(start - 1 + U1,U2);
     std::binomial_distribution<unsigned long long> bern_distribution_pput(1,pput);
     std::pair<std::set<unsigned long long>::iterator,bool> ret;
     for (int64_t i = 0; i < number_queries; i++) {

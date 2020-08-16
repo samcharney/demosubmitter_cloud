@@ -1,3 +1,7 @@
+/**
+ * Get selected workload file, show indicator, and call worker to calculate workload inputs
+ * @param {*} event 
+ */
 function uploadWorkloadFile(event) {
     // Clear workload
     clearWorkload();
@@ -12,11 +16,14 @@ function uploadWorkloadFile(event) {
     // Show indicator
     document.getElementById("loading_indicator_2").style.opacity = 1;
 
+    // Call worker
     uploadDataWorkloadWorker.addEventListener('message', onUploadWorkloadFileWorkerMessage);
-
     uploadDataWorkloadWorker.postMessage({from: "workload", selectedFile: selectedFile});
 }
 
+/**
+ * Clear data inputs: query_count, v, r, w
+ */
 function clearWorkload() {
     var queries = "";
     var pointLookupsPercent = "";
@@ -28,6 +35,10 @@ function clearWorkload() {
     document.getElementById("w").value = writesPercent;
 }
 
+/**
+ * Recive data from worker and display data or error
+ * @param {*} e 
+ */
 function onUploadWorkloadFileWorkerMessage(e) {
     if(e.data.to == "workload") {
         switch (e.data.msg) {
@@ -64,7 +75,9 @@ function displayWorkloadInputs(data) {
     document.getElementById("w").value = data.writesPercent;
     document.getElementById("workload-input-file-name").innerHTML = data.fileName;
     
-    p_get = data.uParameters.p_get;
+    if(data.uParameters.p_put != 0) {
+        p_get = data.uParameters.p_get;
+    }
 
     // Hide indicator
     document.getElementById("loading_indicator_2").style.opacity = 0;
