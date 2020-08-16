@@ -1,6 +1,9 @@
 var KeyHash = new Object();
 var U_Parameters = {};
 
+/**
+ * Receive message from upload data and workload 
+ */
 onmessage = function(e) {
     if(e.data.from == "data") {
         loadDataFile(e);
@@ -9,7 +12,10 @@ onmessage = function(e) {
     }
 }
 
-// data file
+/**
+ * Read data from data file and call loadData
+ * @param {*} e 
+ */
 function loadDataFile(e){
     var reader = new FileReader();
     reader.onload = function(evt) {
@@ -19,6 +25,11 @@ function loadDataFile(e){
     reader.readAsText(e.data.selectedFile);
 }
 
+/**
+ * Parse through data file and calculate data inputs
+ * @param {*} e 
+ * @param {*} lines 
+ */
 function loadData(e, lines) {
     var entries = 0;
     var maxKey = -2147483648;
@@ -34,14 +45,21 @@ function loadData(e, lines) {
 
     var percentage = 0;
     
+    // Parse through data file
     for(var i = 0; i < lines.length; i++){
-        var line = lines[i];
+        var line = lines[i].trim();;
 
-        if(line != "") {
+        if(line != "" && line.indexOf("//") != 0) {
+
+            if(line.indexOf("//") > 0)    {
+                line = line.split("//")[0].trim();;
+            }
+
             entries += 1;
 
             var entry = line.split(" ");
 
+            // Check if entry is correct format
             if(!(entry.length == 2 && !entry.some(isNaN)) &&
                !(entry.length == 3 && !(isNaN(entry[1]))  && !(isNaN(entry[2])))) {
                 entries = "";
@@ -62,6 +80,7 @@ function loadData(e, lines) {
             maxKey = Math.max(maxKey, key);
             maxValue = Math.max(maxValue, value);
 
+            // Add key to hash
             if (undefined == keyHash["" + key]) {
                 keyHash["" + key] = 1;
             } else {
@@ -69,6 +88,7 @@ function loadData(e, lines) {
             }
         }         
 
+        // Calculate and update loading percentage
         var per = Math.ceil((i+1) / lines.length * 1000) / 10;
         per = Math.max(0.1, per);
         per = Math.min(99.7, per);
@@ -79,11 +99,13 @@ function loadData(e, lines) {
         }
     }
 
+    // Turn hash into array
     for (const property in keyHash) {
         frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
     }
     frequencyKeys.sort(function(a,b){return a.key - b.key;});
     
+    // Calculate U, U1, U1, and pput
     var uParameters = highestFrequencyPartitions(frequencyKeys);
     uParameters['U'] = maxKey * 100;
 
@@ -108,17 +130,15 @@ function loadData(e, lines) {
     postMessage({to: "data", msg: "inputs", entries: entries, entrySize: entrySize, keySize: keySize, fileName: e.data.selectedFile.name, uParameters: uParameters});
 }
 
-// To calculate U1 and U2:
-//  find partitions with highest frequency with an array of entries as input
-// 	 1. divide it into M partitions
-// 	 2. for each partition calculate the average frequency
-// 	 3. return the partitions with the highest frequency
-//   4. calculate U1 and then U2
+/**
+ * Divide entries into partitions to calculate U1 and U2 
+ * @param {*} entries 
+ */
 function highestFrequencyPartitions(entries) {
     var min = entries[0].key;
     var max = entries[entries.length - 1].key;
     var PARTITION_RANGE = 1000;
-    var N = (max - min)/PARTITION_RANGE;
+    var numPartitions = Math.round((max - min)/PARTITION_RANGE);
     var partitions = [];
     var entriesIndex = 0;
 
@@ -127,11 +147,13 @@ function highestFrequencyPartitions(entries) {
     //  end point
     //  number of keys
     //  total frequency
+    
+    // Divide entries into n partitions
     const START_POINT = 0;
     const END_POINT = 1;
     const NUMBER_KEYS = 2;
     const TOTAL_FREQUENCY = 3;
-    for(var i = 0; i < N - 1; i++) {
+    for(var i = 0; i < numPartitions - 1; i++) {
         partitions[i] = [0, 0, 0, 0];
         var startPoint = i * PARTITION_RANGE + min;
         var endPoint = (i + 1) * PARTITION_RANGE + min;
@@ -147,9 +169,9 @@ function highestFrequencyPartitions(entries) {
         partitions[i][NUMBER_KEYS] = numberKeys;
         partitions[i][TOTAL_FREQUENCY] = totalFrequency;
     }
-    partitions[N - 1] = [0, 0, 0, 0];
-    var startPoint = (N - 1) * PARTITION_RANGE + min;
-    var endPoint = N * PARTITION_RANGE + min;
+    partitions[numPartitions - 1] = [0, 0, 0, 0];
+    var startPoint = (numPartitions - 1) * PARTITION_RANGE + min;
+    var endPoint = numPartitions * PARTITION_RANGE + min;
     var numberKeys = 0;
     var totalFrequency = 0;
     while(entriesIndex < entries.length) {
@@ -157,28 +179,31 @@ function highestFrequencyPartitions(entries) {
         totalFrequency += entries[entriesIndex].frequency;
         entriesIndex++; 
     }
-    partitions[N - 1][START_POINT] = startPoint;
-    partitions[N - 1][END_POINT] = endPoint;
-    partitions[N - 1][NUMBER_KEYS] = numberKeys;
-    partitions[N - 1][TOTAL_FREQUENCY] = totalFrequency;
+    partitions[numPartitions - 1][START_POINT] = startPoint;
+    partitions[numPartitions - 1][END_POINT] = endPoint;
+    partitions[numPartitions - 1][NUMBER_KEYS] = numberKeys;
+    partitions[numPartitions - 1][TOTAL_FREQUENCY] = totalFrequency;
 
     partitions = removeEmptyPartitions(partitions);
 
     // Sort array by average frequencies
     partitions.sort(function(a,b){return (b[TOTAL_FREQUENCY] / b[NUMBER_KEYS]) - (a[TOTAL_FREQUENCY] / a[NUMBER_KEYS]);});
 
-    var avgAvgFrequency = 0;
+    // Find the mean of the average frequencies
+    var meanAvgFrequency = 0;
     for(var partition of partitions) {
         var avg = (partition[TOTAL_FREQUENCY] / partition[NUMBER_KEYS]);
-        avgAvgFrequency += avg;
+        meanAvgFrequency += avg;
     }
-    avgAvgFrequency /= N;
+    meanAvgFrequency /= partitions.length;
 
+    // Find the partitions with the highest frequency
+    // Calculate U1 and then U2
     var start = max;
     var end = min;
     var specialKeys = 0;
     var avgFrequency = partitions[0][TOTAL_FREQUENCY] / partitions[0][NUMBER_KEYS];
-    var thresholdFrequency = 1.5 * avgAvgFrequency;
+    var thresholdFrequency = 1.5 * meanAvgFrequency;
     for(var i = 0; i < partitions.length && avgFrequency > thresholdFrequency; i++) {
         start = Math.min(start, partitions[i][START_POINT]);
         end = Math.max(end, partitions[i][END_POINT]);
@@ -188,9 +213,13 @@ function highestFrequencyPartitions(entries) {
     U_1 = end - start;
     U_2 = (max - min) - U_1;
 
-    return {U_1: U_1, U_2: U_2, specialKeys: specialKeys};
+    return {U_1: U_1, U_2: U_2, specialKeys: specialKeys, start: start, end: end};
 }
 
+/**
+ * Remove partitions with no keys
+ * @param {*} partitions 
+ */
 function removeEmptyPartitions(partitions) {
     const NUMBER_KEYS = 2;
     var newPartitions = [];
@@ -202,7 +231,10 @@ function removeEmptyPartitions(partitions) {
     return newPartitions;
 }
 
-// workload file
+/**
+ * Read data from workload file and call loadWorkload
+ * @param {*} e 
+ */
 function loadWorkloadFile(e){
     var reader = new FileReader();
     reader.onload = function(evt) {
@@ -212,6 +244,11 @@ function loadWorkloadFile(e){
     reader.readAsText(e.data.selectedFile);
 }
 
+/**
+ * Parse through workload file and calculate workload inputs
+ * @param {*} e 
+ * @param {*} lines 
+ */
 function loadWorkload(e, lines) {
     var queries = 0;
     var pointLookups = 0;
@@ -229,14 +266,21 @@ function loadWorkload(e, lines) {
 
     var percentage = 0;
 
+    // Parse through workload file
     for(var i = 0; i < lines.length; i++){
-        var line = lines[i];
+        var line = lines[i].trim();
 
-        if(line != "") {
+        if(line != "" && line.indexOf("//") != 0) {
+
+            if(line.indexOf("//") > 0)    {
+                line = line.split("//")[0].trim();
+            }
+
             queries += 1;
 
             var query = line.split(" ");
 
+            // Check if query is a put or a get
             if(query.length == 3 && query[0] == "p" && !isNaN(query[1]) && !isNaN(query[2])) {
                 var key = query[1];
                 if (undefined == keyHash["" + key]) {
@@ -247,10 +291,11 @@ function loadWorkload(e, lines) {
                 writes += 1;
             } else if(query.length == 2 && query[0] == "g" && !isNaN(query[1])) {
                 var key = query[1];
+                // Check if get is zero result or not
                 if(undefined !== keyHash["" + key]) {
                     pointLookups += 1;
                     totalGets++;
-                    if(key <= U_Parameters['U_1']) {
+                    if(U_Parameters['start'] <= key && key <= U_Parameters['end']) {
                         specialGets++;
                     }
                 } else {
@@ -264,6 +309,7 @@ function loadWorkload(e, lines) {
             }
         }  
 
+        // Calculate and update loading percentage
         var per = Math.ceil((i+1) / lines.length * 1000) / 10;
         per = Math.max(0.1, per);
         per = Math.min(99.7, per);
@@ -274,6 +320,7 @@ function loadWorkload(e, lines) {
         }          
     }
 
+    // Calculate pget
     U_Parameters['p_get'] = Math.round(specialGets/totalGets*100)/100;
 
     if(isValid) {
