@@ -42,6 +42,7 @@ function loadData(e, lines) {
 
     var keyHash = new Object();
     var frequencyKeys = [];
+    var uParameters;
 
     var percentage = 0;
     
@@ -99,32 +100,32 @@ function loadData(e, lines) {
         }
     }
 
-    // Turn hash into array
-    for (const property in keyHash) {
-        frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
-    }
-    frequencyKeys.sort(function(a,b){return a.key - b.key;});
-    
-    // Calculate U, U1, U1, and pput
-    var uParameters = highestFrequencyPartitions(frequencyKeys);
-    uParameters['U'] = maxKey * 100;
-
-    var totalKeys = 0;
-    for (var key of frequencyKeys) {
-        totalKeys += key.frequency;
-    }
-    uParameters['p_put'] = Math.round(uParameters['specialKeys']/totalKeys*100)/100;
-
     if(isValid) {
         keySize = Math.ceil(Math.log2(maxKey)/8);
         valueSize = Math.ceil(Math.log2(maxValue)/8);
         entrySize = keySize + valueSize;
+        
+        // Turn hash into array
+        for (const property in keyHash) {
+            frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
+        }
+        frequencyKeys.sort(function(a,b){return a.key - b.key;});
+        
+        // Calculate U, U1, U1, and pput
+        uParameters = highestFrequencyPartitions(frequencyKeys);
+        uParameters['U'] = maxKey * 100;
+
+        var totalKeys = 0;
+        for (var key of frequencyKeys) {
+            totalKeys += key.frequency;
+        }
+        uParameters['p_put'] = Math.round(uParameters['specialKeys']/totalKeys*100)/100;
+
+        KeyHash = keyHash;
+        U_Parameters = uParameters;
     } else {
         postMessage({to: "data", msg: "invalid"});
     }
-    
-    KeyHash = keyHash;
-    U_Parameters = uParameters;
 
     // Update the inputs
     postMessage({to: "data", msg: "inputs", entries: entries, entrySize: entrySize, keySize: keySize, fileName: e.data.selectedFile.name, uParameters: uParameters});
@@ -320,13 +321,13 @@ function loadWorkload(e, lines) {
         }          
     }
 
-    // Calculate pget
-    U_Parameters['p_get'] = Math.round(specialGets/totalGets*100)/100;
-
     if(isValid) {
         pointLookupsPercent = Math.round(pointLookups/queries*100)/100;
         zeroResultPointLookupsPercent = Math.round(zeroResultPointLookups/queries*100)/100;
         writesPercent = Math.round(writes/queries*100)/100;
+
+        // Calculate pget
+        U_Parameters['p_get'] = Math.round(specialGets/totalGets*100)/100;
     } else {
         postMessage({to: "workload", msg: "invalid"});
     }

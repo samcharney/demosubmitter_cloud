@@ -64,6 +64,9 @@ function displayDataPercentage(data) {
 
 function displayDataError() {
     document.getElementById("data-input-file-invalid").innerHTML = "Invalid format";
+
+    // Hide indicator
+    document.getElementById("loading_indicator_1").style.opacity = 0;
 }
 
 function displayDataInputs(data) {

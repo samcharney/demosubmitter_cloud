@@ -64,6 +64,9 @@ function displayWorkloadPercentage(data) {
 
 function displayWorkloadError() {
     document.getElementById("workload-input-file-invalid").innerHTML = "Invalid format";
+    
+    // Hide indicator
+    document.getElementById("loading_indicator_2").style.opacity = 0;
 }
 
 function displayWorkloadInputs(data) {
