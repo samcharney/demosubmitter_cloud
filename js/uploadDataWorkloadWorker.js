@@ -205,7 +205,7 @@ function highestFrequencyPartitions(entries) {
     var specialKeys = 0;
     var avgFrequency = partitions[0][TOTAL_FREQUENCY] / partitions[0][NUMBER_KEYS];
     var thresholdFrequency = 1.5 * meanAvgFrequency;
-    for(var i = 0; i < partitions.length && avgFrequency > thresholdFrequency; i++) {
+    for(var i = 0; i+1 < partitions.length && avgFrequency > thresholdFrequency; i++) {
         start = Math.min(start, partitions[i][START_POINT]);
         end = Math.max(end, partitions[i][END_POINT]);
         specialKeys += partitions[i][TOTAL_FREQUENCY];
