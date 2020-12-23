@@ -317,7 +317,7 @@
                  </span>
             </div>
             <div id="input" class="row" style="text-align: center;  background-color: #F0F7FF; background-color: white; border-radius: 0px; padding-left: 160px" >
-                <div class="col-sm-3" style="width: 20%;">
+                <div class="col-sm-3" style="width: 23%;position: relative; left: -1.5%">
                     <div class="row">
                             <div style="display: inline-block">
                             <!--<img class="img-responsive img-centered" style="width:105px" src="./images/data.png"/>-->
@@ -332,6 +332,31 @@
                         </div>
                     </div>
                     <div id="dataset-setting" class="collapse multi-collapse">
+                        <form id="myForm_3" style=" text-align: left; height:30px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px">
+                            <label class="radiobutton"  style=" margin:0px 40px 0px 15px"><input type="radio" id="data_radio_1" name="radio_1" value="uniform" checked="checked"/> uniform <br />
+                                <span class="check_mark"></span>
+                            </label>
+
+                            <label class="radiobutton"><input type="radio" id="data_radio_2" name="radio_1" value="skew" /> skew <br />
+                                <span class="check_mark"></span>
+                            </label>
+                        </form>
+
+                        <form id="myForm_4" style="text-align: left; height: 0px; opacity: 0; padding:0px; background-color:#FFFFFF; border:0px solid  #D3EBFF;border-radius:4px; margin:0px">
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="1" /> 80% reads are skewed <br />
+                                <span id="check_2" name="skew_check_mark" class="check_mark"></span>
+                                <div id="check_mark_2" style="position: absolute;background-color: #7F89FF;width: 0px;height: 0px;top: 9px;left: 9px; opacity: 0; border-radius: 50%;z-index: 15"></div>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="2" /> 80% writes are skewed <br />
+                                <span name="skew_check_mark" class="check_mark"></span>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 10px 10px; display: block"><input type="radio" name="radio_2" value="3" /> both read and writes are skewed by 20% <br />
+                                <span name="skew_check_mark" class="check_mark"></span>
+                            </label>
+                            <label class="radiobutton"  style="margin:0px 0px 0px 10px; display: block"><input type="radio" name="radio_2" value="4" /> both read and writes are skewed by 50% <br />
+                                <span name="skew_check_mark" class="check_mark"></span>
+                            </label>
+                        </form>
                             <div class="input-group" >
                                 <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Total data items to store</span># Entries</span>
                                 <input id="N" type="text" class="form-control" aria-label="Index Size N (elements)" placeholder="Number of Entries in the Index (e.g., 10485760)" style="text-align:right" autocomplete="false"/>
@@ -365,7 +390,7 @@
                 </div>
 
 
-                <div class="col-sm-3" style="width: 22%;position: relative; left: -2.5%">
+                <div class="col-sm-3" style="width: 23%;position: relative; left: -2.5%">
                     <div class="row">
                     <div style="display: inline-block">
                         <!--<img class="img-responsive img-centered" style="width:105px" src="./images/workload.png"/>-->
@@ -384,7 +409,7 @@
                           <div class="col-lg-4 col-md-4 col-sm-4"> <h4>Point Lookups</h4> </div>
                         </div> -->
                         <form id="myForm_1" style=" text-align: left; height:30px; padding:5px; border:0px solid #D3EBFF;border-radius:4px; margin:7px 6px 7px 6px">
-                            <label class="radiobutton"  style=" margin:0px 40px 0px 20px"><input type="radio" name="radio_1" value="uniform" checked="checked"/> uniform <br />
+                            <label class="radiobutton"  style=" margin:0px 40px 0px 15px"><input type="radio" name="radio_1" value="uniform" checked="checked"/> uniform <br />
                                 <span class="check_mark"></span>
                             </label>
 
@@ -429,8 +454,18 @@
                         </div>
 
                         <div class="input-group">
-                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Writes (inserts, updates, and deletes) in the Workload</span> Writes % </span>
-                            <input id="w" type="text" class="form-control" aria-label="Proportion of writes operation" placeholder=" w (e.g., 1)"  style="text-align:right"/>
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Inserts in the Workload</span> Inserts % </span>
+                            <input id="insert_workload" type="text" class="form-control" aria-label="Proportion of inserts operation" placeholder=" w (e.g., 1)"  style="text-align:right"/>
+                        </div>
+
+                        <div class="input-group">
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Blind Updates in the Workload</span> Blind Updates % </span>
+                            <input id="blind_update_workload" type="text" class="form-control" aria-label="Proportion of Blind Updates operation" placeholder=" w (e.g., 1)"  style="text-align:right"/>
+                        </div>
+
+                        <div class="input-group">
+                            <span class="input-group-addon tooltip1"><span class="tooltip1 tooltiptext_input">Proportion of Read Modify Updates in the Workload</span> Read Modify Updates % </span>
+                            <input id="read_modify_update_workload" type="text" class="form-control" aria-label="Proportion of Read Modify Updates operation" placeholder=" w (e.g., 1)"  style="text-align:right"/>
                         </div>
 
                         <div class="input-group" style="display: none">
@@ -968,8 +1003,8 @@
                                     <div style="position: absolute; width:1.5px; height: 630px; top:-80px; background-color: #7F89FF; transform: translateX(-1px); z-index: 10; display: none"></div>
                                     <div class="exist-button" id="rocks_button"><div style="width:100px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">RocksDB</div></div>
                                     <div class="exist-button" id="wt_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">WiredTiger</div></div>
-                                    <div class="exist-button" id="fasterh_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">FASTER-H</div></div>
                                     <div class="exist-button" id="fast_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">FASTER-A</div></div>
+                                    <div class="exist-button" id="fasterh_button" style="padding-top: 20px"><div style="width:80px; transform: rotateZ(90deg) translateY(-16px); transform-origin: top left 0; ">FASTER-H</div></div>
                                 </div>
 
                             <div id="rocks" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
@@ -996,7 +1031,7 @@
                                     </div>
                                 </div>
                             </div>
-                                <div id="faster_h" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
+                                <div id="faster" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
                                     <div id="cost_result_p10" class="col-lg-1 col-md-1 col-sm-1" style=" width: 255px; border-radius: 8px; font-size: 15px; text-align: center;">
                                     </div>
                                     <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px;  padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 0px solid black;">
@@ -1008,7 +1043,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="faster" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
+                                <div id="faster_h" style="width:255px; height:630px; display:inline-block;vertical-align:top;opacity: 0">
                                     <div id="cost_result_p12" class="col-lg-1 col-md-1 col-sm-1" style=" width: 255px; border-radius: 8px; font-size: 15px; text-align: center;">
                                     </div>
                                     <div class="col-lg-1 col-md-1 col-sm-1" style="width:255px;  padding:0px 0px 0px 0px; border-radius: 8px; background-color: white; border: 0px solid black;">

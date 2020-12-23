@@ -12,11 +12,11 @@ var workload_exec_time = 0;
 var total_budget;
 var max_RAM_purchased; // in GB
 var no_of_RAM_blocks;
-var U = 10000000000;
+var U = 100000000000000;
 // static double U = 300000000;
-var p_put = 0.0001; // fraction of the time that you call get on elements in U_1
-var U_1 = 10000;
-var U_2 = 100000000000;
+var p_put = 0.2; // fraction of the time that you call get on elements in U_1
+var U_1 = 100000;
+var U_2 = 1000000000000;
 // NOTE: it must always be true that (p_put / U_1) > (1 / U_2)
 var p_get = 0.7;
 
@@ -89,7 +89,9 @@ function Variables()
     var Z;
     var L;
 
-    var w;
+    var insert;
+    var blind_update;
+    var read_modify_update;
     var r;
     var v;
     var qL;
@@ -110,10 +112,13 @@ function Variables()
 
     var update_cost;
     var read_cost;
+    var rmw_cost;
+    var blind_update_cost;
     var no_result_read_cost;
     var short_scan_cost;
     var long_scan_cost;
     var total_cost;
+    var SLA_cost;
 
     var query_count;
 
@@ -126,6 +131,8 @@ function Variables()
     var Vcpu_num;
 
     var compression_name;
+
+    var is_classical;
 
 }
 
@@ -153,7 +160,6 @@ function SLA_factor() {
 
 function parseInputVariables()
 {
-
     var parsedBoxes = new Variables();
 
     //Dataset and Environment
@@ -165,7 +171,9 @@ function parseInputVariables()
 
     //Workload
     parsedBoxes.s = parseInt(document.getElementById("s").value.replace(/\D/g,''), 10);
-    parsedBoxes.w = parseFloat(document.getElementById("w").value);
+    parsedBoxes.insert_percentage = parseFloat(document.getElementById("insert_workload").value);
+    parsedBoxes.blind_update_percentage = parseFloat(document.getElementById("blind_update_workload").value);
+    parsedBoxes.rmw_percentage = parseFloat(document.getElementById("read_modify_update_workload").value);
     parsedBoxes.r = parseFloat(document.getElementById("r").value);
     parsedBoxes.v = parseFloat(document.getElementById("v").value);
     parsedBoxes.qL = parseFloat(document.getElementById("qL").value);
@@ -249,7 +257,9 @@ function navigateDesignSpace() {
     var B = Math.floor(Variables.B/E);
     var s = Variables.s;
 
-    var w = Variables.w;
+    var insert = Variables.insert_percentage;
+    var blind_update = Variables.blind_update_percentage;
+    var read_modify_update = Variables.rmw_percentage;
     var r = Variables.r;
     var v = Variables.v;
     var qL = Variables.qL;
@@ -515,7 +525,10 @@ function countThroughput(cost, cloud_provider) {
     var B = Math.floor(Variables.B/E);
     var s = Variables.s;
 
-    var w = Variables.w;
+    var insert = Variables.insert_percentage;
+    var blind_update = Variables.blind_update_percentage;
+    var read_modify_update = Variables.rmw_percentage;
+    console.log(insert);
     var r = Variables.r;
     var v = Variables.v;
     var qL = Variables.qL;
@@ -676,7 +689,9 @@ function countContinuum(combination, cloud_provider, compression_style=0) {
     var B = Math.floor(Variables.B/E);
     var s = Variables.s;
 
-    var w = Variables.w;
+    var insert = Variables.insert_percentage;
+    var blind_update = Variables.blind_update_percentage;
+    var read_modify_update = Variables.rmw_percentage;
     var r = Variables.r;
     var v = Variables.v;
     var qL = Variables.qL;
@@ -900,7 +915,9 @@ function countContinuumForExistingDesign(combination, cloud_provider, existing_s
     var B = Math.floor(Variables.B/E);
     var s = Variables.s;
 
-    var w = Variables.w;
+    var insert = Variables.insert_percentage;
+    var blind_update = Variables.blind_update_percentage;
+    var read_modify_update = Variables.rmw_percentage;
     var r = Variables.r;
     var v = Variables.v;
     var qL = Variables.qL;
@@ -2085,7 +2102,6 @@ function getBestDesignEverArray(result_array) {
     var best_design_index;
     var best_y_ever = -1;
     var bestDesignArray = new Array();
-    console.log(result_array);
     for (var i = 0; i < result_array.length; i++) {
         if (result_array[i][0] == last_x) {
             if (best_y == -1 || result_array[i][1] < best_y) {

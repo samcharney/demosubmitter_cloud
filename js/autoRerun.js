@@ -29,7 +29,7 @@ function re_run(e, if_regenerate=true) {
 	}
 
     var inputIdList=[
-        "N","E","F","qS","qL","w","r","query_count","v","s","cost"
+        "N","E","F","qS","qL","insert_workload","blind_update_workload","read_modify_update_workload","r","query_count","v","s","cost"
     ]
 
     for(var i=0;i<inputIdList.length;i++) {
@@ -53,17 +53,20 @@ function re_run(e, if_regenerate=true) {
 function init(){
 
     // Dataset and Environment
-    document.getElementById("N").value=numberWithCommas(20000000000); //(10M values)
-    document.getElementById("E").value=2048;
+    document.getElementById("N").value=numberWithCommas(100000000000); //(10M values)
+    document.getElementById("E").value=512;
     //document.getElementById("B").value=4096; //in B
     document.getElementById("F").value=64;
 
     // Workload
-    document.getElementById("s").value = 8192;
+    document.getElementById("s").value = 4096;
     document.getElementById("qS").value = 0;
-    document.getElementById("w").value = 0.1;
+    //document.getElementById("w").value = 0.1 This was before adding the insert to read modify boxes
+    document.getElementById("insert_workload").value = 0.5;
+    document.getElementById("blind_update_workload").value = 0.0;
+    document.getElementById("read_modify_update_workload").value = 0.0;
     document.getElementById("r").value = 0.0;
-    document.getElementById("v").value = 0.9;
+    document.getElementById("v").value = 0.5;
     document.getElementById("qL").value = 0.0;
     //document.getElementById("X").value = numberWithCommas(0);
 
@@ -72,7 +75,7 @@ function init(){
     document.getElementById("AWS").style.fontWeight='bold';
     document.getElementById("AWS").style.fontSize='16px';
 
-    document.getElementById("cost").value = 3400;
+    document.getElementById("cost").value = 3200;
     //document.getElementById("latency").value = 5.7;
 
     document.getElementById("query_count").value=10000000000;
@@ -185,6 +188,61 @@ function init(){
         //setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
     });
 
+    // To draw skew choices in Data uncomment the next
+    // var redraw=true;
+    // $('#myForm_3 input').on('change', function() {
+    //     if($('input[name=radio_1]:checked', '#myForm_3').val()=="skew")
+    //         $("#myForm_4").animate({height: '168px',opacity:'1',margin:'7px 6px 6px 6px',padding:'5px',borderWidth:'0px'}, "slow");
+    //     else{
+    //         $("#myForm_4").animate({height: '0px',opacity:'0',margin:'0px',padding:'0px',borderWidth:'0px'}, "slow");
+    //         workload_type = 0;
+    //         U_1 = 10000;
+    //         U_2=100000000000;
+    //         p_get = 0.7;
+    //         p_put=0.0001;
+    //         //navigateDesignSpace();
+    //         drawContinuumsMultithread();
+    //     }
+    // });
+    //
+    // $('#myForm_4 input').on('change', function() {
+    //     redraw=true;
+    //     workload_type = 1;
+    //     U_1 = 10000;
+    //     U_2 = 10000000000;
+    //     if($('input[name=radio_2]:checked', '#myForm_4').val()=="1"){
+    //         //$("#check_mark_1").animate({top: "3px", left: "3px", width: "12px",height: "12px",opacity: 1}, {speed:"slow",quene:false});
+    //         p_get=0.8;
+    //         p_put=0.0001;
+    //     }
+    //     if($('input[name=radio_2]:checked', '#myForm_4').val()=="2"){
+    //         p_get=0.0001;
+    //         p_put=0.8;
+    //     }
+    //     if($('input[name=radio_2]:checked', '#myForm_4').val()=="3"){
+    //         p_get=0.2;
+    //         p_put=0.2;
+    //     }
+    //     if($('input[name=radio_2]:checked', '#myForm_4').val()=="4"){
+    //         p_get=0.5;
+    //         p_put=0.5;
+    //     }
+    //     //navigateDesignSpace();
+    //     //$("#loading_canvas").animate({opacity:1}, 'fast');
+    //     //setTimeout('$("#loading_canvas").animate({opacity:0}, \'fast\').css(\'z-index\',0)',5000);
+    //     //$(document.body).css({'cursor' : 'wait'});
+    //     //setTimeout('$(document.body).css({\'cursor\' : \'default\'})',4000);
+    //     var check_boxes=$('span[name="skew_check_mark"]');
+    //     check_boxes.one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend',
+    //         function(e) {
+    //             if(redraw) {
+    //                 if(if_display) {
+    //                     drawContinuumsMultithread();
+    //                     redraw = false;
+    //                 }
+    //             }
+    //         });
+    // });
 
     /*
         $('[name=cp_tab]').on('click',function(){
@@ -992,7 +1050,6 @@ function initializeExistDesignPanel() {
 
 function reverseColor() {
     if(document.getElementById("title").style.backgroundColor=="white"){
-        console.log(document.getElementById("title").style.backgroundColor)
         document.getElementById("title").style.backgroundColor="#222222";
         document.getElementById("title").style.color="white";
         clearInterval(interval)

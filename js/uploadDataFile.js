@@ -9,7 +9,7 @@ function uploadDataFile(event) {
     clearData();
 
     // Get selected file
-    const selectedFile = event.srcElement.files[0];
+    const selectedFile = event.target.files[0];
     document.getElementById("data-input-file-name").innerHTML = "loading... " + selectedFile.name;
     
     document.getElementById("data-input-file-invalid").innerHTML = "";
@@ -17,10 +17,18 @@ function uploadDataFile(event) {
 
     // Show indicator
     document.getElementById("loading_indicator_1").style.opacity = 1;
-    
+
+    // Get uniform/skew
+    let uniform;
+    if (document.getElementById('data_radio_1').checked) {
+        uniform = true;
+    } else {
+        uniform = false;
+    }
+
     // Call worker
     uploadDataWorkloadWorker.addEventListener('message', onUploadDataFileWorkerMessage);
-    uploadDataWorkloadWorker.postMessage({from: "data", selectedFile: selectedFile});
+    uploadDataWorkloadWorker.postMessage({from: "data", selectedFile: selectedFile, uniform: uniform});
 }
 
 /**
@@ -36,7 +44,7 @@ function clearData() {
 }
 
 /**
- * Recive data from worker and display data or error
+ * Receive data from worker and display data or error
  * @param {*} e 
  */
 function onUploadDataFileWorkerMessage(e) {

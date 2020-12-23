@@ -48,11 +48,14 @@ std::set<unsigned long long>* special_keys_set = new std::set<unsigned long long
 std::set<unsigned long long>* normal_keys_set = new std::set<unsigned long long>;
 std::default_random_engine unif_generator(20);
 std::default_random_engine bern_generator(10);
+
+char static_value[] = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAaAAAAaAAAAaAAAAaaAAAAaa";
+
 void generateKeysUniform(bool write_to_file, bool print) {
     std::random_device rd;  //Will be used to obtain a seed for the random number engine
     std::mt19937_64 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
     uniform_int_distribution<unsigned long long> uni_dist1(min_U, max_U);
-    uniform_int_distribution<unsigned long long> uni_dist2(1, 10000);
+    uniform_int_distribution<unsigned long long> uni_dist2(1, max_U);
     keys.reserve(N);
     values.reserve(N);
     //char str[MAX_LENGTH];
@@ -66,7 +69,7 @@ void generateKeysUniform(bool write_to_file, bool print) {
         values.push_back(val);
         if(write_to_file)
         {
-            fprintf (fp_bulk, "%d %d\n", (int)key, (int)val);
+            fprintf (fp_bulk, "%lld %s\n", key, static_value);
         }
     }
     //ssort(keys.begin(), keys.end());
@@ -259,7 +262,8 @@ int main(int argc, char* argv[])
         no_of_puts = atol(argv[4]); 
         if(strcmp(argv[1], "0") == 0)
         {
-            max_U = atol(argv[5]); 
+            max_U = atoll(argv[5]);
+            min_U = -max_U;
         }
         else
         {
