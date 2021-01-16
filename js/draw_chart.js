@@ -1026,7 +1026,6 @@ function drawContinuums(if_regenerate=true) {
     //Plotly.newPlot('tester5', data_ad, layout_ad);
     //Plotly.newPlot('tester', data_ever, layout);
     //Plotly.newPlot('tester', data_compare, layout);
-
     //Plotly.newPlot('tester3', data3, layout_ad);
     layout.width=375;
     layout_ad.width=375;
@@ -1127,6 +1126,7 @@ function drawContinuums(if_regenerate=true) {
     console.log(dri_count);
     console.log(dri_miss_count);
     console.log(log);
+
 
 }
 function drawContinuums(if_regenerate=true) {
@@ -1777,7 +1777,8 @@ function drawContinuumsMultithread(if_regenerate=true) {
         }
         myWorker = new Worker('js/worker.js');
         var input = parseInputVariables();
-        if (input.blind_update_percentage + input.insert_percentage + input.rmw_percentage + input.r + input.v != 1) {
+        if (input.blind_update_percentage + input.insert_percentage + input.rmw_percentage + input.r + input.v + input.qEL + input.qL != 1) {
+
             alert("Workload inputs do not add to 1!");
             return 0;
         } else {
@@ -3407,8 +3408,6 @@ function putTheWordAndBeforeTheLastPercentage(string_to_edit) {
     string_to_edit=string_to_edit.slice(0, last_percentage_index-number_of_digits_in_percentage) + " and " + string_to_edit.slice(last_percentage_index-number_of_digits_in_percentage);
     return string_to_edit;
 }
-
-
 
 function outputParameter(result_div,value,text,highlight=false){
     var div_tmp = document.createElement("div");
