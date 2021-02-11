@@ -3,8 +3,6 @@
 This a tool that does (...)
 
 ## Files
-### lsm_cost.js
-Most of the functions contained here have been copied to worker.js
 
 ### worker.js 
 For multithreading purposes a Web Worker has been implemented.
@@ -26,6 +24,8 @@ This returns the result for an already existing configuration.
 It has a major functionality in the code. It contains the functions responsible for calling
 the continuum building functions from `worker.js` as well as various functions that are responsible
 for creating the necessary elements in the website for the user to see results.
+
+
 
 ### autoRerun.js
 This file contains the necessary functions for initializing variables as well as drawing basic
