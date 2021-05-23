@@ -1,7 +1,9 @@
 // The format is <operation code><space><key><space><value if needed>
 // Examples:
-g 749704996 // get
-g -85347365 // get
-p -1360378798 1997 // put
-p 1565510461 6627 // put
-g 1565510461 // get
+l 749704996 // point lookups
+z 749708741 // zero result point lookups
+i -1360378798 1997 // inserts
+u 1565510461 6627 // blind update
+w 673598223 +1 // read modify updates
+r 120490123 4987 // non-empty range lookups
+e 908482924 8827 // empty range lookups
