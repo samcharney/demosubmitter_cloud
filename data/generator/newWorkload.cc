@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <cassert>
 #include <limits>
+#include <algorithm>
+#include <iterator>
 
 class params{
 	public:
@@ -38,6 +40,16 @@ class params{
 		bulkdata.open("bulkwrite.txt");
 		workload.open("workload.txt");
 	}
+
+    unsigned int num_ops() {
+        return numPointLookups +
+                numZeroResultPointLookups +
+                numInserts +
+                numBlindUpdates +
+                numReadModifyUpdates +
+                numNonEmptyRangeLookups +
+                numEmptyRangeLookups;
+    }
 
 	void close() {
 		bulkdata.close();
@@ -103,7 +115,45 @@ void generateKeys(params& args) {
 }
 
 void generateWorkload(params& args) {
+    std::vector<int> op_order(args.num_ops());
+    for(int i=0; i<op_order.size(); i++) {
+        op_order[i]=i;
+    }    
 
+    std::random_device rd;
+    std::mt19937 g(rd());
+    
+    //generates random permutation 
+    std::shuffle(op_order.begin(), op_order.end(), g);
+    
+    unsigned int a1 = args.numPointLookups;
+    unsigned int a2 = args.numZeroResultPointLookups +a1;
+    unsigned int a3 = args.numInserts +a2;
+    unsigned int a4 = args.numBlindUpdates +a3;
+    unsigned int a5 = args.numReadModifyUpdates +a4;
+    unsigned int a6 = args.numNonEmptyRangeLookups +a5;
+    unsigned int a7 = args.numEmptyRangeLookups+a6;
+
+    for(int i=0; i<op_order.size(); i++) {
+        int num=op_order[i];
+        if(num<a1) {
+        }
+        else if(num<a2) {
+        } 
+        else if(num<a3) {
+        }
+        else if(num<a4) {
+        }
+        else if(num<a5) {
+        }
+        else if(num<a6) {
+        }
+        else if(num<a7) {
+        }
+        else {
+            assert(0); //should not happen
+        }
+    }
 }
 
 int main(int argc, char* argv[]) {
