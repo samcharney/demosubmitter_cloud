@@ -95,36 +95,30 @@ T get_random() {
 };
 
 std::vector<int> keys;
-//std::vector<unsigned int> values;
-//In the original program, values was not used and a bizarre string of A's was printed to the file
+std::vector<unsigned int> values;
 
 void generateKeys(params& args) {
     uniform_random_numbers<int> int_gen(-args.maxKey, args.maxKey);
-    uniform_random_numbers<unsigned int> un_gen(1, 10000); //should 10000 be a param?
+    uniform_random_numbers<unsigned int> un_gen(1, 10000);
 	
 	keys.reserve(args.numKeys);
-	//values.reserve(args.numKeys);
+    values.reserve(args.numKeys);
 	
 	for (int i=0; i<args.numKeys; i++) {
 		int key=int_gen.get_random();
 		unsigned int val=un_gen.get_random();
 		keys.push_back(key);
-      	//values.push_back(val);
-		args.bulkdata << key << " " << val <<std::endl; //should this be A's?
+      	values.push_back(val);
+		args.bulkdata << key << " " << val <<std::endl;
 	}
 }
 
-void generateWorkload(params& args) {
-    std::vector<int> op_order(args.num_ops());
-    for(int i=0; i<op_order.size(); i++) {
-        op_order[i]=i;
-    }    
-
-    std::random_device rd;
-    std::mt19937 g(rd());
+void randomExistingKey(params& args) {
     
-    //generates random permutation 
-    std::shuffle(op_order.begin(), op_order.end(), g);
+}
+
+void generateWorkload(params& args) {
+    std::vector<char> op_order(args.num_ops());
     
     unsigned int a1 = args.numPointLookups;
     unsigned int a2 = args.numZeroResultPointLookups +a1;
@@ -133,25 +127,74 @@ void generateWorkload(params& args) {
     unsigned int a5 = args.numReadModifyUpdates +a4;
     unsigned int a6 = args.numNonEmptyRangeLookups +a5;
     unsigned int a7 = args.numEmptyRangeLookups+a6;
-
+    
     for(int i=0; i<op_order.size(); i++) {
-        int num=op_order[i];
-        if(num<a1) {
+        char op;
+        if(i<a1) {
+          op='l';
         }
-        else if(num<a2) {
+        else if(i<a2) {
+          op='z';
         } 
-        else if(num<a3) {
+        else if(i<a3) {
+          op='i';
         }
-        else if(num<a4) {
+        else if(i<a4) {
+          op='u';
         }
-        else if(num<a5) {
+        else if(i<a5) {
+          op='w';
         }
-        else if(num<a6) {
+        else if(i<a6) {
+          op='r';
         }
-        else if(num<a7) {
+        else if(i<a7) {
+          op='e';
         }
         else {
             assert(0); //should not happen
+        }
+        op_order[i]=op;
+    }    
+
+    std::random_device rd;
+    std::mt19937 g(rd());
+    
+    //generates random permutation 
+    std::shuffle(op_order.begin(), op_order.end(), g);
+
+    uniform_random_numbers<unsigned int> old_keys(0, keys.size()-1);
+
+    uniform_random_numbers<int> new_keys(-args.maxKey, args.maxKey);
+    
+    for(int i=0; i<op_order.size(); i++) {
+        char op=op_order[i];
+        switch(op) {
+            case 'l':
+            case 'z': {
+                unsigned int index = old_keys.get_random();
+                args.workload << op  << keys[index] << '\n';
+                break;
+                      }
+            case 'i': {
+                /*int new_key;
+                bool isNew=false;
+                do {
+                    new_key=new_keys.get_random();
+                } while(!isNew);*/
+                break;
+                      }
+            case 'u':
+            break;
+            case 'w':
+            break;
+            case 'r':
+            break;
+            case 'e':
+            break;
+            default: assert(0); //should not happen
+            break;
+
         }
     }
 }
