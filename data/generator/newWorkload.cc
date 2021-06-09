@@ -19,6 +19,9 @@ To-do:
 #include <set>
 #include <map>
 
+typedef int keytype;
+typedef unsigned int valtype;
+
 class params{
     public:
         unsigned int numKeys;
@@ -30,7 +33,7 @@ class params{
         unsigned int numNonEmptyRangeLookups;
         unsigned int numEmptyRangeLookups;
         bool isUniform;
-        unsigned int maxKey;
+        keytype maxKey;
         std::ofstream bulkdata;
         std::ofstream workload;
 
@@ -102,23 +105,23 @@ class uniform_random_numbers {
     }
 };
 
-std::vector<int> keys;
-std::set<int> keys_set;
-std::vector<unsigned int> values;
+std::vector<keytype> keys;
+std::set<keytype> keys_set;
+std::vector<valtype> values;
 
 void generateKeys(params& args) {
-    uniform_random_numbers<int> int_gen(-args.maxKey, args.maxKey);
-    uniform_random_numbers<unsigned int> un_gen(1, 10000); //FIXME Random string
+    uniform_random_numbers<keytype> key_gen(-args.maxKey, args.maxKey);
+    uniform_random_numbers<valtype> val_gen(1, 10000); //FIXME Random string
 
     keys.reserve(args.numKeys);
     values.reserve(args.numKeys);
 
     for (int i=0; i<args.numKeys; i++) {
-        int key=int_gen.get_random();
+        keytype key=key_gen.get_random();
         while(keys_set.find(key) != keys_set.end()) { //finds unique key
-            key=int_gen.get_random();
+            key=key_gen.get_random();
         }
-        unsigned int val=un_gen.get_random();
+        valtype val=val_gen.get_random();
         keys.push_back(key);
         keys_set.insert(key);
         values.push_back(val);
@@ -172,9 +175,9 @@ void generateWorkload(params& args) {
     //generates random permutation 
     std::shuffle(op_order.begin(), op_order.end(), g);
 
-    uniform_random_numbers<unsigned int> old_keys(0, keys.size()-1);
+    uniform_random_numbers<keytype> old_keys(0, keys.size()-1);
 
-    uniform_random_numbers<int> new_keys(-args.maxKey, args.maxKey);
+    uniform_random_numbers<keytype> new_keys(-args.maxKey, args.maxKey);
 
     for(int i=0; i<op_order.size(); i++) {
         char op=op_order[i];
@@ -188,7 +191,7 @@ void generateWorkload(params& args) {
                 }
             case 'i': 
                 {
-                    int new_key;
+                    keytype new_key;
                     bool isNew=false;
                     do {
                         new_key=new_keys.get_random();
@@ -197,7 +200,7 @@ void generateWorkload(params& args) {
                         }
                     } while(!isNew);
                     //FIXME:generate value
-                    unsigned int val=0;
+                    valtype val=0;
                     args.workload << op << ' ' << new_key << ' ' << val << '\n';
                     break;
                 }
@@ -205,7 +208,7 @@ void generateWorkload(params& args) {
                 {
                     unsigned int index = old_keys.get_random();
                     //FIXME:generate value
-                    unsigned int val=0;
+                    valtype val=0;
                     args.workload << op  << ' ' << keys[index] << ' ' << val << '\n';
                 }
                 break;
