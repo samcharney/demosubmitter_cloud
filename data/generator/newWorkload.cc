@@ -1,7 +1,6 @@
 /*
 To-do:
-1. Values as random strings and incrementing?
-2. Skew keys
+1. Skew keys
 */
 
 #include <iostream>
@@ -20,7 +19,7 @@ To-do:
 #include <map>
 
 typedef int keytype;
-typedef unsigned int valtype;
+typedef std::string valtype;
 
 class params{
     public:
@@ -32,6 +31,7 @@ class params{
         unsigned int numReadModifyUpdates;
         unsigned int numNonEmptyRangeLookups;
         unsigned int numEmptyRangeLookups;
+        unsigned int skewBoundary;
         bool isUniform;
         keytype maxKey;
         std::ofstream bulkdata;
@@ -46,6 +46,7 @@ params() {
             numReadModifyUpdates=10;
             numNonEmptyRangeLookups=10;
             numEmptyRangeLookups=10;
+            skewBoundary=1000;
             isUniform=true;
             maxKey=INT_MAX;
             bulkdata.open("bulkwrite.txt");
@@ -79,7 +80,9 @@ void help() {
         "-u numBlindUpdates",
         "-w numReadModifyUpdates",
         "-r numNonEmptyRangeLookups",
-        "-e numEmptyRangeLookups"
+        "-e numEmptyRangeLookups",
+        "-m maxKey",
+        "-s skewBoundary"
     };
     for(auto str:s) {
         std::cout<<str<<std::endl;
@@ -105,13 +108,50 @@ class uniform_random_numbers {
     }
 };
 
+template <typename T>
+class random_numbers {
+    std::mt19937 gen;
+    std::uniform_int_distribution<T> distrib1;
+    std::uniform_int_distribution<T> distrib2;
+    std::binomial_distribution<> choose_distrib;
+    std::string type;
+
+    public:
+    random_numbers(T lo, T hi) : distrib1(lo, hi), gen(get_generator()) {
+        type="uniform";
+    }
+    random_numbers(T lo, T hi, int bound) : distrib1(lo, bound), distrib2(bound, hi), choose_distrib(1, 0.5), gen(get_generator()) {
+        type="skew";
+    }
+
+    std::mt19937 get_generator() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        return gen;
+    }
+
+    T get_random() {
+        if (type=="unifrom") {
+            return distrib1(gen);
+        }
+        else { //skew
+            int choice=choose_distrib(gen);
+            if (choice==0) {
+                return distrib1(gen);
+            }
+            else {
+                return distrib2(gen);
+            }
+        }
+    }
+};
+
 std::vector<keytype> keys;
 std::set<keytype> keys_set;
 std::vector<valtype> values;
 
 void generateKeys(params& args) {
     uniform_random_numbers<keytype> key_gen(-args.maxKey, args.maxKey);
-    uniform_random_numbers<valtype> val_gen(1, 10000); //FIXME Random string
 
     keys.reserve(args.numKeys);
     values.reserve(args.numKeys);
@@ -121,7 +161,7 @@ void generateKeys(params& args) {
         while(keys_set.find(key) != keys_set.end()) { //finds unique key
             key=key_gen.get_random();
         }
-        valtype val=val_gen.get_random();
+        valtype val = "AAAAAAAAAAA"; //default value. Values aren't actually used
         keys.push_back(key);
         keys_set.insert(key);
         values.push_back(val);
@@ -199,23 +239,22 @@ void generateWorkload(params& args) {
                             isNew=true;
                         }
                     } while(!isNew);
-                    //FIXME:generate value
-                    valtype val=0;
+                    valtype val = "AAAAAAAAAAA"; //default value. Values aren't actually used
                     args.workload << op << ' ' << new_key << ' ' << val << '\n';
                     break;
                 }
             case 'u':
                 {
                     unsigned int index = old_keys.get_random();
-                    //FIXME:generate value
-                    valtype val=0;
+                    valtype val = "AAAAAAAAAAA"; //default value. Values aren't actually used
                     args.workload << op  << ' ' << keys[index] << ' ' << val << '\n';
                 }
                 break;
             case 'w':
                 {
                     unsigned int index = old_keys.get_random();
-                    args.workload << op  << ' ' << keys[index] << ' ' << values[index]+1 << '\n';//FIXME increment string?
+                    valtype incremented_val = "BBBBBBBBBB"; //Incremented value is default string of B's rather than A's now
+                    args.workload << op  << ' ' << keys[index] << ' ' << incremented_val << '\n';
                 }
                 break;
             case 'r':
@@ -289,10 +328,15 @@ int main(int argc, char* argv[]) {
             assert(i<argc);
             args.numEmptyRangeLookups=atoi(argv[i]);
         }
-        else if (p=="-maxKey") {
+        else if (p=="-m") {
             i++;
             assert(i<argc);
             args.maxKey=atoi(argv[i]);
+        }
+        else if (p=="-s") {
+            i++;
+            assert(i<argc);
+            args.skewBoundary=atoi(argv[i]);
         }
         else if (p=="-h") {
             help();
