@@ -32,6 +32,7 @@ class params{
         unsigned int numNonEmptyRangeLookups;
         unsigned int numEmptyRangeLookups;
         unsigned int skewBoundary;
+        double skewProb;
         bool isUniform;
         keytype maxKey;
         std::ofstream bulkdata;
@@ -47,6 +48,7 @@ params() {
             numNonEmptyRangeLookups=10;
             numEmptyRangeLookups=10;
             skewBoundary=1000;
+            skewProb=0.5;
             isUniform=true;
             maxKey=INT_MAX;
             bulkdata.open("bulkwrite.txt");
@@ -82,10 +84,11 @@ void help() {
         "-r numNonEmptyRangeLookups",
         "-e numEmptyRangeLookups",
         "-m maxKey",
-        "-s skewBoundary"
+        "-s skewBoundary",
+        "-p skewProbability"
     };
     for(auto str:s) {
-        std::cout<<str<<std::endl;
+        std::cout << '\t' << str << '\n';
     }
 
 }
@@ -108,21 +111,37 @@ class uniform_random_numbers {
     }
 };
 
+enum distrib_enum {dUniform, dSkew};
+
 template <typename T>
 class random_numbers {
     std::mt19937 gen;
+    /*
+     If doing uniform distribution, use distribU on entire range.
+     If doing skew distribution, use choose_distrib to pick between distrib1 and distrib2, set to the skew ranges
+     */
+    std::uniform_int_distribution<T> distribU;
     std::uniform_int_distribution<T> distrib1;
     std::uniform_int_distribution<T> distrib2;
     std::binomial_distribution<> choose_distrib;
-    std::string type;
+    distrib_enum distrib_type;
 
     public:
-    random_numbers(T lo, T hi) : distrib1(lo, hi), gen(get_generator()) {
-        type="uniform";
+    random_numbers(T lo, T hi, double skewProb = 0.5, T bound = 0, bool isUniform = true) : distribU(lo, hi),
+                                          distrib1(lo, std::max(lo, bound)),
+                                          distrib2(std::min(bound, hi), hi),
+                                          choose_distrib(1, skewProb), 
+                                          gen(get_generator()) 
+    {
+        if (isUniform) {
+            distrib_type=dUniform;   
+        }
+        else {
+            distrib_type=dSkew;
+        }
     }
-    random_numbers(T lo, T hi, int bound) : distrib1(lo, bound), distrib2(bound, hi), choose_distrib(1, 0.5), gen(get_generator()) {
-        type="skew";
-    }
+
+    //FIXME is it okay to reuse gen for all three distributions when skew
 
     std::mt19937 get_generator() {
         std::random_device rd;
@@ -131,8 +150,8 @@ class random_numbers {
     }
 
     T get_random() {
-        if (type=="unifrom") {
-            return distrib1(gen);
+        if (distrib_type==dUniform) {
+            return distribU(gen);
         }
         else { //skew
             int choice=choose_distrib(gen);
@@ -151,7 +170,8 @@ std::set<keytype> keys_set;
 std::vector<valtype> values;
 
 void generateKeys(params& args) {
-    uniform_random_numbers<keytype> key_gen(-args.maxKey, args.maxKey);
+   
+    random_numbers<keytype> key_gen(-args.maxKey, args.maxKey, args.skewProb, args.skewBoundary, args.isUniform);
 
     keys.reserve(args.numKeys);
     values.reserve(args.numKeys);
@@ -215,9 +235,9 @@ void generateWorkload(params& args) {
     //generates random permutation 
     std::shuffle(op_order.begin(), op_order.end(), g);
 
-    uniform_random_numbers<keytype> old_keys(0, keys.size()-1);
+    random_numbers<keytype> old_keys(0, keys.size()-1);
 
-    uniform_random_numbers<keytype> new_keys(-args.maxKey, args.maxKey);
+    random_numbers<keytype> new_keys(-args.maxKey, args.maxKey, args.skewProb, args.skewBoundary, args.isUniform);
 
     for(int i=0; i<op_order.size(); i++) {
         char op=op_order[i];
@@ -338,6 +358,11 @@ int main(int argc, char* argv[]) {
             assert(i<argc);
             args.skewBoundary=atoi(argv[i]);
         }
+        else if (p=="-p") {
+            i++;
+            assert(i<argc);
+            args.skewProb=atof(argv[i]);
+        }
         else if (p=="-h") {
             help();
             return 0;
@@ -348,7 +373,6 @@ int main(int argc, char* argv[]) {
         }
 
     }
-    //do work here
 
     generateKeys(args);
     generateWorkload(args);
