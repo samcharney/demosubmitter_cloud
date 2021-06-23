@@ -72,7 +72,6 @@ class params{
 //These are the commands the user can use in the command line to change the value of the parameters from the defaults
 void help() {
     std::string s[]={
-        "-uniform",
         "-skew",
         "-n numKeys",
         "-l numPointLookups",
@@ -349,10 +348,7 @@ int main(int argc, char* argv[]) {
     //Parses the commands the user enters and updates the parameters as necessary
     for(int i=1; i<argc; i++) {
         std::string p=argv[i];
-        if (p=="-uniform") {
-            args.isUniform=true;
-        }
-        else if (p=="-skew") {
+        if (p=="-skew") {
             args.isUniform=false;
         }
         else if (p=="-n") {
