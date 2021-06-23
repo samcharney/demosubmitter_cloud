@@ -224,9 +224,9 @@ void generateWorkload(params& args) {
     //generates random permutation 
     std::shuffle(op_order.begin(), op_order.end(), g);
 
-    //FIXME When new keys are added from inserts, they will not be called for subsequent 
-    //point lookups, zero result point lookups, blind updates, or read modify updates
-    random_numbers<keytype> old_keys(0, keys.size()-1);
+    //Generates a random index for an existing key, including the keys that are added by inserts
+    //Uses of this random number generator check that the index generated exists at that time
+    random_numbers<keytype> old_keys(0, args.numKeys-1+args.numInserts);
 
     random_numbers<keytype> new_keys(-args.maxKey, args.maxKey, args.skewProb, args.skewBoundary, args.isUniform);
 
@@ -242,7 +242,10 @@ void generateWorkload(params& args) {
             case 'l':
             case 'z': 
                 {
-                    unsigned int index = old_keys.get_random();
+                    unsigned int index = 0;
+                    do {
+                        index = old_keys.get_random();
+                    } while (index>=keys.size());
                     args.workload << op  << ' ' << keys[index] << '\n';
                     break;
                 }
@@ -267,7 +270,10 @@ void generateWorkload(params& args) {
                 //Blind updates find an old key and change the value, but values aren't used in this program so it is a default
             case 'u':
                 {
-                    unsigned int index = old_keys.get_random();
+                    unsigned int index = 0;
+                    do {
+                        index = old_keys.get_random();
+                    } while (index>=keys.size());
                     valtype val = "AAAAAAAAAAA"; //default value. Values aren't actually used
                     args.workload << op  << ' ' << keys[index] << ' ' << val << '\n';
                 }
@@ -275,7 +281,10 @@ void generateWorkload(params& args) {
                 //Read modify updates find an old key and increment the value, but values aren't use in this program so it is a default
             case 'w':
                 {
-                    unsigned int index = old_keys.get_random();
+                    unsigned int index = 0;
+                    do {
+                        index = old_keys.get_random();
+                    } while (index>=keys.size());
                     valtype incremented_val = "BBBBBBBBBB"; //Incremented value is default string of B's rather than A's now
                     args.workload << op  << ' ' << keys[index] << ' ' << incremented_val << '\n';
                 }
