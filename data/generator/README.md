@@ -1,13 +1,31 @@
-This file can be used both for generating data and workload of the demo. 
+This file can be used both for generating data and workload file for the demo. 
+After running it it generates 2 files - bulkwrite.txt (for populating data) and workload.txt (for operations).
 
-You can compile with compile with g++ -O3 -o workload workload.cc 
+See the Makefile for how to compile the new Workload generator.
 
-There are different ways to run it.
- 1. ./workload 0  - this simply generates 10000000 entries with keys between -2147483648 and 2147483648 and values less than 10000 with uniform distribution.
- 2. ./workload 1 - this does the same but with skew distribution.
+The program has two modes of execution.
+ 1. To generate 10000000 data entries with keys between -2147483648 and 2147483648 and values as a default string with uniform distribution use the command
+ `./newWorkload` 
+ which defaults to a uniform distribution
+ 2. To do this with a skew distribution instead, use the command
+ `./newWorkload -skew`
 
-If you want to play around with these settings, you can either change it in the file or follow either of the two following ways.
- 3. ./workload 0 1000000 100000 100000 10000000000 - Here the format is <workload_type>, <#data>, <#gets>, <#puts>, <max_U> where workload_type = 0 for uniform, 1 for skew, max_U is the maximum value allowed for keys
- 4. ./workload 1 1000000 10000 10000 100000 100000000 0.3 0.1 - Here the format is <workload_type>, <#data>, <#gets>, <#puts>, <U_1,U_2,p_put,p_get>
+To configure the settings, use the arguments when running it as specified by the help function (`-h`).
+The arguments are listed below, where the number you want to replace the default replacing the variable name (i.e. `-n 1000`).
+ * `-skew` Changes the distribution from uniform to skew
+ * `-n numKeys` Number of keys in the data file - Default: 10,000,000
+ * `-l numPointLookups` Number of point lookups in the workload - Default: 10
+ * `-z numZeroResultPointLookups` Number of zero result point lookups in the workload - Default: 10
+ * `-i numInserts` Number of inserts in the workload - Default: 10
+ * `-u numBlindUpdates` Number of blind updates in the workload - Default: 10
+ * `-w numReadModifyUpdates` Number of read modify updates in the workload - Default: 10
+ * `-r numNonEmptyRangeLookups` Number of non-empty range lookups in the workload - Default: 10
+ * `-e numEmptyRangeLookups` Number of empty range lookups in the workload - Default: 10
+ * `-m maxKey` Maximum key in the key space, which goes from -maxKey to maxKey - Default: INT_MAX
+ * `-s skewBoundary` The divider of the key space into two separate uniform distributions to generate skewed data - Default: 1000
+ * `-p skewProbability` The probability of picking between the two seperate uniform distributions to generate skewed data - Default: 0.5
+ * `-rl rangeLength` The size of the range used for range queries in the workload - Default: 100
 
-After running it it generates 2 files - bulkwrite.txt (for populating data) and workload.txt (for gets and puts).
+Here are some examples of how to run the new Workload generator:
+ 1. `./newWorkload -uniform -n 1000 -l 3 -z 2 -i 3 -u 3 -w 2 -r 3 -e 2 -m 10000 -rl 50`
+ 2. `./newWorkload -skew -n 1000 -l 3 -z 2 -i 3 -u 3 -w 2 -r 3 -e 2 -m 10000 -s 9000 -p 0.5 -rl 200`
