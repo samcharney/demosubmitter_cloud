@@ -22,17 +22,27 @@ function uploadWorkloadFile(event) {
 }
 
 /**
- * Clear data inputs: query_count, v, r, w
+ * Clear data inputs: query_count, v, r, insert_workload, blind_update_workload, read_modify_update_worklaod, qL, qEL, s
  */
 function clearWorkload() {
     var queries = "";
     var pointLookupsPercent = "";
     var zeroResultPointLookupsPercent = "";
-    var writesPercent = "";
+    var insertsPercent = "";
+    var blindUpdatesPercent = "";
+    var readModifyUpdatesPercent = "";
+    var NonEmptyRangeLookupsPercent = "";
+    var EmptyRangeLookupsPercent = "";
+    var TargetRangeSize = "";
     document.getElementById("query_count").value = numberWithCommas(queries);
     document.getElementById("v").value = pointLookupsPercent;
     document.getElementById("r").value = zeroResultPointLookupsPercent;
-    document.getElementById("w").value = writesPercent;
+    document.getElementById("insert_workload").value = insertsPercent;
+    document.getElementById("blind_update_workload").value = blindUpdatesPercent;
+    document.getElementById("read_modify_update_workload").value = readModifyUpdatesPercent;
+    document.getElementById("qL").value = NonEmptyRangeLookupsPercent;
+    document.getElementById("qEL").value = EmptyRangeLookupsPercent; 
+    document.getElementById("s").value = TargetRangeSize;
 }
 
 /**
@@ -75,7 +85,12 @@ function displayWorkloadInputs(data) {
     document.getElementById("query_count").value = numberWithCommas(data.queries);
     document.getElementById("v").value = data.pointLookupsPercent;
     document.getElementById("r").value = data.zeroResultPointLookupsPercent;
-    document.getElementById("w").value = data.writesPercent;
+    document.getElementById("insert_workload").value = data.insertsPercent;
+    document.getElementById("blind_update_workload").value = data.blindUpdatesPercent;
+    document.getElementById("read_modify_update_workload").value = data.readModifyUpdatesPercent;
+    document.getElementById("qL").value = data.NonEmptyRangeLookupsPercent;
+    document.getElementById("qEL").value = data.EmptyRangeLookupsPercent; 
+    document.getElementById("s").value = data.TargetRangeSize;
     document.getElementById("workload-input-file-name").innerHTML = data.fileName;
     
     if(data.uParameters.p_put != 0) {

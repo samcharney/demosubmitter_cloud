@@ -325,12 +325,21 @@ function loadWorkload(e, lines) {
     var queries = 0;
     var pointLookups = 0;
     var zeroResultPointLookups = 0;
-    var writes = 0;
+    var inserts = 0;
+    var blindUpdates = 0;
+    var readModifyUpdates = 0;
+    var nonEmptyRangeLookups = 0;
+    var emptyRangeLookups = 0;
+    var targetRangeSize = "";
 
     var isValid = true;
     var pointLookupsPercent = "";
     var zeroResultPointLookupsPercent = "";
-    var writesPercent = "";
+    var insertsPercent = "";
+    var blindUpdatesPercent = "";
+    var readModifyUpdatesPercent = "";
+    var nonEmptyRangeLookupsPercent = "";
+    var emptyRangeLookupsPercent = "";
 
     var keyHash = KeyHash;
     var specialGets = 0;
@@ -395,7 +404,11 @@ function loadWorkload(e, lines) {
     if (isValid) {
         pointLookupsPercent = Math.round(pointLookups / queries * 100) / 100;
         zeroResultPointLookupsPercent = Math.round(zeroResultPointLookups / queries * 100) / 100;
-        writesPercent = Math.round(writes / queries * 100) / 100;
+        insertsPercent = Math.round(inserts / queries * 100) / 100;
+        blindUpdatesPercent = Math.round(blindUpdates / queries * 100) / 100;
+        readModifyUpdatesPercent = Math.round(readModifyUpdates / queries * 100) / 100;
+        nonEmptyRangeLookupsPercent = Math.round(nonEmptyRangeLookups / queries * 100) / 100;
+        emptyRangeLookupsPercent = Math.round(emptyRangeLookups / queries * 100) / 100;
 
         // Calculate pget
         U_Parameters['p_get'] = Math.round(specialGets / totalGets * 100) / 100;
@@ -410,7 +423,12 @@ function loadWorkload(e, lines) {
         queries: queries,
         pointLookupsPercent: pointLookupsPercent,
         zeroResultPointLookupsPercent: zeroResultPointLookupsPercent,
-        writesPercent: writesPercent,
+        insertsPercent: insertsPercent,
+        blindUpdatesPercent: blindUpdatesPercent,
+        readModifyUpdatesPercent: readModifyUpdatesPercent,
+        nonEmptyRangeLookupsPercent: nonEmptyRangeLookupsPercent,
+        emptyRangeLookupsPercent: emptyRangeLookupsPercent,
+        targetRangeSize: targetRangeSize,
         fileName: e.data.selectedFile.name,
         uParameters: U_Parameters
     });
