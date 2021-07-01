@@ -361,27 +361,55 @@ function loadWorkload(e, lines) {
 
             var query = line.split(" ");
 
-            // Check if query is a put or a get
-            if (query.length == 3 && query[0] == "p" && !isNaN(query[1]) && !isNaN(query[2])) {
-                var key = query[1];
-                if (undefined == keyHash["" + key]) {
-                    keyHash["" + key] = 1;
-                } else {
-                    keyHash["" + key] += 1;
+            // Parse the type of query
+            if (query.length == 3 && !isNaN(query[1]) && !isNaN(query[2])) {
+                if (query[0] == 'r') {
+                    targetRangeSize = query[2];
+                    nonEmptyRangeLookups += 1;
                 }
-                writes += 1;
-            } else if (query.length == 2 && query[0] == "g" && !isNaN(query[1])) {
-                var key = query[1];
-                // Check if get is zero result or not
-                if (undefined !== keyHash["" + key]) {
+                else if (query[0] == 'e') {
+                    targetRangeSize = query[2];
+                    emptyRangeLookups += 1;
+                }
+                else {
+                    var key = query[1];
+                    if (undefined == keyHash["" + key]) {
+                        keyHash["" + key] = 1;
+                    } else {
+                        keyHash["" + key] += 1;
+                    }
+                    
+                    if (query[0] == 'i') {
+                        inserts += 1;
+                    }
+                    else if (query[0] == 'u') {
+                        blindUpdates += 1;
+                    }
+                    else if (query[0] == 'w') {
+                        readModifyUpdates += 1;
+                    }
+                    else {
+                        queries = "";
+                        isValid = false;
+                        break;
+                    }
+                }
+            } else if (query.length == 2 && !isNaN(query[1])) {
+                if (query[0] == 'l') { 
+                    var key = query[1];
                     pointLookups += 1;
                     totalGets++;
                     if (U_Parameters['start'] <= key && key <= U_Parameters['end']) {
                         specialGets++;
                     }
-                } else {
+                else if (query[0] == 'z') {
                     zeroResultPointLookups += 1;
                     totalGets++;
+                }
+                else {
+                    queries = "";
+                    isValid = false;
+                    break;
                 }
             } else {
                 queries = "";
