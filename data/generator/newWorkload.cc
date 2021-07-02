@@ -31,6 +31,7 @@ class params{
         unsigned int rangeLength;
         double skewProb;
         bool isUniform;
+        bool permuteWorkload;
         keytype maxKey;
         std::ofstream bulkdata;
         std::ofstream workload;
@@ -48,6 +49,7 @@ class params{
             rangeLength=100;
             skewProb=0.5;
             isUniform=true;
+            permuteWorkload=false;
             maxKey=INT_MAX;
             bulkdata.open("bulkwrite.txt");
             workload.open("workload.txt");
@@ -84,7 +86,8 @@ void help() {
         "-m maxKey",
         "-s skewBoundary",
         "-p skewProbability",
-        "-rl rangeLength"
+        "-rl rangeLength",
+        "-permute"
     };
     for(auto str:s) {
         std::cout << '\t' << str << '\n';
@@ -220,8 +223,10 @@ void generateWorkload(params& args) {
     std::random_device rd;
     std::mt19937 g(rd());
 
-    //generates random permutation 
-    std::shuffle(op_order.begin(), op_order.end(), g);
+    if (args.permuteWorkload) {
+        //generates random permutation 
+        std::shuffle(op_order.begin(), op_order.end(), g);
+    }
 
     //Generates a random index for an existing key, including the keys that are added by inserts
     //Uses of this random number generator check that the index generated exists at that time
@@ -410,6 +415,9 @@ int main(int argc, char* argv[]) {
             i++;
             assert(i<argc);
             args.rangeLength=atoi(argv[i]);
+        }
+        else if (p=="-permute") {
+            args.permuteWorkload=true;
         }
         else if (p=="-h") {
             help();
