@@ -31,18 +31,18 @@ function clearWorkload() {
     var insertsPercent = "";
     var blindUpdatesPercent = "";
     var readModifyUpdatesPercent = "";
-    var NonEmptyRangeLookupsPercent = "";
-    var EmptyRangeLookupsPercent = "";
-    var TargetRangeSize = "";
+    var nonEmptyRangeLookupsPercent = "";
+    var emptyRangeLookupsPercent = "";
+    var targetRangeSize = "";
     document.getElementById("query_count").value = numberWithCommas(queries);
     document.getElementById("v").value = pointLookupsPercent;
     document.getElementById("r").value = zeroResultPointLookupsPercent;
     document.getElementById("insert_workload").value = insertsPercent;
     document.getElementById("blind_update_workload").value = blindUpdatesPercent;
     document.getElementById("read_modify_update_workload").value = readModifyUpdatesPercent;
-    document.getElementById("qL").value = NonEmptyRangeLookupsPercent;
-    document.getElementById("qEL").value = EmptyRangeLookupsPercent; 
-    document.getElementById("s").value = TargetRangeSize;
+    document.getElementById("qL").value = nonEmptyRangeLookupsPercent;
+    document.getElementById("qEL").value = emptyRangeLookupsPercent; 
+    document.getElementById("s").value = targetRangeSize;
 }
 
 /**
@@ -88,10 +88,11 @@ function displayWorkloadInputs(data) {
     document.getElementById("insert_workload").value = data.insertsPercent;
     document.getElementById("blind_update_workload").value = data.blindUpdatesPercent;
     document.getElementById("read_modify_update_workload").value = data.readModifyUpdatesPercent;
-    document.getElementById("qL").value = data.NonEmptyRangeLookupsPercent;
-    document.getElementById("qEL").value = data.EmptyRangeLookupsPercent; 
-    document.getElementById("s").value = data.TargetRangeSize;
+    document.getElementById("qL").value = data.nonEmptyRangeLookupsPercent;
+    document.getElementById("qEL").value = data.emptyRangeLookupsPercent; 
+    document.getElementById("s").value = data.targetRangeSize;
     document.getElementById("workload-input-file-name").innerHTML = data.fileName;
+    updateReadOnlyFields();
     
     if(data.uParameters.p_put != 0) {
         p_get = data.uParameters.p_get;
