@@ -44,7 +44,9 @@ function loadDataFile(e, callback) {
                 metadata = loadData(e, lines.slice(1,lines.length-1), uniform, metadata);
             }
        //     last_line = lines[lines.length-1];
-            total_lines = total_lines + lines.length;
+            //We subtract 1 from lines.length because the chunks split the last line read into two parts
+            //These lines are counted as the last in this chunk and the first in the next chunk
+            total_lines = total_lines + lines.length - 1;
             // Calculate and update loading percentage
 
             var per = Math.ceil((iteration + 1) / (fileSize/chunkSize) * 1000) / 10;
@@ -351,6 +353,7 @@ function loadWorkload(e, lines) {
     for (var i = 0; i < lines.length; i++) {
         var line = lines[i].trim();
 
+        //Looks for lines that aren't empty or comments
         if (line != "" && line.indexOf("//") != 0) {
 
             if (line.indexOf("//") > 0) {
@@ -363,15 +366,20 @@ function loadWorkload(e, lines) {
 
             // Parse the type of query
             if (query.length == 3 && !isNaN(query[1]) && !isNaN(query[2])) {
-                if (query[0] == 'r') {
+                if (query[0] === 'r') {
                     targetRangeSize = query[2];
                     nonEmptyRangeLookups += 1;
                 }
-                else if (query[0] == 'e') {
+                else if (query[0] === 'e') {
                     targetRangeSize = query[2];
                     emptyRangeLookups += 1;
                 }
                 else {
+                        queries = "";
+                        isValid = false;
+                        break;
+                    }
+            } else if (query.length == 3 && !isNaN(query[1]) && isNaN(query[2])) {
                     var key = query[1];
                     if (undefined == keyHash["" + key]) {
                         keyHash["" + key] = 1;
@@ -379,13 +387,13 @@ function loadWorkload(e, lines) {
                         keyHash["" + key] += 1;
                     }
                     
-                    if (query[0] == 'i') {
+                    if (query[0] === 'i') {
                         inserts += 1;
                     }
-                    else if (query[0] == 'u') {
+                    else if (query[0] === 'u') {
                         blindUpdates += 1;
                     }
-                    else if (query[0] == 'w') {
+                    else if (query[0] === 'w') {
                         readModifyUpdates += 1;
                     }
                     else {
@@ -393,16 +401,16 @@ function loadWorkload(e, lines) {
                         isValid = false;
                         break;
                     }
-                }
             } else if (query.length == 2 && !isNaN(query[1])) {
-                if (query[0] == 'l') { 
+                if (query[0] === 'l') { 
                     var key = query[1];
                     pointLookups += 1;
                     totalGets++;
                     if (U_Parameters['start'] <= key && key <= U_Parameters['end']) {
                         specialGets++;
                     }
-                else if (query[0] == 'z') {
+                }
+                else if (query[0] === 'z') {
                     zeroResultPointLookups += 1;
                     totalGets++;
                 }
@@ -427,9 +435,10 @@ function loadWorkload(e, lines) {
             percentage = per;
             postMessage({to: "workload", msg: "percentage", percentage: percentage});
         }
-    }
+    } //for
 
     if (isValid) {
+
         pointLookupsPercent = Math.round(pointLookups / queries * 100) / 100;
         zeroResultPointLookupsPercent = Math.round(zeroResultPointLookups / queries * 100) / 100;
         insertsPercent = Math.round(inserts / queries * 100) / 100;
