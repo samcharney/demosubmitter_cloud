@@ -20,6 +20,9 @@ onmessage = function (e) {
  */
 function loadDataFile(e, callback) {
 
+    var startDay = new Date();
+    var startTime = startDay.getTime();
+
     var file = e.data.selectedFile;
     var fileSize = file.size;
     var chunkSize = fileSize/100; // bytes
@@ -73,6 +76,9 @@ function loadDataFile(e, callback) {
         if (offset >= fileSize) {
             console.log("lines="+total_lines);
             console.log("Done reading file");
+            var endDay = new Date();
+            var endTime = endDay.getTime();
+            console.log("Run time: " + (endTime-startTime));
             // Update the inputs
             postMessage({
                 to: "data",
@@ -99,6 +105,7 @@ function loadDataFile(e, callback) {
 
     // now let's start the read with the first block
     chunkReaderBlock(offset, chunkSize, file);
+
 }
 
 /**
@@ -324,6 +331,10 @@ function loadWorkloadFile(e) {
  * @param {*} lines
  */
 function loadWorkload(e, lines) {
+
+    var startDay = new Date();
+    var startTime = startDay.getTime();
+
     var queries = 0;
     var pointLookups = 0;
     var zeroResultPointLookups = 0;
@@ -436,6 +447,10 @@ function loadWorkload(e, lines) {
             postMessage({to: "workload", msg: "percentage", percentage: percentage});
         }
     } //for
+
+        var endDay = new Date();
+        var endTime = endDay.getTime();
+        console.log("Run time: " + (endTime-startTime));
 
     if (isValid) {
 /* Rounding is removed for now as it can cause the total proportion of queries not to add to 1
