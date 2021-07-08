@@ -438,7 +438,7 @@ function loadWorkload(e, lines) {
     } //for
 
     if (isValid) {
-
+/* Rounding is removed for now as it can cause the total proportion of queries not to add to 1
         pointLookupsPercent = Math.round(pointLookups / queries * 100) / 100;
         zeroResultPointLookupsPercent = Math.round(zeroResultPointLookups / queries * 100) / 100;
         insertsPercent = Math.round(inserts / queries * 100) / 100;
@@ -446,6 +446,14 @@ function loadWorkload(e, lines) {
         readModifyUpdatesPercent = Math.round(readModifyUpdates / queries * 100) / 100;
         nonEmptyRangeLookupsPercent = Math.round(nonEmptyRangeLookups / queries * 100) / 100;
         emptyRangeLookupsPercent = Math.round(emptyRangeLookups / queries * 100) / 100;
+*/
+        pointLookupsPercent = pointLookups / queries;
+        zeroResultPointLookupsPercent = zeroResultPointLookups / queries;
+        insertsPercent = inserts / queries;
+        blindUpdatesPercent = blindUpdates / queries;
+        readModifyUpdatesPercent = readModifyUpdates / queries;
+        nonEmptyRangeLookupsPercent = nonEmptyRangeLookups / queries;
+        emptyRangeLookupsPercent = emptyRangeLookups / queries;
 
         // Calculate pget
         U_Parameters['p_get'] = Math.round(specialGets / totalGets * 100) / 100;
