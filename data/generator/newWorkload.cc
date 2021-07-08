@@ -314,10 +314,11 @@ void generateWorkload(params& args) {
             case 'e':
                 {
                     keytype rangeS;
-                    bool foundRange=true;
+                    bool foundRange;
                     int tries=0;
                     int maxTries=10 + args.maxKey/100; //max number of tries is at least 10 and is a function of the size of the key space
                     do {
+                        foundRange=true;
                         tries++;
                         rangeS = range_start.get_random();
                         keytype rangeE = rangeS + args.rangeLength;
@@ -326,7 +327,7 @@ void generateWorkload(params& args) {
                                 foundRange=false;
                             }
                         }
-                    } while(foundRange && tries < maxTries);
+                    } while(!foundRange && tries < maxTries);
                     if (foundRange) {
                         args.workload << op << ' ' << rangeS << ' ' << args.rangeLength << '\n';
                     }
