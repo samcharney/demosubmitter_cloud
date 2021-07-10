@@ -1,6 +1,6 @@
 all:
 	clang++ -o workload workload.cc
-	clang++ -std=c++11 -o newWorkload newWorkload.cc
+	clang++ -std=c++11 -O3 -o newWorkload newWorkload.cc
 test1:
 	./newWorkload -n 1000 -l 3 -z 2 -i 3 -u 3 -w 2 -r 3 -e 2 -m 10000 -rl 50 -permute
 
