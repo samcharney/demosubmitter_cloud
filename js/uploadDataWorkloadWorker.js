@@ -317,12 +317,74 @@ function removeEmptyPartitions(partitions) {
  * @param {*} e
  */
 function loadWorkloadFile(e) {
-    var reader = new FileReader();
+    var file = e.data.selectedFile;
+    var fileSize = file.size;
+    var chunkSize = 1024*1024;
+    var offset = 0;
+    var leftover = "";
+    console.log("File size: " + fileSize);
+    /*var reader = new FileReader();
     reader.onload = function (evt) {
         var lines = evt.target.result.split('\n');
         loadWorkload(e, lines);
     };
-    reader.readAsText(e.data.selectedFile);
+    reader.readAsText(e.data.selectedFile);*/
+
+    var ops = {
+        queries: 0,
+        pointLookups: 0,
+        zeroResultPointLookups: 0,
+        inserts: 0,
+        blindUpdates: 0,
+        readModifyUpdates: 0,
+        nonEmptyRangeLookups: 0,
+        emptyRangeLookups: 0,
+        targetRangeSize: "",
+
+        done: false,
+        isValid: true,
+
+        keyHash: KeyHash,
+        specialGets: 0,
+        totalGets: 0,
+    }
+    var postPercentage = function (_offset, _fileSize) {
+        // Calculate and update loading percentage
+        var per = Math.ceil((_offset) / _fileSize * 1000) / 10;
+        per = Math.max(0.1, per);
+        per = Math.min(99.7, per);
+
+        postMessage({to: "workload", msg: "percentage", percentage: per});
+    }
+
+    var readEventHandler = function (evt) {
+        //console.log("Offset: " + offset);
+        var lines = (leftover + evt.target.result).split('\n');
+        leftover = lines[lines.length - 1];
+        lines = lines.slice(0, lines.length - 1);
+        //console.log("Leftover: " + leftover);
+        ops.done = offset+chunkSize >= fileSize;
+
+        loadWorkload(e, lines, ops);
+        
+        postPercentage(offset, fileSize);
+
+        offset += chunkSize;
+        if (offset >= fileSize) {
+            console.log("Done reading workload file");
+        }
+        else {
+            chunkReaderBlock(offset, chunkSize, file);
+        }
+    }
+    chunkReaderBlock = function (_offset, length, _file) {
+        var r = new FileReader();
+        var blob = _file.slice(_offset, length + _offset);
+        r.onload = readEventHandler;
+        r.readAsText(blob);
+    }
+    
+    chunkReaderBlock(offset, chunkSize, file);
 }
 
 /**
@@ -330,22 +392,8 @@ function loadWorkloadFile(e) {
  * @param {*} e
  * @param {*} lines
  */
-function loadWorkload(e, lines) {
-
-    var startDay = new Date();
-    var startTime = startDay.getTime();
-
-    var queries = 0;
-    var pointLookups = 0;
-    var zeroResultPointLookups = 0;
-    var inserts = 0;
-    var blindUpdates = 0;
-    var readModifyUpdates = 0;
-    var nonEmptyRangeLookups = 0;
-    var emptyRangeLookups = 0;
-    var targetRangeSize = "";
-
-    var isValid = true;
+function loadWorkload(e, lines, ops) {
+    
     var pointLookupsPercent = "";
     var zeroResultPointLookupsPercent = "";
     var insertsPercent = "";
@@ -354,11 +402,6 @@ function loadWorkload(e, lines) {
     var nonEmptyRangeLookupsPercent = "";
     var emptyRangeLookupsPercent = "";
 
-    var keyHash = KeyHash;
-    var specialGets = 0;
-    var totalGets = 0;
-
-    var percentage = 0;
 
     // Parse through workload file
     for (var i = 0; i < lines.length; i++) {
@@ -371,107 +414,91 @@ function loadWorkload(e, lines) {
                 line = line.split("//")[0].trim();
             }
 
-            queries += 1;
+            ops.queries += 1;
 
             var query = line.split(" ");
 
             // Parse the type of query
             if (query.length == 3 && !isNaN(query[1]) && !isNaN(query[2])) {
                 if (query[0] === 'r') {
-                    targetRangeSize = query[2];
-                    nonEmptyRangeLookups += 1;
+                    ops.targetRangeSize = query[2];
+                    ops.nonEmptyRangeLookups += 1;
                 }
                 else if (query[0] === 'e') {
-                    targetRangeSize = query[2];
-                    emptyRangeLookups += 1;
+                    ops.targetRangeSize = query[2];
+                    ops.emptyRangeLookups += 1;
                 }
                 else {
-                        queries = "";
-                        isValid = false;
+                        ops.queries = "";
+                        ops.isValid = false;
                         break;
                     }
             } else if (query.length == 3 && !isNaN(query[1]) && isNaN(query[2])) {
                     var key = query[1];
-                    if (undefined == keyHash["" + key]) {
-                        keyHash["" + key] = 1;
+                    if (undefined == ops.keyHash["" + key]) {
+                        ops.keyHash["" + key] = 1;
                     } else {
-                        keyHash["" + key] += 1;
+                        ops.keyHash["" + key] += 1;
                     }
                     
                     if (query[0] === 'i') {
-                        inserts += 1;
+                        ops.inserts += 1;
                     }
                     else if (query[0] === 'u') {
-                        blindUpdates += 1;
+                        ops.blindUpdates += 1;
                     }
                     else if (query[0] === 'w') {
-                        readModifyUpdates += 1;
+                        ops.readModifyUpdates += 1;
                     }
                     else {
-                        queries = "";
-                        isValid = false;
+                        ops.queries = "";
+                        ops.isValid = false;
                         break;
                     }
             } else if (query.length == 2 && !isNaN(query[1])) {
                 if (query[0] === 'l') { 
                     var key = query[1];
-                    pointLookups += 1;
-                    totalGets++;
+                    ops.pointLookups += 1;
+                    ops.totalGets++;
                     if (U_Parameters['start'] <= key && key <= U_Parameters['end']) {
-                        specialGets++;
+                        ops.specialGets++;
                     }
                 }
                 else if (query[0] === 'z') {
-                    zeroResultPointLookups += 1;
-                    totalGets++;
+                    ops.zeroResultPointLookups += 1;
+                    ops.totalGets++;
                 }
                 else {
-                    queries = "";
-                    isValid = false;
+                    ops.queries = "";
+                    ops.isValid = false;
                     break;
                 }
             } else {
-                queries = "";
-                isValid = false;
+                ops.queries = "";
+                ops.isValid = false;
                 break;
             }
         }
 
-        // Calculate and update loading percentage
-        var per = Math.ceil((i + 1) / lines.length * 1000) / 10;
-        per = Math.max(0.1, per);
-        per = Math.min(99.7, per);
-
-        if (per != percentage) {
-            percentage = per;
-            postMessage({to: "workload", msg: "percentage", percentage: percentage});
-        }
     } //for
 
         var endDay = new Date();
         var endTime = endDay.getTime();
         console.log("Run time: " + (endTime-startTime));
 
-    if (isValid) {
-/* Rounding is removed for now as it can cause the total proportion of queries not to add to 1
-        pointLookupsPercent = Math.round(pointLookups / queries * 100) / 100;
-        zeroResultPointLookupsPercent = Math.round(zeroResultPointLookups / queries * 100) / 100;
-        insertsPercent = Math.round(inserts / queries * 100) / 100;
-        blindUpdatesPercent = Math.round(blindUpdates / queries * 100) / 100;
-        readModifyUpdatesPercent = Math.round(readModifyUpdates / queries * 100) / 100;
-        nonEmptyRangeLookupsPercent = Math.round(nonEmptyRangeLookups / queries * 100) / 100;
-        emptyRangeLookupsPercent = Math.round(emptyRangeLookups / queries * 100) / 100;
-*/
-        pointLookupsPercent = pointLookups / queries;
-        zeroResultPointLookupsPercent = zeroResultPointLookups / queries;
-        insertsPercent = inserts / queries;
-        blindUpdatesPercent = blindUpdates / queries;
-        readModifyUpdatesPercent = readModifyUpdates / queries;
-        nonEmptyRangeLookupsPercent = nonEmptyRangeLookups / queries;
-        emptyRangeLookupsPercent = emptyRangeLookups / queries;
+    if (ops.done) {
+    if (ops.isValid) {
+        pointLookupsPercent = ops.pointLookups / ops.queries;
+        zeroResultPointLookupsPercent = ops.zeroResultPointLookups / ops.queries;
+        insertsPercent = ops.inserts / ops.queries;
+        blindUpdatesPercent = ops.blindUpdates / ops.queries;
+        readModifyUpdatesPercent = ops.readModifyUpdates / ops.queries;
+        nonEmptyRangeLookupsPercent = ops.nonEmptyRangeLookups / ops.queries;
+        emptyRangeLookupsPercent = ops.emptyRangeLookups / ops.queries;
+
 
         // Calculate pget
-        U_Parameters['p_get'] = Math.round(specialGets / totalGets * 100) / 100;
+        U_Parameters['p_get'] = Math.round(ops.specialGets / ops.totalGets * 100) / 100;
     } else {
         postMessage({to: "workload", msg: "invalid"});
     }
@@ -480,7 +507,7 @@ function loadWorkload(e, lines) {
     postMessage({
         to: "workload",
         msg: "inputs",
-        queries: queries,
+        queries: ops.queries,
         pointLookupsPercent: pointLookupsPercent,
         zeroResultPointLookupsPercent: zeroResultPointLookupsPercent,
         insertsPercent: insertsPercent,
@@ -488,8 +515,9 @@ function loadWorkload(e, lines) {
         readModifyUpdatesPercent: readModifyUpdatesPercent,
         nonEmptyRangeLookupsPercent: nonEmptyRangeLookupsPercent,
         emptyRangeLookupsPercent: emptyRangeLookupsPercent,
-        targetRangeSize: targetRangeSize,
+        targetRangeSize: ops.targetRangeSize,
         fileName: e.data.selectedFile.name,
         uParameters: U_Parameters
     });
+    }
 }
