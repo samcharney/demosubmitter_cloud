@@ -25,7 +25,7 @@ function loadDataFile(e, callback) {
 
     var file = e.data.selectedFile;
     var fileSize = file.size;
-    var chunkSize = fileSize/100; // bytes
+    var chunkSize = 1024*1024 // bytes
     var offset = 0;
     var self = this; // we need a reference to the current object
     var chunkReaderBlock = null;
@@ -52,7 +52,7 @@ function loadDataFile(e, callback) {
             total_lines = total_lines + lines.length - 1;
             // Calculate and update loading percentage
 
-            var per = Math.ceil((iteration + 1) / (fileSize/chunkSize) * 1000) / 10;
+            var per = Math.ceil(offset / fileSize * 1000) / 10;
             per = Math.max(0.1, per);
             per = Math.min(99.7, per);
 
@@ -60,7 +60,6 @@ function loadDataFile(e, callback) {
                 percentage = per;
                 postMessage({to: "data", msg: "percentage", percentage: percentage});
             }
-            iteration ++;
 
             offset += chunkSize;
             if (Math.ceil(Math.random()*10) == 5) {
