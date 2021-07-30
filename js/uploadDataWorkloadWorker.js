@@ -25,34 +25,31 @@ function loadDataFile(e, callback) {
 
     var file = e.data.selectedFile;
     var fileSize = file.size;
-    var chunkSize = file.size/100; // bytes
+    var chunkSize = 1024*1024; // bytes
     var offset = 0;
+    var leftover = "";
     var self = this; // we need a reference to the current object
     var chunkReaderBlock = null;
-    // var last_line = "";
+    var done = false;
     var uniform = e.data.uniform;
     var metadata = {maxKey: -2147483648, maxValue: "", keyHash: new Object(), frequencyKeys: [], uParameters: {}}
-    var iteration = 0;
     var percentage = 0;
-    var visit = true;
     var total_lines = 0;
     var readEventHandler = function (evt) {
         if (evt.target.error == null) {
-            var lines = evt.target.result.split('\n');
-            //           if (last_line != "") {
-            //             lines.unshift(last_line+lines[0]);
-            //           lines.splice(1,1);
-            //     }
-            if (visit) {
-                metadata = loadData(e, lines.slice(1,lines.length-1), uniform, metadata);
-            }
-            //     last_line = lines[lines.length-1];
+            var lines = (leftover + evt.target.result).split('\n');
+            leftover = lines[lines.length - 1];
+            lines = lines.slice(0, lines.length - 1);
+            done = offset+chunkSize >= fileSize;
+
+            metadata = loadData(e, lines, uniform, metadata, done);
+
             //We subtract 1 from lines.length because the chunks split the last line read into two parts
             //These lines are counted as the last in this chunk and the first in the next chunk
             total_lines = total_lines + lines.length - 1;
             // Calculate and update loading percentage
 
-            var per = Math.ceil((iteration+1) / (fileSize/chunkSize) * 1000) / 10;
+            var per = Math.ceil(offset / fileSize * 1000) / 10;
             per = Math.max(0.1, per);
             per = Math.min(99.7, per);
 
@@ -60,15 +57,9 @@ function loadDataFile(e, callback) {
                 percentage = per;
                 postMessage({to: "data", msg: "percentage", percentage: percentage});
             }
-            iteration++;
 
             offset += chunkSize;
 
-            if (Math.ceil(Math.random()*10) == 5) {
-                visit = true;
-            } else {
-                visit = false;
-            }
             callback(evt.target.result); // callback for handling read chunk
         } else {
             console.log("Read error: " + evt.target.error);
@@ -114,7 +105,7 @@ chunkReaderBlock(offset, chunkSize, file);
  * @param {*} e
  * @param {*} lines
  */
-function loadData(e, lines, uniform, metadata) {
+function loadData(e, lines, uniform, metadata, done) {
     var maxKey = metadata['maxKey'];
     var maxValue = metadata['maxValue'];
 
@@ -167,6 +158,7 @@ function loadData(e, lines, uniform, metadata) {
         }
     }
 
+    if (done) {
     if (isValid) {
 
         // Turn hash into array
@@ -193,6 +185,7 @@ function loadData(e, lines, uniform, metadata) {
         U_Parameters = uParameters;
     } else {
         postMessage({to: "data", msg: "invalid"});
+    }
     }
 
 
