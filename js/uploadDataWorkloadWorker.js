@@ -25,7 +25,7 @@ function loadDataFile(e, callback) {
 
     var file = e.data.selectedFile;
     var fileSize = file.size;
-    var chunkSize = 1024*1024; // bytes
+    var chunkSize = 1024*1024// bytes
     var offset = 0;
     var leftover = "";
     var self = this; // we need a reference to the current object
@@ -41,14 +41,12 @@ function loadDataFile(e, callback) {
             leftover = lines[lines.length - 1];
             lines = lines.slice(0, lines.length - 1);
             done = offset+chunkSize >= fileSize;
-
+            
             metadata = loadData(e, lines, uniform, metadata, done);
 
-            //We subtract 1 from lines.length because the chunks split the last line read into two parts
-            //These lines are counted as the last in this chunk and the first in the next chunk
-            total_lines = total_lines + lines.length - 1;
-            // Calculate and update loading percentage
+            total_lines = total_lines + lines.length;
 
+            // Calculate and update loading percentage
             var per = Math.ceil(offset / fileSize * 1000) / 10;
             per = Math.max(0.1, per);
             per = Math.min(99.7, per);
@@ -84,7 +82,7 @@ function loadDataFile(e, callback) {
             return;
         }
 
-    // of to the next chunk
+    // off to the next chunk
     chunkReaderBlock(offset, chunkSize, file);
 }
 
@@ -108,12 +106,9 @@ chunkReaderBlock(offset, chunkSize, file);
 function loadData(e, lines, uniform, metadata, done) {
     var maxKey = metadata['maxKey'];
     var maxValue = metadata['maxValue'];
+    var keyHash = metadata['keyHash'];
 
     var isValid = true;
-
-    var keyHash = metadata['keyHash'];
-    var frequencyKeys = metadata['frequencyKeys'];
-    var uParameters = metadata['uParameters'];
 
     // Parse through data file
     for (var i = 0; i < lines.length; i++) {
@@ -150,51 +145,56 @@ function loadData(e, lines, uniform, metadata, done) {
                 maxValue = value;
             }
             // Add key to hash
-            if (undefined == keyHash["" + key]) {
-                keyHash["" + key] = 1;
-            } else {
-                keyHash["" + key] += 1;
+            // 1 in 10 keys is stored in hash to prevent memory overflow
+            if (Math.ceil(Math.random()*10) == 5) {
+                if (undefined == keyHash["" + key]) {
+                    keyHash["" + key] = 1;
+                } else {
+                    keyHash["" + key] += 1;
+                }
             }
         }
     }
 
-    if (done) {
     if (isValid) {
+        if (done) {
 
-        // Turn hash into array
-        for (const property in keyHash) {
-            frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
-        }
-        frequencyKeys.sort(function (a, b) {
+            var frequencyKeys = metadata['frequencyKeys'];
+            var uParameters = metadata['uParameters'];
+
+            // Turn hash into array
+            for (const property in keyHash) {
+                frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
+            }
+            frequencyKeys.sort(function (a, b) {
                 return a.key - b.key;
                 });
-        // Calculate U, U1, U1, and pput
-        if (!uniform) {
-            uParameters = highestFrequencyPartitions(frequencyKeys);
-            var totalKeys = 0;
-            for (var key of frequencyKeys) {
-                totalKeys += key.frequency;
+            // Calculate U, U1, U2, and pput
+            if (!uniform) {
+                uParameters = highestFrequencyPartitions(frequencyKeys);
+                var totalKeys = 0;
+                for (var key of frequencyKeys) {
+                    totalKeys += key.frequency;
+                }
+                uParameters['p_put'] = Math.round(uParameters['specialKeys'] / totalKeys * 100) / 100;
+            } else {
+                uParameters['U'] = maxKey * 100;
             }
-            uParameters['p_put'] = Math.round(uParameters['specialKeys'] / totalKeys * 100) / 100;
-        } else {
-            uParameters['U'] = maxKey * 100;
+
+            metadata['frequencyKeys'] = frequencyKeys;
+            metadata['uParameters'] = uParameters;
+            
+            KeyHash = metadata['keyHash'];
+            U_Parameters = metadata['uParameters'];
         }
-
-
-        KeyHash = keyHash;
-        U_Parameters = uParameters;
     } else {
         postMessage({to: "data", msg: "invalid"});
-    }
     }
 
 
     metadata['maxKey'] = maxKey;
     metadata['maxValue'] = maxValue;
-
     metadata['keyHash'] = keyHash;
-    metadata['frequencyKeys'] = frequencyKeys;
-    metadata['uParameters'] = uParameters;
 
     return metadata;
 }
