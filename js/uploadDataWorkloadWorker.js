@@ -25,34 +25,29 @@ function loadDataFile(e, callback) {
 
     var file = e.data.selectedFile;
     var fileSize = file.size;
-    var chunkSize = fileSize/100; // bytes
+    var chunkSize = 1024*1024// bytes
     var offset = 0;
+    var leftover = "";
     var self = this; // we need a reference to the current object
     var chunkReaderBlock = null;
-   // var last_line = "";
+    var done = false;
     var uniform = e.data.uniform;
     var metadata = {maxKey: -2147483648, maxValue: "", keyHash: new Object(), frequencyKeys: [], uParameters: {}}
-    var iteration = 0;
     var percentage = 0;
-    var visit = false;
     var total_lines = 0;
     var readEventHandler = function (evt) {
         if (evt.target.error == null) {
-            var lines = evt.target.result.split('\n');
- //           if (last_line != "") {
-   //             lines.unshift(last_line+lines[0]);
-     //           lines.splice(1,1);
-       //     }
-            if (visit) {
-                metadata = loadData(e, lines.slice(1,lines.length-1), uniform, metadata);
-            }
-       //     last_line = lines[lines.length-1];
-            //We subtract 1 from lines.length because the chunks split the last line read into two parts
-            //These lines are counted as the last in this chunk and the first in the next chunk
-            total_lines = total_lines + lines.length - 1;
-            // Calculate and update loading percentage
+            var lines = (leftover + evt.target.result).split('\n');
+            leftover = lines[lines.length - 1];
+            lines = lines.slice(0, lines.length - 1);
+            done = offset+chunkSize >= fileSize;
+            
+            metadata = loadData(e, lines, uniform, metadata, done);
 
-            var per = Math.ceil((iteration + 1) / (fileSize/chunkSize) * 1000) / 10;
+            total_lines = total_lines + lines.length;
+
+            // Calculate and update loading percentage
+            var per = Math.ceil(offset / fileSize * 1000) / 10;
             per = Math.max(0.1, per);
             per = Math.min(99.7, per);
 
@@ -60,14 +55,9 @@ function loadDataFile(e, callback) {
                 percentage = per;
                 postMessage({to: "data", msg: "percentage", percentage: percentage});
             }
-            iteration ++;
 
             offset += chunkSize;
-            if (Math.ceil(Math.random()*10) == 5) {
-                visit = true;
-            } else {
-                visit = false;
-            }
+
             callback(evt.target.result); // callback for handling read chunk
         } else {
             console.log("Read error: " + evt.target.error);
@@ -92,19 +82,19 @@ function loadDataFile(e, callback) {
             return;
         }
 
-        // of to the next chunk
-        chunkReaderBlock(offset, chunkSize, file);
-    }
-
-    chunkReaderBlock = function (_offset, length, _file) {
-        var r = new FileReader();
-        var blob = _file.slice(_offset, length + _offset);
-        r.onload = readEventHandler;
-        r.readAsText(blob);
-    }
-
-    // now let's start the read with the first block
+    // off to the next chunk
     chunkReaderBlock(offset, chunkSize, file);
+}
+
+chunkReaderBlock = function (_offset, length, _file) {
+    var r = new FileReader();
+    var blob = _file.slice(_offset, length + _offset);
+    r.onload = readEventHandler;
+    r.readAsText(blob);
+}
+
+// now let's start the read with the first block
+chunkReaderBlock(offset, chunkSize, file);
 
 }
 
@@ -113,15 +103,12 @@ function loadDataFile(e, callback) {
  * @param {*} e
  * @param {*} lines
  */
-function loadData(e, lines, uniform, metadata) {
+function loadData(e, lines, uniform, metadata, done) {
     var maxKey = metadata['maxKey'];
     var maxValue = metadata['maxValue'];
+    var keyHash = metadata['keyHash'];
 
     var isValid = true;
-
-    var keyHash = metadata['keyHash'];
-    var frequencyKeys = metadata['frequencyKeys'];
-    var uParameters = metadata['uParameters'];
 
     // Parse through data file
     for (var i = 0; i < lines.length; i++) {
@@ -137,7 +124,7 @@ function loadData(e, lines, uniform, metadata) {
 
             // Check if entry is correct format
             if (!(entry.length == 2 && !isNaN(entry[0])) &&
-                !(entry.length == 3 && !(isNaN(entry[1])) && !(isNaN(entry[2])))) {
+                    !(entry.length == 3 && !(isNaN(entry[1])) && !(isNaN(entry[2])))) {
                 entries = "";
                 isValid = false;
                 break;
@@ -158,38 +145,48 @@ function loadData(e, lines, uniform, metadata) {
                 maxValue = value;
             }
             // Add key to hash
-            if (undefined == keyHash["" + key]) {
-                keyHash["" + key] = 1;
-            } else {
-                keyHash["" + key] += 1;
+            // 1 in 10 keys is stored in hash to prevent memory overflow
+            if (Math.ceil(Math.random()*10) == 5) {
+                if (undefined == keyHash["" + key]) {
+                    keyHash["" + key] = 1;
+                } else {
+                    keyHash["" + key] += 1;
+                }
             }
         }
     }
 
     if (isValid) {
+        if (done) {
 
-        // Turn hash into array
-        for (const property in keyHash) {
-            frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
-        }
-        frequencyKeys.sort(function (a, b) {
-            return a.key - b.key;
-        });
-        // Calculate U, U1, U1, and pput
-        if (!uniform) {
-            uParameters = highestFrequencyPartitions(frequencyKeys);
-            var totalKeys = 0;
-            for (var key of frequencyKeys) {
-                totalKeys += key.frequency;
+            var frequencyKeys = metadata['frequencyKeys'];
+            var uParameters = metadata['uParameters'];
+
+            // Turn hash into array
+            for (const property in keyHash) {
+                frequencyKeys.push({key: Number(property), frequency: keyHash[property]});
             }
-            uParameters['p_put'] = Math.round(uParameters['specialKeys'] / totalKeys * 100) / 100;
-        } else {
-            uParameters['U'] = maxKey * 100;
+            frequencyKeys.sort(function (a, b) {
+                return a.key - b.key;
+                });
+            // Calculate U, U1, U2, and pput
+            if (!uniform) {
+                uParameters = highestFrequencyPartitions(frequencyKeys);
+                var totalKeys = 0;
+                for (var key of frequencyKeys) {
+                    totalKeys += key.frequency;
+                }
+                uParameters['p_put'] = Math.round(uParameters['specialKeys'] / totalKeys * 100) / 100;
+            } else {
+                uParameters['U'] = maxKey * 100;
+            }
+
+            metadata['frequencyKeys'] = frequencyKeys;
+            metadata['uParameters'] = uParameters;
+            
+            KeyHash = metadata['keyHash'];
+            U_Parameters = metadata['uParameters'];
         }
-
-
-        KeyHash = keyHash;
-        U_Parameters = uParameters;
     } else {
         postMessage({to: "data", msg: "invalid"});
     }
@@ -197,10 +194,7 @@ function loadData(e, lines, uniform, metadata) {
 
     metadata['maxKey'] = maxKey;
     metadata['maxValue'] = maxValue;
-
     metadata['keyHash'] = keyHash;
-    metadata['frequencyKeys'] = frequencyKeys;
-    metadata['uParameters'] = uParameters;
 
     return metadata;
 }
@@ -267,8 +261,8 @@ function highestFrequencyPartitions(entries) {
 
     // Sort array by average frequencies
     partitions.sort(function (a, b) {
-        return (b[TOTAL_FREQUENCY] / b[NUMBER_KEYS]) - (a[TOTAL_FREQUENCY] / a[NUMBER_KEYS]);
-    });
+            return (b[TOTAL_FREQUENCY] / b[NUMBER_KEYS]) - (a[TOTAL_FREQUENCY] / a[NUMBER_KEYS]);
+            });
 
     // Find the mean of the average frequencies
     var meanAvgFrequency = 0;
@@ -317,12 +311,76 @@ function removeEmptyPartitions(partitions) {
  * @param {*} e
  */
 function loadWorkloadFile(e) {
-    var reader = new FileReader();
-    reader.onload = function (evt) {
-        var lines = evt.target.result.split('\n');
-        loadWorkload(e, lines);
-    };
-    reader.readAsText(e.data.selectedFile);
+
+    var startDay = new Date();
+    var startTime = startDay.getTime();
+
+    var file = e.data.selectedFile;
+    var fileSize = file.size;
+    var chunkSize = 1024*1024;
+    var offset = 0;
+    var leftover = "";
+    console.log("File size: " + fileSize);
+
+    var ops = {
+         queries: 0,
+         pointLookups: 0,
+         zeroResultPointLookups: 0,
+         inserts: 0,
+         blindUpdates: 0,
+         readModifyUpdates: 0,
+         nonEmptyRangeLookups: 0,
+         emptyRangeLookups: 0,
+         targetRangeSize: "",
+
+         done: false,
+         isValid: true,
+
+         keyHash: KeyHash,
+         specialGets: 0,
+         totalGets: 0,
+    }
+    var postPercentage = function (_offset, _fileSize) {
+        // Calculate and update loading percentage
+        var per = Math.ceil((_offset) / _fileSize * 1000) / 10;
+        per = Math.max(0.1, per);
+        per = Math.min(99.7, per);
+
+        postMessage({to: "workload", msg: "percentage", percentage: per});
+    }
+
+    var readEventHandler = function (evt) {
+        //console.log("Offset: " + offset);
+        var lines = (leftover + evt.target.result).split('\n');
+        leftover = lines[lines.length - 1];
+        lines = lines.slice(0, lines.length - 1);
+        //console.log("Leftover: " + leftover);
+        ops.done = offset+chunkSize >= fileSize;
+
+        loadWorkload(e, lines, ops);
+
+        postPercentage(offset, fileSize);
+
+        offset += chunkSize;
+        if (offset >= fileSize) {
+            console.log("Done reading workload file");
+
+            var endDay = new Date();
+            var endTime = endDay.getTime();
+            console.log("Run time: " + (endTime-startTime));
+        }
+        else {
+            chunkReaderBlock(offset, chunkSize, file);
+        }
+    }
+    chunkReaderBlock = function (_offset, length, _file) {
+        var r = new FileReader();
+        var blob = _file.slice(_offset, length + _offset);
+        r.onload = readEventHandler;
+        r.readAsText(blob);
+    }
+
+    chunkReaderBlock(offset, chunkSize, file);
 }
 
 /**
@@ -330,22 +388,8 @@ function loadWorkloadFile(e) {
  * @param {*} e
  * @param {*} lines
  */
-function loadWorkload(e, lines) {
+function loadWorkload(e, lines, ops) {
 
-    var startDay = new Date();
-    var startTime = startDay.getTime();
-
-    var queries = 0;
-    var pointLookups = 0;
-    var zeroResultPointLookups = 0;
-    var inserts = 0;
-    var blindUpdates = 0;
-    var readModifyUpdates = 0;
-    var nonEmptyRangeLookups = 0;
-    var emptyRangeLookups = 0;
-    var targetRangeSize = "";
-
-    var isValid = true;
     var pointLookupsPercent = "";
     var zeroResultPointLookupsPercent = "";
     var insertsPercent = "";
@@ -354,11 +398,6 @@ function loadWorkload(e, lines) {
     var nonEmptyRangeLookupsPercent = "";
     var emptyRangeLookupsPercent = "";
 
-    var keyHash = KeyHash;
-    var specialGets = 0;
-    var totalGets = 0;
-
-    var percentage = 0;
 
     // Parse through workload file
     for (var i = 0; i < lines.length; i++) {
@@ -371,125 +410,106 @@ function loadWorkload(e, lines) {
                 line = line.split("//")[0].trim();
             }
 
-            queries += 1;
+            ops.queries += 1;
 
             var query = line.split(" ");
 
             // Parse the type of query
             if (query.length == 3 && !isNaN(query[1]) && !isNaN(query[2])) {
                 if (query[0] === 'r') {
-                    targetRangeSize = query[2];
-                    nonEmptyRangeLookups += 1;
+                    ops.targetRangeSize = query[2];
+                    ops.nonEmptyRangeLookups += 1;
                 }
                 else if (query[0] === 'e') {
-                    targetRangeSize = query[2];
-                    emptyRangeLookups += 1;
+                    ops.targetRangeSize = query[2];
+                    ops.emptyRangeLookups += 1;
                 }
                 else {
-                        queries = "";
-                        isValid = false;
-                        break;
-                    }
+                    ops.queries = "";
+                    ops.isValid = false;
+                    break;
+                }
             } else if (query.length == 3 && !isNaN(query[1]) && isNaN(query[2])) {
-                    var key = query[1];
-                    if (undefined == keyHash["" + key]) {
-                        keyHash["" + key] = 1;
-                    } else {
-                        keyHash["" + key] += 1;
-                    }
-                    
-                    if (query[0] === 'i') {
-                        inserts += 1;
-                    }
-                    else if (query[0] === 'u') {
-                        blindUpdates += 1;
-                    }
-                    else if (query[0] === 'w') {
-                        readModifyUpdates += 1;
-                    }
-                    else {
-                        queries = "";
-                        isValid = false;
-                        break;
-                    }
+                var key = query[1];
+                if (undefined == ops.keyHash["" + key]) {
+                    ops.keyHash["" + key] = 1;
+                } else {
+                    ops.keyHash["" + key] += 1;
+                }
+
+                if (query[0] === 'i') {
+                    ops.inserts += 1;
+                }
+                else if (query[0] === 'u') {
+                    ops.blindUpdates += 1;
+                }
+                else if (query[0] === 'w') {
+                    ops.readModifyUpdates += 1;
+                }
+                else {
+                    ops.queries = "";
+                    ops.isValid = false;
+                    break;
+                }
             } else if (query.length == 2 && !isNaN(query[1])) {
                 if (query[0] === 'l') { 
                     var key = query[1];
-                    pointLookups += 1;
-                    totalGets++;
+                    ops.pointLookups += 1;
+                    ops.totalGets++;
                     if (U_Parameters['start'] <= key && key <= U_Parameters['end']) {
-                        specialGets++;
+                        ops.specialGets++;
                     }
                 }
                 else if (query[0] === 'z') {
-                    zeroResultPointLookups += 1;
-                    totalGets++;
+                    ops.zeroResultPointLookups += 1;
+                    ops.totalGets++;
                 }
                 else {
-                    queries = "";
-                    isValid = false;
+                    ops.queries = "";
+                    ops.isValid = false;
                     break;
                 }
             } else {
-                queries = "";
-                isValid = false;
+                ops.queries = "";
+                ops.isValid = false;
                 break;
             }
         }
 
-        // Calculate and update loading percentage
-        var per = Math.ceil((i + 1) / lines.length * 1000) / 10;
-        per = Math.max(0.1, per);
-        per = Math.min(99.7, per);
-
-        if (per != percentage) {
-            percentage = per;
-            postMessage({to: "workload", msg: "percentage", percentage: percentage});
-        }
     } //for
 
-        var endDay = new Date();
-        var endTime = endDay.getTime();
-        console.log("Run time: " + (endTime-startTime));
+    if (ops.done) {
+        if (ops.isValid) {
+            pointLookupsPercent = ops.pointLookups / ops.queries;
+            zeroResultPointLookupsPercent = ops.zeroResultPointLookups / ops.queries;
+            insertsPercent = ops.inserts / ops.queries;
+            blindUpdatesPercent = ops.blindUpdates / ops.queries;
+            readModifyUpdatesPercent = ops.readModifyUpdates / ops.queries;
+            nonEmptyRangeLookupsPercent = ops.nonEmptyRangeLookups / ops.queries;
+            emptyRangeLookupsPercent = ops.emptyRangeLookups / ops.queries;
 
-    if (isValid) {
-/* Rounding is removed for now as it can cause the total proportion of queries not to add to 1
-        pointLookupsPercent = Math.round(pointLookups / queries * 100) / 100;
-        zeroResultPointLookupsPercent = Math.round(zeroResultPointLookups / queries * 100) / 100;
-        insertsPercent = Math.round(inserts / queries * 100) / 100;
-        blindUpdatesPercent = Math.round(blindUpdates / queries * 100) / 100;
-        readModifyUpdatesPercent = Math.round(readModifyUpdates / queries * 100) / 100;
-        nonEmptyRangeLookupsPercent = Math.round(nonEmptyRangeLookups / queries * 100) / 100;
-        emptyRangeLookupsPercent = Math.round(emptyRangeLookups / queries * 100) / 100;
-*/
-        pointLookupsPercent = pointLookups / queries;
-        zeroResultPointLookupsPercent = zeroResultPointLookups / queries;
-        insertsPercent = inserts / queries;
-        blindUpdatesPercent = blindUpdates / queries;
-        readModifyUpdatesPercent = readModifyUpdates / queries;
-        nonEmptyRangeLookupsPercent = nonEmptyRangeLookups / queries;
-        emptyRangeLookupsPercent = emptyRangeLookups / queries;
 
-        // Calculate pget
-        U_Parameters['p_get'] = Math.round(specialGets / totalGets * 100) / 100;
-    } else {
-        postMessage({to: "workload", msg: "invalid"});
+            // Calculate pget
+            U_Parameters['p_get'] = Math.round(ops.specialGets / ops.totalGets * 100) / 100;
+        } else {
+            postMessage({to: "workload", msg: "invalid"});
+        }
+
+        // Update the inputs
+        postMessage({
+            to: "workload",
+            msg: "inputs",
+            queries: ops.queries,
+            pointLookupsPercent: pointLookupsPercent,
+            zeroResultPointLookupsPercent: zeroResultPointLookupsPercent,
+            insertsPercent: insertsPercent,
+            blindUpdatesPercent: blindUpdatesPercent,
+            readModifyUpdatesPercent: readModifyUpdatesPercent,
+            nonEmptyRangeLookupsPercent: nonEmptyRangeLookupsPercent,
+            emptyRangeLookupsPercent: emptyRangeLookupsPercent,
+            targetRangeSize: ops.targetRangeSize,
+            fileName: e.data.selectedFile.name,
+            uParameters: U_Parameters
+        });
     }
-
-    // Update the inputs
-    postMessage({
-        to: "workload",
-        msg: "inputs",
-        queries: queries,
-        pointLookupsPercent: pointLookupsPercent,
-        zeroResultPointLookupsPercent: zeroResultPointLookupsPercent,
-        insertsPercent: insertsPercent,
-        blindUpdatesPercent: blindUpdatesPercent,
-        readModifyUpdatesPercent: readModifyUpdatesPercent,
-        nonEmptyRangeLookupsPercent: nonEmptyRangeLookupsPercent,
-        emptyRangeLookupsPercent: emptyRangeLookupsPercent,
-        targetRangeSize: targetRangeSize,
-        fileName: e.data.selectedFile.name,
-        uParameters: U_Parameters
-    });
 }
