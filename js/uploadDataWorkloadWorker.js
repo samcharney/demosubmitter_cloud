@@ -306,6 +306,10 @@ function removeEmptyPartitions(partitions) {
     return newPartitions;
 }
 
+function round1000(x) {
+    return Math.round(x * 1000) / 1000;
+}
+
 /**
  * Read data from workload file and call loadWorkload
  * @param {*} e
@@ -480,13 +484,13 @@ function loadWorkload(e, lines, ops) {
 
     if (ops.done) {
         if (ops.isValid) {
-            pointLookupsPercent = ops.pointLookups / ops.queries;
-            zeroResultPointLookupsPercent = ops.zeroResultPointLookups / ops.queries;
-            insertsPercent = ops.inserts / ops.queries;
-            blindUpdatesPercent = ops.blindUpdates / ops.queries;
-            readModifyUpdatesPercent = ops.readModifyUpdates / ops.queries;
-            nonEmptyRangeLookupsPercent = ops.nonEmptyRangeLookups / ops.queries;
-            emptyRangeLookupsPercent = ops.emptyRangeLookups / ops.queries;
+            pointLookupsPercent = round1000(ops.pointLookups / ops.queries);
+            zeroResultPointLookupsPercent = round1000(ops.zeroResultPointLookups / ops.queries);
+            insertsPercent = round1000(ops.inserts / ops.queries);
+            blindUpdatesPercent = round1000(ops.blindUpdates / ops.queries);
+            readModifyUpdatesPercent = round1000(ops.readModifyUpdates / ops.queries);
+            nonEmptyRangeLookupsPercent = round1000(ops.nonEmptyRangeLookups / ops.queries);
+            emptyRangeLookupsPercent = round1000(ops.emptyRangeLookups / ops.queries);
 
 
             // Calculate pget

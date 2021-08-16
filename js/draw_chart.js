@@ -355,7 +355,8 @@ function drawContinuumsMultithread(if_regenerate=true) {
         }
         myWorker = new Worker('js/worker.js');
         var input = parseInputVariables();
-        if (input.blind_update_percentage + input.insert_percentage + input.rmw_percentage + input.r + input.v + input.qEL + input.qL != 1) {
+        var sum = input.blind_update_percentage + input.insert_percentage + input.rmw_percentage + input.r + input.v + input.qEL + input.qL;
+        if (sum<0.997 || sum>1.003 ){
             alert("Workload inputs do not add to 1!");
             return 0;
         } else {
