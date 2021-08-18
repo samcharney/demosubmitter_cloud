@@ -32,9 +32,10 @@ function loadDataFile(e, callback) {
     var chunkReaderBlock = null;
     var done = false;
     var uniform = e.data.uniform;
-    var metadata = {maxKey: -2147483648, maxValue: "", keyHash: new Object(), frequencyKeys: [], uParameters: {}}
+    var metadata = {maxKey: -2147483648, minKey: 2147483648, maxValue: "", partitions: [],/* keyHash: new Object(), frequencyKeys: [],*/ uParameters: {}}
     var percentage = 0;
     var total_lines = 0;
+    var pass = 1;
     var readEventHandler = function (evt) {
         if (evt.target.error == null) {
             var lines = (leftover + evt.target.result).split('\n');
@@ -42,12 +43,20 @@ function loadDataFile(e, callback) {
             lines = lines.slice(0, lines.length - 1);
             done = offset+chunkSize >= fileSize;
             
-            metadata = loadData(e, lines, uniform, metadata, done);
-
-            total_lines = total_lines + lines.length;
-
+            if (pass===1) {
+                metadata = loadData(e, lines, uniform, metadata, done);
+                total_lines = total_lines + lines.length;
+            }
+            else if (pass===2) {
+                if (uniform) {
+                    metadata['uParameters']['U'] == 100 * maxKey;
+                }
+                else {
+                    metadata = loadSkewParamaters(e, lines, metadata, done);
+                }
+            }
             // Calculate and update loading percentage
-            var per = Math.ceil(offset / fileSize * 1000) / 10;
+            var per = Math.ceil(offset / fileSize * 1000) / 20 + 50 * (pass - 1);
             per = Math.max(0.1, per);
             per = Math.min(99.7, per);
 
@@ -63,7 +72,7 @@ function loadDataFile(e, callback) {
             console.log("Read error: " + evt.target.error);
             return;
         }
-        if (offset >= fileSize) {
+        if (done && pass===2) {
             console.log("lines="+total_lines);
             console.log("Done reading file");
             var endDay = new Date();
@@ -80,6 +89,12 @@ function loadDataFile(e, callback) {
                 uParameters: metadata['uParameters']
             });
             return;
+        }
+        else if (done && pass===1) {
+            offset = 0;
+            pass = 2;
+            total_lines=0; //Zeroed to prevent it from being doubled and is faster than checking pass every chunk
+            metadata['partitions'] = setUpPartitions(metadata);
         }
 
     // off to the next chunk
@@ -105,8 +120,9 @@ chunkReaderBlock(offset, chunkSize, file);
  */
 function loadData(e, lines, uniform, metadata, done) {
     var maxKey = metadata['maxKey'];
+    var minKey = metadata['maxKey'];
     var maxValue = metadata['maxValue'];
-    var keyHash = metadata['keyHash'];
+    //var keyHash = metadata['keyHash'];
 
     var isValid = true;
 
@@ -141,9 +157,11 @@ function loadData(e, lines, uniform, metadata, done) {
             }
 
             maxKey = Math.max(maxKey, key);
+            minKey = Math.min(minKey, key);
             if (maxValue.length < value.length) {
                 maxValue = value;
             }
+            /*
             // Add key to hash
             // 1 in 10 keys is stored in hash to prevent memory overflow
             if (Math.ceil(Math.random()*10) == 5) {
@@ -152,11 +170,12 @@ function loadData(e, lines, uniform, metadata, done) {
                 } else {
                     keyHash["" + key] += 1;
                 }
-            }
+            }*/
         }
     }
 
     if (isValid) {
+        /*
         if (done) {
 
             var frequencyKeys = metadata['frequencyKeys'];
@@ -186,17 +205,100 @@ function loadData(e, lines, uniform, metadata, done) {
             
             KeyHash = metadata['keyHash'];
             U_Parameters = metadata['uParameters'];
-        }
+        }*/
     } else {
         postMessage({to: "data", msg: "invalid"});
     }
 
 
     metadata['maxKey'] = maxKey;
+    metadata['minKey'] = minKey;
     metadata['maxValue'] = maxValue;
-    metadata['keyHash'] = keyHash;
+    //metadata['keyHash'] = keyHash;
 
     return metadata;
+}
+
+function loadSkewParameters(e, lines, metadata, done) {
+
+    var partitions = metadata['partitions'];
+    const START_POINT = 0;
+    const END_POINT = 1;
+    const TOTAL_FREQUENCY = 2;
+
+    // Parse through data file
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+
+        if (line != "" && line.indexOf("//") != 0) {
+
+            if (line.indexOf("//") > 0) {
+                line = line.split("//")[0].trim();
+            }
+
+            var entry = line.split(" ");
+
+            var key;
+
+            if (entry.length == 2) {
+                key = Number(entry[0]);
+            } else {
+                key = Number(entry[1]);
+            }
+
+            //Add the key to the appropriate partition 
+            
+            var i = -1;
+            var current_end;
+            
+            do {
+                i++;
+                current_end = partitions[i][END_POINT];
+            }
+            while (key >= current_end);
+
+            partitions[i][TOTAL_FREQUENCY]++;
+        }
+    }
+    
+    if (done) {
+        //Calculate U parameters
+        //Idea: Find largest range between hot partitions including no empty partitions
+    }
+
+    metadata['partitions'] = partitions;
+
+    return metadata;
+} 
+
+function setUpPartitions(metadata) {
+    var min = metadata['minKey'];
+    var max = metadata['maxKey'];
+    var i = 1;
+    while ((max - min) % i != (max - min)) {
+        i = i * 10;
+    }
+    var PARTITION_RANGE = i / 1000000;
+    var numPartitions = Math.round((max - min) / PARTITION_RANGE);
+    var partitions = [];
+    // Partition:
+    //  start point
+    //  end point
+    //  total frequency
+
+    // Set up ranges on each partition
+    const START_POINT = 0;
+    const END_POINT = 1;
+    for (var i = 0; i < numPartitions; i++) {
+        partitions[i] = [0, 0, 0];
+        var startPoint = i * PARTITION_RANGE + min;
+        var endPoint = (i + 1) * PARTITION_RANGE + min;
+
+        partitions[i][START_POINT] = startPoint;
+        partitions[i][END_POINT] = endPoint;
+    }
+
+    return partitions;
 }
 
 /**
@@ -435,12 +537,12 @@ function loadWorkload(e, lines, ops) {
                 }
             } else if (query.length == 3 && !isNaN(query[1]) && isNaN(query[2])) {
                 var key = query[1];
-                if (undefined == ops.keyHash["" + key]) {
+/*                if (undefined == ops.keyHash["" + key]) {
                     ops.keyHash["" + key] = 1;
                 } else {
                     ops.keyHash["" + key] += 1;
                 }
-
+*/
                 if (query[0] === 'i') {
                     ops.inserts += 1;
                 }
