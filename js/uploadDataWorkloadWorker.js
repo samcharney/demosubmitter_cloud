@@ -49,10 +49,10 @@ function loadDataFile(e, callback) {
             }
             else if (pass===2) {
                 if (uniform) {
-                    metadata['uParameters']['U'] == 100 * maxKey;
+                    metadata['uParameters']['U'] == 100 * metadata['maxKey'];
                 }
                 else {
-                    metadata = loadSkewParamaters(e, lines, metadata, done);
+                    metadata = loadSkewParameters(e, lines, metadata, done);
                 }
             }
             // Calculate and update loading percentage
@@ -93,7 +93,6 @@ function loadDataFile(e, callback) {
         else if (done && pass===1) {
             offset = 0;
             pass = 2;
-            total_lines=0; //Zeroed to prevent it from being doubled and is faster than checking pass every chunk
             metadata['partitions'] = setUpPartitions(metadata);
         }
 
@@ -120,7 +119,7 @@ chunkReaderBlock(offset, chunkSize, file);
  */
 function loadData(e, lines, uniform, metadata, done) {
     var maxKey = metadata['maxKey'];
-    var minKey = metadata['maxKey'];
+    var minKey = metadata['minKey'];
     var maxValue = metadata['maxValue'];
     //var keyHash = metadata['keyHash'];
 
@@ -248,16 +247,16 @@ function loadSkewParameters(e, lines, metadata, done) {
 
             //Add the key to the appropriate partition 
             
-            var j = -1;
+            var j = 0;
             var current_end;
             
             do {
-                j++;
                 current_end = partitions[j][END_POINT];
+                j++;
             }
             while (key >= current_end);
 
-            partitions[j][TOTAL_FREQUENCY]++;
+            partitions[j-1][TOTAL_FREQUENCY]++;
         }
     }
     
@@ -300,14 +299,14 @@ function loadSkewParameters(e, lines, metadata, done) {
             }
 
             if (i >= (windowSize + 1) / 2) {
-                movingTotal -= partitions[i - (windowSize + 1) / 2][TOTAL_FREQUENCY] / windowSize;
+                movingTotal -= partitions[i - (windowSize + 1) / 2][TOTAL_FREQUENCY];
                 currentWindow--;
             }
             
             movingAvg = movingTotal / currentWindow;
             
             if (movingAvg >= thresholdValue * avgFrequency) {
-                if (hotPartitions = 0) {
+                if (hotPartitions === 0) {
                     startU1 = partitions[i][START_POINT];
                 }
                 endU1 = partitions[i][END_POINT];
@@ -317,7 +316,7 @@ function loadSkewParameters(e, lines, metadata, done) {
         }
         U_1 = endU1 - startU1;
         U_2 = (partitions[partitions.length - 1][END_POINT] - partitions[0][START_POINT]) - U_1;
-        var p_put = Math.round(uParameters['specialKeys'] / totalKeys * 100) / 100;
+        var p_put = Math.round(specialKeys / totalKeys * 100) / 100;
         
 
         metadata['uParameters'] = {U_1: U_1, U_2: U_2, p_put: p_put, specialKeys: specialKeys, start: startU1, end: endU1};
@@ -338,7 +337,7 @@ function setUpPartitions(metadata) {
         i = i * 10;
     }
     var PARTITION_RANGE = i / 1000000;
-    var numPartitions = Math.round((max - min) / PARTITION_RANGE);
+    var numPartitions = Math.round((max - min) / PARTITION_RANGE) + 1;
     var partitions = [];
     // Partition:
     //  start point
