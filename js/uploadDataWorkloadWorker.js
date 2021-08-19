@@ -248,22 +248,81 @@ function loadSkewParameters(e, lines, metadata, done) {
 
             //Add the key to the appropriate partition 
             
-            var i = -1;
+            var j = -1;
             var current_end;
             
             do {
-                i++;
-                current_end = partitions[i][END_POINT];
+                j++;
+                current_end = partitions[j][END_POINT];
             }
             while (key >= current_end);
 
-            partitions[i][TOTAL_FREQUENCY]++;
+            partitions[j][TOTAL_FREQUENCY]++;
         }
     }
     
     if (done) {
         //Calculate U parameters
-        //Idea: Find largest range between hot partitions including no empty partitions
+        var nonemptyPartitions = 0;
+        var totalKeys = 0;
+
+        for (var i = 0; i<partitions.length; i++) {
+            if (partitions[i][TOTAL_FREQUENCY] != 0) {
+                nonemptyPartitions++;
+                totalKeys += partitions[i][TOTAL_FREQUENCY];
+            }
+        }
+
+        var avgFrequency = totalKeys / nonemptyPartitions;
+        
+        var thresholdValue = 2;
+        var startU1;
+        var endU1;
+        var hotPartitions = 0;
+        var specialKeys = 0;
+        
+        //Uses a moving average to determine if the current partition is hot
+        //This method smooths the distribution, preventing outliers from being counted
+        var movingTotal = 0;
+        var movingAvg = 0;
+        var currentWindow = 0;
+        var windowSize = 5;
+
+        for (var i = 0; i < (windowSize - 1) / 2; i++) {
+            movingTotal += partitions[i][TOTAL_FREQUENCY];
+            currentWindow++;
+        }
+
+        for (var i = 0; i<partitions.length; i++) {
+            if (i < partitions.length - (windowSize - 1) / 2) {
+                movingTotal += partitions[i + (windowSize - 1) / 2][TOTAL_FREQUENCY];
+                currentWindow++;
+            }
+
+            if (i >= (windowSize + 1) / 2) {
+                movingTotal -= partitions[i - (windowSize + 1) / 2][TOTAL_FREQUENCY] / windowSize;
+                currentWindow--;
+            }
+            
+            movingAvg = movingTotal / currentWindow;
+            
+            if (movingAvg >= thresholdValue * avgFrequency) {
+                if (hotPartitions = 0) {
+                    startU1 = partitions[i][START_POINT];
+                }
+                endU1 = partitions[i][END_POINT];
+                hotPartitions++;
+                specialKeys += partitions[i][TOTAL_FREQUENCY];
+            }
+        }
+        U_1 = endU1 - startU1;
+        U_2 = (partitions[partitions.length - 1][END_POINT] - partitions[0][START_POINT]) - U_1;
+        var p_put = Math.round(uParameters['specialKeys'] / totalKeys * 100) / 100;
+        
+
+        metadata['uParameters'] = {U_1: U_1, U_2: U_2, p_put: p_put, specialKeys: specialKeys, start: startU1, end: endU1};
+
+        U_Parameters = metadata['uParameters'];
     }
 
     metadata['partitions'] = partitions;
